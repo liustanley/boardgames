@@ -29,6 +29,13 @@ export class ChatServer {
     this.io = socketIo(this.server);
   }
 
+  private onMessage = (m: ChatMessage): void => {
+    console.log('[server](message): %s', JSON.stringify(m));
+
+    // Emits the ChatMessage to all connected clients via a MESSAGE event.
+    this.io.emit(ChatEvent.MESSAGE, m);
+  }
+
   /**
    * Opens up communication to our server and Socket.io events.
    */
@@ -37,15 +44,9 @@ export class ChatServer {
       console.log('Running server on port %s', this.port);
     });
 
-    this.io.on(ChatEvent.CONNECT, (socket: any) => {
+    this.io.on(ChatEvent.CONNECT, (socket: socketIo.Socket) => {
       console.log('Connected client on port %s.', this.port);
-
-      socket.on(ChatEvent.MESSAGE, (m: ChatMessage) => {
-        console.log('[server](message): %s', JSON.stringify(m));
-
-        // Emits the ChatMessage to all connected clients via a MESSAGE event.
-        this.io.emit(ChatEvent.MESSAGE, m);
-      });
+      socket.on(ChatEvent.MESSAGE, this.onMessage);
 
       socket.on(ChatEvent.DISCONNECT, () => {
         console.log('Client disconnected');
