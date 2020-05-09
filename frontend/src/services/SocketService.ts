@@ -1,5 +1,5 @@
-import io from 'socket.io-client';
-import { ChatMessage } from '../models/types';
+import io from "socket.io-client";
+import { ChatMessage } from "../models/types";
 
 /**
  * Represents a service object that manages socket connection to the server.
@@ -10,18 +10,18 @@ export class SocketService {
   /**
    * Initializes this class's socket connection.
    */
-  public init (): SocketService {
-    console.log('initiating socket service');
-    this.socket = io('localhost:8080');
+  public init(): SocketService {
+    console.log("initiating socket service");
+    this.socket = io("localhost:8080");
     return this;
   }
 
   /**
    * Send a message for the server to broadcast.
    */
-  public send (message: ChatMessage): void {
-    console.log('emitting message: ' + message);
-    this.socket.emit('message', message);
+  public send(message: ChatMessage): void {
+    console.log("emitting message: " + message);
+    this.socket.emit("message", message);
   }
 
   /**
@@ -29,13 +29,13 @@ export class SocketService {
    * @param callback function to call upon receiving a chat message.
    */
   public subscribeToChat(callback: (message: ChatMessage) => void) {
-    this.socket.on('message', (m: ChatMessage) => callback(m));
+    this.socket.on("message", (m: ChatMessage) => callback(m));
   }
 
   /**
    * Disconnect - used when unmounting
    */
-  public disconnect (): void {
+  public disconnect(): void {
     this.socket.disconnect();
   }
 }

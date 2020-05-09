@@ -1,9 +1,9 @@
-import * as express from 'express';
-import * as socketIo from 'socket.io';
-import { ChatEvent } from './constants';
-import { ChatMessage } from './types';
-import { createServer, Server } from 'http';
-var cors = require('cors');
+import * as express from "express";
+import * as socketIo from "socket.io";
+import { ChatEvent } from "./constants";
+import { ChatMessage } from "./types";
+import { createServer, Server } from "http";
+var cors = require("cors");
 
 export class ChatServer {
   public static readonly PORT: number = 8080;
@@ -12,11 +12,11 @@ export class ChatServer {
   private io: SocketIO.Server;
   private port: string | number;
 
-  constructor () {
+  constructor() {
     this._app = express();
     this.port = process.env.PORT || ChatServer.PORT;
     this._app.use(cors());
-    this._app.options('*', cors());
+    this._app.options("*", cors());
     this.server = createServer(this._app);
     this.initSocket();
     this.listen();
@@ -25,31 +25,31 @@ export class ChatServer {
   /**
    * Initializes socketIO instance.
    */
-  private initSocket (): void {
+  private initSocket(): void {
     this.io = socketIo(this.server);
   }
 
   private onMessage = (m: ChatMessage): void => {
-    console.log('[server](message): %s', JSON.stringify(m));
+    console.log("[server](message): %s", JSON.stringify(m));
 
     // Emits the ChatMessage to all connected clients via a MESSAGE event.
     this.io.emit(ChatEvent.MESSAGE, m);
-  }
+  };
 
   /**
    * Opens up communication to our server and Socket.io events.
    */
-  private listen (): void {
+  private listen(): void {
     this.server.listen(this.port, () => {
-      console.log('Running server on port %s', this.port);
+      console.log("Running server on port %s", this.port);
     });
 
     this.io.on(ChatEvent.CONNECT, (socket: socketIo.Socket) => {
-      console.log('Connected client on port %s.', this.port);
+      console.log("Connected client on port %s.", this.port);
       socket.on(ChatEvent.MESSAGE, this.onMessage);
 
       socket.on(ChatEvent.DISCONNECT, () => {
-        console.log('Client disconnected');
+        console.log("Client disconnected");
       });
     });
   }
@@ -57,7 +57,7 @@ export class ChatServer {
   /**
    * Getter function to return the express app.
    */
-  get app (): express.Application {
+  get app(): express.Application {
     return this._app;
   }
 }

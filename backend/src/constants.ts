@@ -4,7 +4,7 @@
  * Message event handles incoming chat messages.
  */
 export enum ChatEvent {
-  CONNECT = 'connect',
-  DISCONNECT = 'disconnect',
-  MESSAGE = 'message'
+  CONNECT = "connect",
+  DISCONNECT = "disconnect",
+  MESSAGE = "message",
 }

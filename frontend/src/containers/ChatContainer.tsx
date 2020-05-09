@@ -14,7 +14,7 @@ export class ChatContainer extends React.Component<
     super(props);
     this.state = {
       input: "",
-      messages: []
+      messages: [],
     };
   }
 
@@ -29,15 +29,15 @@ export class ChatContainer extends React.Component<
   sendMessage() {
     this.props.socket.send({
       author: "stanley",
-      message: this.state.input
-    })
+      message: this.state.input,
+    });
   }
 
   receiveMessage(message: ChatMessage) {
     let messages: ChatMessage[] = this.state.messages;
     messages.push(message);
 
-    this.setState({messages: messages});
+    this.setState({ messages: messages });
   }
 
   render() {
@@ -49,16 +49,13 @@ export class ChatContainer extends React.Component<
               <p>{msg.author}</p>
               <p>{msg.message}</p>
             </div>
-          )
-          )}
+          ))}
         </div>
-        <input 
-          placeholder="Type your message here" 
+        <input
+          placeholder="Type your message here"
           onChange={this.onChangeInput.bind(this)}
         />
-        <button onClick={this.sendMessage.bind(this)}>
-          Send
-        </button>
+        <button onClick={this.sendMessage.bind(this)}>Send</button>
       </div>
     );
   }
