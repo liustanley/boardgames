@@ -1,0 +1,9 @@
+{
+  "name": "boardgames",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:backend": "npm --prefix backend run prod",
+    "build:frontend": "npm --prefix frontend run build"
+  }
+}
