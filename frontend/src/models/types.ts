@@ -12,6 +12,10 @@ export interface ChatMessage {
  * - messages[] is an array of ChatMessages received from Socket.io emits
  */
 export interface ChatState {
+  usernameEntered: boolean;
+  username: string;
   input: string;
   messages: ChatMessage[];
+  userColors: Array<String>;
+  userToColorMap: Map<String, String>;
 }
