@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
-    "prod": "tsc && node ./dist/server.js"
+    "dev": "ts-node-dev --respawn --transpileOnly ./src/config/server.ts",
+    "prod": "tsc && node ./dist/config/server.js"
   },
   "keywords": [
     "boardgames",

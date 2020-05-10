@@ -1,32 +1,23 @@
-import * as express from "express";
 import * as socketIo from "socket.io";
-import { ChatEvent } from "./constants";
-import { ChatMessage } from "./types";
-import { createServer, Server } from "http";
-var cors = require("cors");
+import { ChatEvent } from "../types/constants";
+import { ChatMessage } from "../types/types";
+import { Server } from "http";
 
 export class ChatServer {
-  public static readonly PORT: number = 8080;
-  private _app: express.Application;
-  private server: Server;
   private io: SocketIO.Server;
   private port: string | number;
 
-  constructor() {
-    this._app = express();
-    this.port = process.env.PORT || ChatServer.PORT;
-    this._app.use(cors());
-    this._app.options("*", cors());
-    this.server = createServer(this._app);
-    this.initSocket();
+  constructor(server: Server, port: string | number) {
+    this.port = port;
+    this.initSocket(server);
     this.listen();
   }
 
   /**
    * Initializes socketIO instance.
    */
-  private initSocket(): void {
-    this.io = socketIo(this.server);
+  private initSocket(server: Server): void {
+    this.io = socketIo(server);
   }
 
   private onMessage = (m: ChatMessage): void => {
@@ -40,10 +31,6 @@ export class ChatServer {
    * Opens up communication to our server and Socket.io events.
    */
   private listen(): void {
-    this.server.listen(this.port, () => {
-      console.log("Running server on port %s", this.port);
-    });
-
     this.io.on(ChatEvent.CONNECT, (socket: socketIo.Socket) => {
       console.log("Connected client on port %s.", this.port);
       socket.on(ChatEvent.MESSAGE, this.onMessage);
@@ -52,12 +39,5 @@ export class ChatServer {
         console.log("Client disconnected");
       });
     });
-  }
-
-  /**
-   * Getter function to return the express app.
-   */
-  get app(): express.Application {
-    return this._app;
   }
 }
