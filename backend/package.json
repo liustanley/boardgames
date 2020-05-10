@@ -8,7 +8,7 @@
     "tsc": "tsc",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/config/server.ts",
     "prod": "tsc && node ./dist/config/server.js",
-    "build": "tsc"
+    "start": "tsc && node ./dist/config/server.js"
   },
   "keywords": [
     "boardgames",
@@ -25,5 +25,8 @@
     "socket.io": "^2.3.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
+  },
+  "engines": {
+    "node": "12.16.1"
   }
 }
