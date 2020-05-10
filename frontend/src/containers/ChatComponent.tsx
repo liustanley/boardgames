@@ -20,6 +20,7 @@ function ChatComponent(props: any) {
       <hr />
       <div className="chatInput">
         <input
+          className="input"
           value={props.messageValue}
           placeholder={props.messagePlaceholder}
           onChange={props.messageOnChange}

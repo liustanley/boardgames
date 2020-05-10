@@ -19,7 +19,16 @@ export class ChatContainer extends React.Component<
       username: "",
       input: "",
       messages: [],
-      userColors: ["red", "orange", "green", "blue", "violet"],
+      userColors: [
+        "#BF616A",
+        "#D08770",
+        "#EBCB8B",
+        "#A3BE8C",
+        "#87ABAB",
+        "#87C1D1",
+        "#BF89B9",
+        "#EA85A8",
+      ],
       userToColorMap: new Map<string, string>(),
     };
   }
@@ -80,7 +89,7 @@ export class ChatContainer extends React.Component<
 
   pickUserColor(): String {
     if (this.state.userColors.length === 0) {
-      return "black";
+      return "white";
     }
     const colorIndex: number = Math.floor(
       Math.random() * this.state.userColors.length
@@ -105,6 +114,7 @@ export class ChatContainer extends React.Component<
     return !this.state.usernameEntered ? (
       <div className="usernameInput">
         <input
+          className="input"
           value={this.state.username}
           placeholder="Enter your name"
           onChange={this.onUsernameChange.bind(this)}
