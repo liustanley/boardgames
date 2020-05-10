@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build:backend": "npm --prefix backend run prod",
+    "build:backend": "npm --prefix backend run build",
     "build:frontend": "npm --prefix frontend run build"
   },
   "dependencies": {
