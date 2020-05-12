@@ -2,6 +2,7 @@ import React, { createRef } from "react";
 import ChatComponent from "./ChatComponent";
 import { ChatState, ChatMessage } from "../models/types";
 import { SocketService } from "../services/SocketService";
+import { LoveLetterColors } from "../models/constants";
 import "./ChatContainer.css";
 
 interface ChatContainerProps {
@@ -20,14 +21,14 @@ export class ChatContainer extends React.Component<
       input: "",
       messages: [],
       userColors: [
-        "#BF616A",
-        "#D08770",
-        "#EBCB8B",
-        "#A3BE8C",
-        "#87ABAB",
-        "#87C1D1",
-        "#BF89B9",
-        "#EA85A8",
+        LoveLetterColors.RED,
+        LoveLetterColors.ORANGE,
+        LoveLetterColors.YELLOW,
+        LoveLetterColors.GREEN,
+        LoveLetterColors.TEAL,
+        LoveLetterColors.BLUE,
+        LoveLetterColors.VIOLET,
+        LoveLetterColors.PINK,
       ],
       userToColorMap: new Map<string, string>(),
     };

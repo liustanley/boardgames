@@ -1,0 +1,12 @@
+.loveLetterCard {
+  width: 248px;
+  height: 396px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 25px;
+  margin: 40px;
+}
+
+.loveLetterCardName {
+  line-height: 396px;
+}

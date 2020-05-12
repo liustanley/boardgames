@@ -19,3 +19,10 @@ export interface ChatState {
   userColors: Array<String>;
   userToColorMap: Map<String, String>;
 }
+
+/**
+ * Defines the possible values of a Love Letter card
+ */
+export interface LoveLetterCardContainerProps {
+  number: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+}
