@@ -1,5 +1,12 @@
 import io from "socket.io-client";
-import { ChatMessage, registerPlayer, lobby } from "../models/types";
+import {
+  ChatMessage,
+  registerPlayerEvent,
+  lobbyEvent,
+  readyPlayerEvent,
+  gameStateEvent,
+  playCardEvent,
+} from "../models/types";
 
 /**
  * Represents a service object that manages socket connection to the server.
@@ -16,13 +23,27 @@ export class SocketService {
     return this;
   }
 
-  registerPlayer(username: registerPlayer) {
-    console.log("registering player: " + username);
-    this.socket.emit("registerPlayer", username);
+  registerPlayer(payload: registerPlayerEvent) {
+    console.log("registering player: " + payload.username);
+    this.socket.emit("registerPlayer", payload);
   }
 
-  subscribeToLobby(callback: (result: lobby) => void) {
-    this.socket.on("lobby", (result: lobby) => callback(result));
+  subscribeToLobby(callback: (result: lobbyEvent) => void) {
+    this.socket.on("lobby", (result: lobbyEvent) => callback(result));
+  }
+
+  readyPlayer(payload: readyPlayerEvent) {
+    console.log("ready player: " + payload.username);
+    this.socket.emit("readyPlayer", payload);
+  }
+
+  subscribeToGameState(callback: (result: gameStateEvent) => void) {
+    this.socket.on("gameState", (result: gameStateEvent) => callback(result));
+  }
+
+  playCard(payload: playCardEvent) {
+    console.log("playing card: " + payload.username + " - " + payload.card);
+    this.socket.emit("playCard", payload);
   }
 
   /**

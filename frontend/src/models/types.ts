@@ -6,13 +6,58 @@ export interface ChatMessage {
   message: string;
 }
 
-export interface registerPlayer {
+export interface registerPlayerEvent {
   username: string;
 }
 
-export interface lobby {
+export interface lobbyEvent {
   success: boolean;
   usernameList: string[];
+}
+
+export interface readyPlayerEvent {
+  username: string;
+}
+
+export interface playCardEvent {
+  username: string;
+  card: number;
+}
+
+export interface gameStateEvent {
+  message: string;
+  visibleCards: Card[];
+  discardCards: Card[];
+  visiblePlayers?: Player[];
+  status: PlayerStatus;
+}
+
+export enum PlayerStatus {
+  WAITING = "WAITING",
+  SELECTING_CARD = "SELECTING_CARD",
+  GUESSING_CARD = "GUESSING_CARD",
+  VIEWING_CARD = "VIEWING_CARD",
+  COMPARING_CARDS = "COMPARING_CARDS",
+  SELECTING_PLAYER = "SELECTING_PLAYER",
+  DEAD = "DEAD",
+}
+
+interface Player {
+  id: string; // socket id
+  username: string; // user input username
+  tokens?: number;
+  card?: Card;
+  drawCard?: Card;
+  visibleCards?: Card[];
+  immune?: boolean;
+  status?: PlayerStatus;
+  selfSelectable?: boolean;
+}
+
+interface Card {
+  value: number;
+  key: string; // name
+  description: string;
 }
 
 /**
@@ -26,11 +71,4 @@ export interface ChatState {
   messages: ChatMessage[];
   userColors: Array<String>;
   userToColorMap: Map<String, String>;
-}
-
-/**
- * Defines the possible values of a Love Letter card
- */
-export interface LoveLetterCardContainerProps {
-  number: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 }

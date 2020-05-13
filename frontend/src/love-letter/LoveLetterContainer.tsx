@@ -1,6 +1,6 @@
 import React from "react";
 import { SocketService } from "../services/SocketService";
-import { lobby } from "../models/types";
+import { lobbyEvent } from "../models/types";
 import { LoveLetterColors } from "../models/constants";
 import "./LoveLetterContainer.css";
 import { LoveLetterLobby } from "./LoveLetterLobby";
@@ -38,11 +38,11 @@ export class LoveLetterContainer extends React.Component<
     socket.subscribeToLobby(this.onLobby.bind(this));
   }
 
-  onLobby(result: lobby) {
-    if (result.success) {
+  onLobby(payload: lobbyEvent) {
+    if (payload.success) {
       this.setState({
         usernameEntered: true,
-        usernameList: result.usernameList,
+        usernameList: payload.usernameList,
       });
     } else {
       this.setState({ roomFullMessage: "Room is full!" });

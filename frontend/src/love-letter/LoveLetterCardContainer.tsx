@@ -1,31 +1,66 @@
 import React from "react";
-import { LoveLetterCardContainerProps } from "../models/types";
 import LoveLetterCardComponent from "./LoveLetterCardComponent";
 import { LoveLetterColors } from "../models/constants";
 
+interface LoveLetterCardContainerProps {
+  number: number;
+  onSelectCard: Function;
+  selected: boolean;
+  clearSelected: Function;
+}
+
+interface LoveLetterCardContainerState {
+  hovered: boolean;
+}
+
 export class LoveLetterCardContainer extends React.Component<
-  LoveLetterCardContainerProps
+  LoveLetterCardContainerProps,
+  LoveLetterCardContainerState
 > {
+  constructor(props: LoveLetterCardContainerProps) {
+    super(props);
+    this.state = {
+      hovered: false,
+    };
+  }
   numberToColor(num: LoveLetterCardContainerProps["number"]): LoveLetterColors {
     switch (num) {
       case 1:
-        return LoveLetterColors.ORANGE;
+        return this.state.hovered
+          ? LoveLetterColors.ORANGE_DARK
+          : LoveLetterColors.ORANGE;
       case 2:
-        return LoveLetterColors.YELLOW;
+        return this.state.hovered
+          ? LoveLetterColors.YELLOW_DARK
+          : LoveLetterColors.YELLOW;
       case 3:
-        return LoveLetterColors.GREEN;
+        return this.state.hovered
+          ? LoveLetterColors.GREEN_DARK
+          : LoveLetterColors.GREEN;
       case 4:
-        return LoveLetterColors.TEAL;
+        return this.state.hovered
+          ? LoveLetterColors.TEAL_DARK
+          : LoveLetterColors.TEAL;
       case 5:
-        return LoveLetterColors.BLUE;
+        return this.state.hovered
+          ? LoveLetterColors.BLUE_DARK
+          : LoveLetterColors.BLUE;
       case 6:
-        return LoveLetterColors.VIOLET;
+        return this.state.hovered
+          ? LoveLetterColors.VIOLET_DARK
+          : LoveLetterColors.VIOLET;
       case 7:
-        return LoveLetterColors.PINK;
+        return this.state.hovered
+          ? LoveLetterColors.PINK_DARK
+          : LoveLetterColors.PINK;
       case 8:
-        return LoveLetterColors.RED;
+        return this.state.hovered
+          ? LoveLetterColors.RED_DARK
+          : LoveLetterColors.RED;
       default:
-        return LoveLetterColors.WHITE;
+        return this.state.hovered
+          ? LoveLetterColors.ORANGE_DARK
+          : LoveLetterColors.ORANGE;
     }
   }
 
@@ -52,12 +87,29 @@ export class LoveLetterCardContainer extends React.Component<
     }
   }
 
+  onClick() {
+    this.props.clearSelected();
+    this.props.onSelectCard(this.props.number);
+  }
+
+  onMouseEnter() {
+    this.setState({ hovered: true });
+  }
+
+  onMouseLeave() {
+    this.setState({ hovered: false });
+  }
+
   render() {
     return (
       <LoveLetterCardComponent
         number={this.props.number}
         numberToColor={this.numberToColor.bind(this)}
         numberToName={this.numberToName.bind(this)}
+        onClick={this.onClick.bind(this)}
+        onMouseEnter={this.onMouseEnter.bind(this)}
+        onMouseLeave={this.onMouseLeave.bind(this)}
+        selected={this.props.selected}
       />
     );
   }

@@ -3,6 +3,8 @@ import "./LoveLetterLobby.css";
 import { LoveLetterColors } from "../models/constants";
 import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
+import { gameStateEvent, PlayerStatus } from "../models/types";
+import { LoveLetterGameState } from "./LoveLetterGameState";
 
 interface LoveLetterLobbyProps {
   usernameList: string[];
@@ -14,7 +16,12 @@ interface LoveLetterLobbyState {
   usernameList: string[];
   gameStarted: boolean;
   ready: boolean;
+  gameState: gameStateEvent | null;
 }
+
+// TODO:
+const guard = { value: 1, key: "guard", description: "guess someone's card" };
+const priest = { value: 2, key: "priest", description: "view someone's card" };
 
 export class LoveLetterLobby extends React.Component<
   LoveLetterLobbyProps,
@@ -25,18 +32,37 @@ export class LoveLetterLobby extends React.Component<
     this.state = {
       usernameList: props.usernameList,
       ready: false,
-      gameStarted: false,
+      // TODO:
+      // gameStarted: false,
+      gameStarted: true,
+      // TODO:
+      // gameState: null,
+      gameState: {
+        message: "Select a card",
+        visibleCards: [guard, priest],
+        discardCards: [],
+        status: PlayerStatus.SELECTING_CARD,
+      },
     };
+  }
+
+  componentDidMount() {
+    this.props.socket.subscribeToGameState(this.onGameState.bind(this));
+  }
+
+  onGameState(payload: gameStateEvent) {
+    this.setState({ gameStarted: true, gameState: payload });
   }
 
   onReady() {
     if (!this.state.ready) {
+      this.props.socket.readyPlayer({ username: this.props.username });
     }
     this.setState({ ready: !this.state.ready });
   }
 
   render() {
-    return !this.state.gameStarted ? (
+    return !this.state.gameStarted || !this.state.gameState ? (
       <Fragment>
         <div className="loveLetterLobby">
           {this.state.usernameList.map((name) => (
@@ -59,7 +85,11 @@ export class LoveLetterLobby extends React.Component<
         />
       </Fragment>
     ) : (
-      <div></div>
+      <LoveLetterGameState
+        socket={this.props.socket}
+        username={this.props.username}
+        gameState={this.state.gameState}
+      />
     );
   }
 }

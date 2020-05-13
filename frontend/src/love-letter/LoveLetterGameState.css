@@ -1,0 +1,15 @@
+.loveLetterGameState {
+  width: 40%;
+  padding-left: 30%;
+}
+.gameMessage {
+  text-align: center;
+}
+
+.cardSelection {
+  display: flex;
+}
+
+.card {
+  margin: 40px auto;
+}
