@@ -10,5 +10,5 @@ export enum LoveLetterColors {
   BLUE = "#9B91D8",
   VIOLET = "#BF89B9",
   PINK = "#EA85A8",
-  WHITE = "#FFFFFF",
+  WHITE = "#ECEFF4",
 }

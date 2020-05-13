@@ -7,6 +7,7 @@ import "./ChatContainer.css";
 
 interface ChatContainerProps {
   socket: SocketService;
+  username: string;
 }
 
 export class ChatContainer extends React.Component<
@@ -16,8 +17,7 @@ export class ChatContainer extends React.Component<
   constructor(props: ChatContainerProps) {
     super(props);
     this.state = {
-      usernameEntered: false,
-      username: "",
+      username: props.username,
       input: "",
       messages: [],
       userColors: [
@@ -38,6 +38,12 @@ export class ChatContainer extends React.Component<
 
   componentDidMount() {
     this.props.socket.subscribeToChat(this.receiveMessage.bind(this));
+    this.props.socket.sendChatMessage({
+      author: this.state.username,
+      message: "is entering the chat. Welcome!",
+    });
+    const color: String = this.pickUserColor();
+    this.state.userToColorMap.set(this.state.username, color);
   }
 
   onChangeInput(e: React.ChangeEvent<HTMLInputElement>) {
@@ -52,7 +58,7 @@ export class ChatContainer extends React.Component<
 
   sendMessage() {
     if (this.state.input) {
-      this.props.socket.send({
+      this.props.socket.sendChatMessage({
         author: this.state.username,
         message: this.state.input,
       });
@@ -70,22 +76,6 @@ export class ChatContainer extends React.Component<
         chatDiv.scrollTop = chatDiv.scrollHeight;
       }
     });
-  }
-
-  onUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ username: e.target.value });
-  }
-
-  onUsernameKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      this.setState({ usernameEntered: true });
-      this.props.socket.send({
-        author: this.state.username,
-        message: "is entering the chat. Welcome!",
-      });
-      const color: String = this.pickUserColor();
-      this.state.userToColorMap.set(this.state.username, color);
-    }
   }
 
   pickUserColor(): String {
@@ -112,17 +102,7 @@ export class ChatContainer extends React.Component<
   }
 
   render() {
-    return !this.state.usernameEntered ? (
-      <div className="usernameInput">
-        <input
-          className="input"
-          value={this.state.username}
-          placeholder="Enter your name"
-          onChange={this.onUsernameChange.bind(this)}
-          onKeyPress={this.onUsernameKeyPress.bind(this)}
-        />
-      </div>
-    ) : (
+    return (
       <ChatComponent
         messages={this.state.messages}
         messageValue={this.state.input}

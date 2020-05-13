@@ -1,5 +1,5 @@
 import io from "socket.io-client";
-import { ChatMessage } from "../models/types";
+import { ChatMessage, registerPlayer, lobby } from "../models/types";
 
 /**
  * Represents a service object that manages socket connection to the server.
@@ -16,11 +16,20 @@ export class SocketService {
     return this;
   }
 
+  registerPlayer(username: registerPlayer) {
+    console.log("registering player: " + username);
+    this.socket.emit("registerPlayer", username);
+  }
+
+  subscribeToLobby(callback: (result: lobby) => void) {
+    this.socket.on("lobby", (result: lobby) => callback(result));
+  }
+
   /**
    * Send a message for the server to broadcast.
    */
-  public send(message: ChatMessage): void {
-    console.log("emitting message: " + message);
+  public sendChatMessage(message: ChatMessage): void {
+    console.log("emitting chat message: " + message);
     this.socket.emit("message", message);
   }
 

@@ -6,13 +6,21 @@ export interface ChatMessage {
   message: string;
 }
 
+export interface registerPlayer {
+  username: string;
+}
+
+export interface lobby {
+  success: boolean;
+  usernameList: string[];
+}
+
 /**
  * Defines the structure of the live chat state.
  * - input is updated as the user is typing the message to be submitted
  * - messages[] is an array of ChatMessages received from Socket.io emits
  */
 export interface ChatState {
-  usernameEntered: boolean;
   username: string;
   input: string;
   messages: ChatMessage[];
