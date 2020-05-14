@@ -23,7 +23,7 @@ export class LoveLetterCardContainer extends React.Component<
       hovered: false,
     };
   }
-  numberToColor(num: LoveLetterCardContainerProps["number"]): LoveLetterColors {
+  numberToColor(num: number): LoveLetterColors {
     switch (num) {
       case 1:
         return this.state.hovered
@@ -58,9 +58,7 @@ export class LoveLetterCardContainer extends React.Component<
           ? LoveLetterColors.RED_DARK
           : LoveLetterColors.RED;
       default:
-        return this.state.hovered
-          ? LoveLetterColors.ORANGE_DARK
-          : LoveLetterColors.ORANGE;
+        return LoveLetterColors.WHITE;
     }
   }
 

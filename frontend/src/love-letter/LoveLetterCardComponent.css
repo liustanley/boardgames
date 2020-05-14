@@ -4,8 +4,10 @@
   display: inline-block;
   text-align: center;
   border-radius: 25px;
+  border: 8px solid #4c566a;
 }
 
 .loveLetterCardName {
   line-height: 396px;
+  font-size: 48px;
 }

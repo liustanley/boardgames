@@ -22,6 +22,12 @@ interface LoveLetterLobbyState {
 // TODO:
 const guard = { value: 1, key: "guard", description: "guess someone's card" };
 const priest = { value: 2, key: "priest", description: "view someone's card" };
+const baron = { value: 3, key: "baron", description: "compare cards" };
+const handmaid = { value: 4, key: "handmaid", description: "protection" };
+const prince = { value: 5, key: "prince", description: "draw card" };
+const king = { value: 6, key: "king", description: "swap cards" };
+const countess = { value: 7, key: "countess", description: "have to play" };
+const princess = { value: 8, key: "princess", description: "lose" };
 
 export class LoveLetterLobby extends React.Component<
   LoveLetterLobbyProps,
@@ -40,7 +46,24 @@ export class LoveLetterLobby extends React.Component<
       gameState: {
         message: "Select a card",
         visibleCards: [guard, priest],
-        discardCards: [],
+        discardCards: [
+          guard,
+          priest,
+          baron,
+          handmaid,
+          prince,
+          king,
+          countess,
+          princess,
+          baron,
+          prince,
+          handmaid,
+          guard,
+          guard,
+          priest,
+          baron,
+          guard,
+        ],
         status: PlayerStatus.SELECTING_CARD,
       },
     };

@@ -4,6 +4,7 @@ import { SocketService } from "../services/SocketService";
 import { LoveLetterColors } from "../models/constants";
 import "./LoveLetterGameState.css";
 import { LoveLetterCardContainer } from "./LoveLetterCardContainer";
+import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
 
 export interface LoveLetterGameStateProps {
   socket: SocketService;
@@ -48,6 +49,11 @@ export class LoveLetterGameState extends React.Component<
         username: this.props.username,
         card: this.state.cardSelected,
       });
+      this.setState({
+        cardSelected: undefined,
+        leftSelected: false,
+        rightSelected: false,
+      });
     }
   }
 
@@ -55,6 +61,11 @@ export class LoveLetterGameState extends React.Component<
     return (
       <Fragment>
         <div className="loveLetterGameState">
+          <div className="deck">
+            {this.props.gameState.discardCards.map((card, index) => (
+              <LoveLetterDeckCard number={card.value} index={index} />
+            ))}
+          </div>
           <hr color={LoveLetterColors.WHITE}></hr>
           <div className="gameMessage">
             <b>{this.props.gameState.message}</b>
