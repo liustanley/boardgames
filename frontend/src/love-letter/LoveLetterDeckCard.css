@@ -1,0 +1,15 @@
+.deck {
+  text-align: center;
+  position: relative;
+  height: 104px;
+}
+
+.deckCard {
+  position: absolute;
+  height: 88px;
+  width: 62px;
+  border-radius: 10px;
+  border: 2px solid #4c566a;
+  font-size: 48px;
+  line-height: 88px;
+}
