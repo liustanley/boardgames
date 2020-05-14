@@ -28,6 +28,21 @@ const prince = { value: 5, key: "prince", description: "draw card" };
 const king = { value: 6, key: "king", description: "swap cards" };
 const countess = { value: 7, key: "countess", description: "have to play" };
 const princess = { value: 8, key: "princess", description: "lose" };
+const deck = [
+  guard,
+  priest,
+  baron,
+  handmaid,
+  prince,
+  king,
+  countess,
+  baron,
+  prince,
+  guard,
+  priest,
+  baron,
+  guard,
+];
 
 export class LoveLetterLobby extends React.Component<
   LoveLetterLobbyProps,
@@ -43,28 +58,46 @@ export class LoveLetterLobby extends React.Component<
       gameStarted: true,
       // TODO:
       // gameState: null,
+      // gameState: {
+      //   message: "Select a card",
+      //   visibleCards: [guard, priest],
+      //   discardCards: [
+      //     guard,
+      //     priest,
+      //     baron,
+      //     handmaid,
+      //     prince,
+      //     king,
+      //     countess,
+      //     princess,
+      //     baron,
+      //     prince,
+      //     handmaid,
+      //     guard,
+      //     guard,
+      //     priest,
+      //     baron,
+      //     guard,
+      //   ],
+      //   status: PlayerStatus.SELECTING_CARD,
+      // },
+      // gameState: {
+      //   message: "It's Stanley's turn",
+      //   visibleCards: [princess],
+      //   discardCards: deck,
+      //   status: PlayerStatus.WAITING,
+      // },
+      // gameState: {
+      //   message: "You are viewing Stanley's card",
+      //   visibleCards: [king],
+      //   discardCards: deck,
+      //   status: PlayerStatus.VIEWING_CARD,
+      // },
       gameState: {
-        message: "Select a card",
-        visibleCards: [guard, priest],
-        discardCards: [
-          guard,
-          priest,
-          baron,
-          handmaid,
-          prince,
-          king,
-          countess,
-          princess,
-          baron,
-          prince,
-          handmaid,
-          guard,
-          guard,
-          priest,
-          baron,
-          guard,
-        ],
-        status: PlayerStatus.SELECTING_CARD,
+        message: "You compared cards with Stanley and won!",
+        visibleCards: [handmaid, guard],
+        discardCards: deck,
+        status: PlayerStatus.COMPARING_CARDS,
       },
     };
   }

@@ -4,9 +4,9 @@ import { LoveLetterColors } from "../models/constants";
 
 interface LoveLetterCardContainerProps {
   number: number;
-  onSelectCard: Function;
-  selected: boolean;
-  clearSelected: Function;
+  onSelectCard?: Function;
+  selected?: boolean;
+  clearSelected?: Function;
 }
 
 interface LoveLetterCardContainerState {
@@ -86,16 +86,22 @@ export class LoveLetterCardContainer extends React.Component<
   }
 
   onClick() {
-    this.props.clearSelected();
-    this.props.onSelectCard(this.props.number);
+    if (this.props.clearSelected && this.props.onSelectCard) {
+      this.props.clearSelected();
+      this.props.onSelectCard(this.props.number);
+    }
   }
 
   onMouseEnter() {
-    this.setState({ hovered: true });
+    if (this.props.onSelectCard) {
+      this.setState({ hovered: true });
+    }
   }
 
   onMouseLeave() {
-    this.setState({ hovered: false });
+    if (this.props.onSelectCard) {
+      this.setState({ hovered: false });
+    }
   }
 
   render() {

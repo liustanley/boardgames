@@ -1,11 +1,11 @@
 import io from "socket.io-client";
 import {
-  ChatMessage,
-  registerPlayerEvent,
-  lobbyEvent,
-  readyPlayerEvent,
-  gameStateEvent,
-  playCardEvent,
+  ChatMessageEvent,
+  RegisterPlayerEvent,
+  LobbyEvent,
+  ReadyPlayerEvent,
+  GameStateEvent,
+  PlayCardEvent,
 } from "../models/types";
 
 /**
@@ -23,25 +23,25 @@ export class SocketService {
     return this;
   }
 
-  registerPlayer(payload: registerPlayerEvent) {
+  registerPlayer(payload: RegisterPlayerEvent) {
     console.log("registering player: " + payload.username);
     this.socket.emit("registerPlayer", payload);
   }
 
-  subscribeToLobby(callback: (result: lobbyEvent) => void) {
-    this.socket.on("lobby", (result: lobbyEvent) => callback(result));
+  subscribeToLobby(callback: (result: LobbyEvent) => void) {
+    this.socket.on("lobby", (result: LobbyEvent) => callback(result));
   }
 
-  readyPlayer(payload: readyPlayerEvent) {
+  readyPlayer(payload: ReadyPlayerEvent) {
     console.log("ready player: " + payload.username);
     this.socket.emit("readyPlayer", payload);
   }
 
-  subscribeToGameState(callback: (result: gameStateEvent) => void) {
-    this.socket.on("gameState", (result: gameStateEvent) => callback(result));
+  subscribeToGameState(callback: (result: GameStateEvent) => void) {
+    this.socket.on("gameState", (result: GameStateEvent) => callback(result));
   }
 
-  playCard(payload: playCardEvent) {
+  playCard(payload: PlayCardEvent) {
     console.log("playing card: " + payload.username + " - " + payload.card);
     this.socket.emit("playCard", payload);
   }
@@ -49,7 +49,7 @@ export class SocketService {
   /**
    * Send a message for the server to broadcast.
    */
-  public sendChatMessage(message: ChatMessage): void {
+  public sendChatMessage(message: ChatMessageEvent): void {
     console.log("emitting chat message: " + message);
     this.socket.emit("message", message);
   }
@@ -58,8 +58,8 @@ export class SocketService {
    * Listens for incoming chat messages.
    * @param callback function to call upon receiving a chat message.
    */
-  public subscribeToChat(callback: (message: ChatMessage) => void) {
-    this.socket.on("message", (m: ChatMessage) => callback(m));
+  public subscribeToChat(callback: (message: ChatMessageEvent) => void) {
+    this.socket.on("message", (m: ChatMessageEvent) => callback(m));
   }
 
   /**

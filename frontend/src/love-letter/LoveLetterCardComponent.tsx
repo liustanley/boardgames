@@ -6,7 +6,7 @@ interface LoveLetterCardComponentProps {
   numberToColor: Function;
   numberToName: Function;
   onClick: Function;
-  selected: boolean;
+  selected?: boolean;
   onMouseEnter: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onMouseLeave: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }

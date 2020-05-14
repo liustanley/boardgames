@@ -1,30 +1,36 @@
 /**
  * The message object to be used by Socket.io events.
  */
-export interface ChatMessage {
+// Sent by front-end and back-end
+export interface ChatMessageEvent {
   author: string;
   message: string;
 }
 
-export interface registerPlayerEvent {
+// Sent by front-end
+export interface RegisterPlayerEvent {
   username: string;
 }
 
-export interface lobbyEvent {
+// Sent by back-end
+export interface LobbyEvent {
   success: boolean;
   usernameList: string[];
 }
 
-export interface readyPlayerEvent {
+// Sent by front-end
+export interface ReadyPlayerEvent {
   username: string;
 }
 
-export interface playCardEvent {
+// Sent by front-end
+export interface PlayCardEvent {
   username: string;
-  card: number;
+  card: Card;
 }
 
-export interface gameStateEvent {
+// Sent by back-end
+export interface GameStateEvent {
   message: string;
   visibleCards: Card[];
   discardCards: Card[];
@@ -42,7 +48,7 @@ export enum PlayerStatus {
   DEAD = "DEAD",
 }
 
-interface Player {
+export interface Player {
   id: string; // socket id
   username: string; // user input username
   tokens?: number;
@@ -54,7 +60,7 @@ interface Player {
   selfSelectable?: boolean;
 }
 
-interface Card {
+export interface Card {
   value: number;
   key: string; // name
   description: string;
@@ -68,7 +74,7 @@ interface Card {
 export interface ChatState {
   username: string;
   input: string;
-  messages: ChatMessage[];
+  messages: ChatMessageEvent[];
   userColors: Array<String>;
   userToColorMap: Map<String, String>;
 }
