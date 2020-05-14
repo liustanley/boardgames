@@ -1,15 +1,17 @@
 import React, { Fragment } from "react";
-import { gameStateEvent, PlayerStatus } from "../models/types";
+import { GameStateEvent, PlayerStatus, Card } from "../models/types";
 import { SocketService } from "../services/SocketService";
 import { LoveLetterColors } from "../models/constants";
 import "./LoveLetterGameState.css";
 import { LoveLetterCardContainer } from "./LoveLetterCardContainer";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
+import { ChatContainer } from "../chat/ChatContainer";
+import { Card as CardEnum } from "../../../backend/src/love-letter/Card";
 
 export interface LoveLetterGameStateProps {
   socket: SocketService;
   username: string;
-  gameState: gameStateEvent;
+  gameState: GameStateEvent;
 }
 
 export interface LoveLetterGameStateState {
@@ -45,15 +47,39 @@ export class LoveLetterGameState extends React.Component<
 
   onPlayCard() {
     if (this.state.cardSelected) {
+      const card = this.numberToCard(this.state.cardSelected);
       this.props.socket.playCard({
         username: this.props.username,
-        card: this.state.cardSelected,
+        card: card,
       });
       this.setState({
         cardSelected: undefined,
         leftSelected: false,
         rightSelected: false,
       });
+    }
+  }
+
+  numberToCard(value: number): Card {
+    switch (value) {
+      case 1:
+        return Card.GUARD;
+      case 2:
+        return Card.PRIEST;
+      case 3:
+        return Card.BARON;
+      case 4:
+        return Card.HANDMAID;
+      case 5:
+        return Card.PRINCE;
+      case 6:
+        return Card.KING;
+      case 7:
+        return Card.COUNTESS;
+      case 8:
+        return Card.PRINCESS;
+      default:
+        return Card.GUARD;
     }
   }
 
@@ -71,8 +97,18 @@ export class LoveLetterGameState extends React.Component<
             <b>{this.props.gameState.message}</b>
           </div>
           <hr color={LoveLetterColors.WHITE}></hr>
+          {(this.props.gameState.status === PlayerStatus.WAITING ||
+            this.props.gameState.status === PlayerStatus.VIEWING_CARD) && (
+            <div className="cardContainer">
+              <div className="card">
+                <LoveLetterCardContainer
+                  number={this.props.gameState.visibleCards[0].value}
+                />
+              </div>
+            </div>
+          )}
           {this.props.gameState.status === PlayerStatus.SELECTING_CARD && (
-            <div className="cardSelection">
+            <div className="cardContainer">
               <div className="card">
                 <LoveLetterCardContainer
                   number={this.props.gameState.visibleCards[0].value}
@@ -91,8 +127,28 @@ export class LoveLetterGameState extends React.Component<
               </div>
             </div>
           )}
+          {this.props.gameState.status === PlayerStatus.COMPARING_CARDS && (
+            <div className="cardContainer">
+              <div className="card">
+                <LoveLetterCardContainer
+                  number={this.props.gameState.visibleCards[0].value}
+                />
+              </div>
+              <div className="card">
+                <LoveLetterCardContainer
+                  number={this.props.gameState.visibleCards[1].value}
+                />
+              </div>
+            </div>
+          )}
         </div>
         {this.props.gameState.status === PlayerStatus.SELECTING_CARD && (
+          <div className="readyButton" onClick={this.onPlayCard.bind(this)}>
+            <b>{this.state.cardSelected ? "Play Card" : "Select a Card"}</b>
+          </div>
+        )}
+        {(this.props.gameState.status === PlayerStatus.VIEWING_CARD ||
+          this.props.gameState.status === PlayerStatus.COMPARING_CARDS) && (
           <div className="readyButton" onClick={this.onPlayCard.bind(this)}>
             <b>{this.state.cardSelected ? "Play Card" : "Select a Card"}</b>
           </div>

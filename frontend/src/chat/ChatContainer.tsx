@@ -1,6 +1,6 @@
 import React, { createRef } from "react";
 import ChatComponent from "./ChatComponent";
-import { ChatState, ChatMessage } from "../models/types";
+import { ChatState, ChatMessageEvent } from "../models/types";
 import { SocketService } from "../services/SocketService";
 import { LoveLetterColors } from "../models/constants";
 import "./ChatContainer.css";
@@ -66,8 +66,8 @@ export class ChatContainer extends React.Component<
     }
   }
 
-  receiveMessage(message: ChatMessage) {
-    let messages: ChatMessage[] = this.state.messages;
+  receiveMessage(message: ChatMessageEvent) {
+    let messages: ChatMessageEvent[] = this.state.messages;
     messages.push(message);
 
     this.setState({ messages }, () => {

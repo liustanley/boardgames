@@ -1,12 +1,12 @@
 import React from "react";
-import { ChatMessage } from "../models/types";
+import { ChatMessageEvent } from "../models/types";
 import "./ChatComponent.css";
 
 function ChatComponent(props: any) {
   return (
     <div className="chatComponent">
       <div className="chatMessages" ref={props.chatRef}>
-        {props.messages.map((msg: ChatMessage, index: number) => (
+        {props.messages.map((msg: ChatMessageEvent, index: number) => (
           <div key={index}>
             <p>
               <span style={{ color: props.userToColor(msg.author) }}>

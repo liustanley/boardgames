@@ -3,7 +3,7 @@ import "./LoveLetterLobby.css";
 import { LoveLetterColors } from "../models/constants";
 import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
-import { gameStateEvent, PlayerStatus } from "../models/types";
+import { GameStateEvent, PlayerStatus } from "../models/types";
 import { LoveLetterGameState } from "./LoveLetterGameState";
 
 interface LoveLetterLobbyProps {
@@ -16,7 +16,7 @@ interface LoveLetterLobbyState {
   usernameList: string[];
   gameStarted: boolean;
   ready: boolean;
-  gameState: gameStateEvent | null;
+  gameState: GameStateEvent | null;
 }
 
 // TODO:
@@ -54,10 +54,10 @@ export class LoveLetterLobby extends React.Component<
       usernameList: props.usernameList,
       ready: false,
       // TODO:
-      // gameStarted: false,
-      gameStarted: true,
+      gameStarted: false,
+      // gameStarted: true,
       // TODO:
-      // gameState: null,
+      gameState: null,
       // gameState: {
       //   message: "Select a card",
       //   visibleCards: [guard, priest],
@@ -93,12 +93,12 @@ export class LoveLetterLobby extends React.Component<
       //   discardCards: deck,
       //   status: PlayerStatus.VIEWING_CARD,
       // },
-      gameState: {
-        message: "You compared cards with Stanley and won!",
-        visibleCards: [handmaid, guard],
-        discardCards: deck,
-        status: PlayerStatus.COMPARING_CARDS,
-      },
+      // gameState: {
+      //   message: "You compared cards with Stanley and won!",
+      //   visibleCards: [handmaid, guard],
+      //   discardCards: deck,
+      //   status: PlayerStatus.COMPARING_CARDS,
+      // },
     };
   }
 
@@ -106,7 +106,7 @@ export class LoveLetterLobby extends React.Component<
     this.props.socket.subscribeToGameState(this.onGameState.bind(this));
   }
 
-  onGameState(payload: gameStateEvent) {
+  onGameState(payload: GameStateEvent) {
     this.setState({ gameStarted: true, gameState: payload });
   }
 
