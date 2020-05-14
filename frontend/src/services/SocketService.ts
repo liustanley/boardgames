@@ -6,6 +6,7 @@ import {
   ReadyPlayerEvent,
   GameStateEvent,
   PlayCardEvent,
+  ConfirmEvent,
 } from "../models/types";
 
 /**
@@ -44,6 +45,11 @@ export class SocketService {
   playCard(payload: PlayCardEvent) {
     console.log("playing card: " + payload.username + " - " + payload.card);
     this.socket.emit("playCard", payload);
+  }
+
+  confirm(payload: ConfirmEvent) {
+    console.log("confirming: " + payload.username);
+    this.socket.emit("confirm", payload);
   }
 
   /**

@@ -5,6 +5,7 @@ import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
 import { GameStateEvent, PlayerStatus } from "../models/types";
 import { LoveLetterGameState } from "./LoveLetterGameState";
+import { Card } from "./Card";
 
 interface LoveLetterLobbyProps {
   usernameList: string[];
@@ -20,28 +21,20 @@ interface LoveLetterLobbyState {
 }
 
 // TODO:
-const guard = { value: 1, key: "guard", description: "guess someone's card" };
-const priest = { value: 2, key: "priest", description: "view someone's card" };
-const baron = { value: 3, key: "baron", description: "compare cards" };
-const handmaid = { value: 4, key: "handmaid", description: "protection" };
-const prince = { value: 5, key: "prince", description: "draw card" };
-const king = { value: 6, key: "king", description: "swap cards" };
-const countess = { value: 7, key: "countess", description: "have to play" };
-const princess = { value: 8, key: "princess", description: "lose" };
 const deck = [
-  guard,
-  priest,
-  baron,
-  handmaid,
-  prince,
-  king,
-  countess,
-  baron,
-  prince,
-  guard,
-  priest,
-  baron,
-  guard,
+  Card.GUARD,
+  Card.HANDMAID,
+  Card.KING,
+  Card.GUARD,
+  Card.PRINCE,
+  Card.PRINCE,
+  Card.GUARD,
+  Card.PRIEST,
+  Card.BARON,
+  Card.GUARD,
+  Card.PRINCESS,
+  Card.PRIEST,
+  Card.BARON,
 ];
 
 export class LoveLetterLobby extends React.Component<
@@ -54,51 +47,40 @@ export class LoveLetterLobby extends React.Component<
       usernameList: props.usernameList,
       ready: false,
       // TODO:
-      gameStarted: false,
-      // gameStarted: true,
+      // gameStarted: false,
+      gameStarted: true,
       // TODO:
-      gameState: null,
+      // gameState: null,
       // gameState: {
       //   message: "Select a card",
-      //   visibleCards: [guard, priest],
-      //   discardCards: [
-      //     guard,
-      //     priest,
-      //     baron,
-      //     handmaid,
-      //     prince,
-      //     king,
-      //     countess,
-      //     princess,
-      //     baron,
-      //     prince,
-      //     handmaid,
-      //     guard,
-      //     guard,
-      //     priest,
-      //     baron,
-      //     guard,
-      //   ],
+      //   visibleCards: [Card.PRIEST, Card.KING],
+      //   discardCards: deck,
       //   status: PlayerStatus.SELECTING_CARD,
       // },
       // gameState: {
       //   message: "It's Stanley's turn",
-      //   visibleCards: [princess],
+      //   visibleCards: [Card.PRINCESS],
+      //   discardCards: deck,
+      //   status: PlayerStatus.WAITING,
+      // },
+      // gameState: {
+      //   message: "Stanley compared cards with you and lost!",
+      //   visibleCards: [Card.PRINCE, Card.COUNTESS],
       //   discardCards: deck,
       //   status: PlayerStatus.WAITING,
       // },
       // gameState: {
       //   message: "You are viewing Stanley's card",
-      //   visibleCards: [king],
+      //   visibleCards: [Card.KING],
       //   discardCards: deck,
       //   status: PlayerStatus.VIEWING_CARD,
       // },
-      // gameState: {
-      //   message: "You compared cards with Stanley and won!",
-      //   visibleCards: [handmaid, guard],
-      //   discardCards: deck,
-      //   status: PlayerStatus.COMPARING_CARDS,
-      // },
+      gameState: {
+        message: "You compared cards with Stanley and won!",
+        visibleCards: [Card.HANDMAID, Card.PRIEST],
+        discardCards: deck,
+        status: PlayerStatus.COMPARING_CARDS,
+      },
     };
   }
 
@@ -113,8 +95,8 @@ export class LoveLetterLobby extends React.Component<
   onReady() {
     if (!this.state.ready) {
       this.props.socket.readyPlayer({ username: this.props.username });
+      this.setState({ ready: true });
     }
-    this.setState({ ready: !this.state.ready });
   }
 
   render() {

@@ -24,13 +24,13 @@ export class LoveLetterContainer extends React.Component<
     this.state = {
       usernameEntered: false,
       // TODO:
-      username: "",
-      // username: "Dillon",
+      // username: "",
+      username: "Dillon",
       input: "",
       roomFullMessage: "",
       // TODO:
-      usernameList: [],
-      // usernameList: ["Stanley", "Alex", "Annette", "Christina"],
+      // usernameList: [],
+      usernameList: ["Stanley", "Alex", "Annette", "Christina"],
     };
   }
 

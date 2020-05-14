@@ -1,8 +1,9 @@
 import React, { Fragment } from "react";
 import "./LoveLetterCardComponent.css";
+import { Card } from "./Card";
 
 interface LoveLetterCardComponentProps {
-  number: number;
+  card: Card;
   numberToColor: Function;
   numberToName: Function;
   onClick: Function;
@@ -16,7 +17,7 @@ function LoveLetterCardComponent(props: LoveLetterCardComponentProps) {
     <Fragment>
       <div
         className="loveLetterCard"
-        style={{ background: props.numberToColor(props.number) }}
+        style={{ background: props.numberToColor(props.card) }}
         onMouseEnter={props.onMouseEnter}
         onMouseLeave={props.onMouseLeave}
         onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
@@ -24,15 +25,16 @@ function LoveLetterCardComponent(props: LoveLetterCardComponentProps) {
         }
       >
         <div className="loveLetterCardName">
-          <b>{props.numberToName(props.number)}</b>
+          <b>{props.numberToName(props.card)}</b>
         </div>
       </div>
       <br></br>
       {props.selected && (
         <hr
           style={{
-            background: props.numberToColor(props.number),
+            background: props.numberToColor(props.card),
             height: "5px",
+            border: "0px",
           }}
         ></hr>
       )}
