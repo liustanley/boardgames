@@ -7,6 +7,8 @@ import {
   GameStateEvent,
   PlayCardEvent,
   ConfirmEvent,
+  SelectPlayerEvent,
+  GuessCardEvent,
 } from "../models/types";
 
 /**
@@ -50,6 +52,24 @@ export class SocketService {
   confirm(payload: ConfirmEvent) {
     console.log("confirming: " + payload.username);
     this.socket.emit("confirm", payload);
+  }
+
+  selectPlayer(payload: SelectPlayerEvent) {
+    console.log(
+      "selecting: " + payload.username + " -> " + payload.player.username
+    );
+    this.socket.emit("selectPLayer", payload);
+  }
+
+  guessCard(payload: GuessCardEvent) {
+    console.log(
+      "guessing card: " +
+        payload.username +
+        " -> " +
+        payload.player.username +
+        " - " +
+        payload.card
+    );
   }
 
   /**

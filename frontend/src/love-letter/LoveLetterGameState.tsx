@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { GameStateEvent, PlayerStatus } from "../models/types";
 import { SocketService } from "../services/SocketService";
-import { LoveLetterColors } from "../models/constants";
+import { LoveLetterColors, cardGuessList } from "../models/constants";
 import "./LoveLetterGameState.css";
 import { LoveLetterCardContainer } from "./LoveLetterCardContainer";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
@@ -18,6 +18,10 @@ export interface LoveLetterGameStateState {
   leftSelected: boolean;
   rightSelected: boolean;
   cardSelected?: Card;
+  nameHovered: number;
+  nameClicked: number;
+  cardNameClicked: number;
+  cardNameHovered: number;
 }
 
 export class LoveLetterGameState extends React.Component<
@@ -31,6 +35,10 @@ export class LoveLetterGameState extends React.Component<
       leftSelected: false,
       rightSelected: false,
       cardSelected: undefined,
+      nameHovered: -1,
+      nameClicked: -1,
+      cardNameClicked: -1,
+      cardNameHovered: -1,
     };
   }
 
@@ -64,6 +72,58 @@ export class LoveLetterGameState extends React.Component<
   onConfirm() {
     this.props.socket.confirm({ username: this.props.username });
     this.setState({ actionCompleted: true });
+  }
+
+  onNameEnter(index: number) {
+    this.setState({ nameHovered: index });
+  }
+
+  onNameLeave(index: number) {
+    this.setState({ nameHovered: -1 });
+  }
+
+  onNameClick(index: number) {
+    this.setState({ nameClicked: index });
+  }
+
+  onSelectPlayer() {
+    if (this.props.gameState.visiblePlayers) {
+      const player = this.props.gameState.visiblePlayers[
+        this.state.nameClicked
+      ];
+      this.props.socket.selectPlayer({
+        username: this.props.username,
+        player,
+      });
+      this.setState({ actionCompleted: true });
+    }
+  }
+
+  onCardNameEnter(index: number) {
+    this.setState({ cardNameHovered: index });
+  }
+
+  onCardNameLeave(index: number) {
+    this.setState({ cardNameHovered: -1 });
+  }
+
+  onCardNameClick(index: number) {
+    this.setState({ cardNameClicked: index });
+  }
+
+  onGuessCard() {
+    if (this.props.gameState.visiblePlayers) {
+      const player = this.props.gameState.visiblePlayers[
+        this.state.nameClicked
+      ];
+      const card = cardGuessList[this.state.cardNameClicked];
+      this.props.socket.guessCard({
+        username: this.props.username,
+        player,
+        card,
+      });
+      this.setState({ actionCompleted: true });
+    }
   }
 
   render() {
@@ -124,6 +184,141 @@ export class LoveLetterGameState extends React.Component<
               </div>
             </div>
           )}
+          {this.props.gameState.status === PlayerStatus.SELECTING_PLAYER && (
+            <Fragment>
+              <br></br>
+              <div className="playerList">
+                <hr style={{ color: LoveLetterColors.WHITE, margin: 0 }}></hr>
+                {this.props.gameState.visiblePlayers?.map((player, index) => (
+                  <Fragment>
+                    {this.props.gameState.visiblePlayers &&
+                    !this.props.gameState.visiblePlayers[index].immune &&
+                    this.props.gameState.visiblePlayers[index].status !==
+                      PlayerStatus.DEAD &&
+                    this.props.gameState.visiblePlayers[index]
+                      .selfSelectable !== false ? (
+                      <Fragment>
+                        <div
+                          className="playerName"
+                          style={{
+                            background:
+                              this.state.nameClicked === index
+                                ? LoveLetterColors.BACKGROUND_BLUE
+                                : this.state.nameHovered === index
+                                ? LoveLetterColors.BACKGROUND_DARK
+                                : LoveLetterColors.BACKGROUND_LIGHT,
+                          }}
+                          onMouseEnter={(event) => this.onNameEnter(index)}
+                          onMouseLeave={(event) => this.onNameLeave(index)}
+                          onClick={(event) => this.onNameClick(index)}
+                        >
+                          <b>{player.username}</b>
+                        </div>
+                        <hr
+                          style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                        ></hr>
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        <div
+                          className="playerName"
+                          style={{
+                            background: LoveLetterColors.BACKGROUND_BLACK,
+                          }}
+                        >
+                          <b>{player.username}</b>
+                        </div>
+                        <hr
+                          style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                        ></hr>
+                      </Fragment>
+                    )}
+                  </Fragment>
+                ))}
+              </div>
+            </Fragment>
+          )}
+          {this.props.gameState.status === PlayerStatus.GUESSING_CARD && (
+            <Fragment>
+              <br></br>
+              <div className="playerList">
+                <hr style={{ color: LoveLetterColors.WHITE, margin: 0 }}></hr>
+                {this.props.gameState.visiblePlayers?.map((player, index) => (
+                  <Fragment>
+                    {this.props.gameState.visiblePlayers &&
+                    !this.props.gameState.visiblePlayers[index].immune &&
+                    this.props.gameState.visiblePlayers[index].status !==
+                      PlayerStatus.DEAD &&
+                    this.props.gameState.visiblePlayers[index]
+                      .selfSelectable !== false ? (
+                      <Fragment>
+                        <div
+                          className="playerName"
+                          style={{
+                            background:
+                              this.state.nameClicked === index
+                                ? LoveLetterColors.BACKGROUND_BLUE
+                                : this.state.nameHovered === index
+                                ? LoveLetterColors.BACKGROUND_DARK
+                                : LoveLetterColors.BACKGROUND_LIGHT,
+                          }}
+                          onMouseEnter={(event) => this.onNameEnter(index)}
+                          onMouseLeave={(event) => this.onNameLeave(index)}
+                          onClick={(event) => this.onNameClick(index)}
+                        >
+                          <b>{player.username}</b>
+                        </div>
+                        <hr
+                          style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                        ></hr>
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        <div
+                          className="playerName"
+                          style={{
+                            background: LoveLetterColors.BACKGROUND_BLACK,
+                          }}
+                        >
+                          <b>{player.username}</b>
+                        </div>
+                        <hr
+                          style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                        ></hr>
+                      </Fragment>
+                    )}
+                  </Fragment>
+                ))}
+              </div>
+              <br></br>
+              <div className="cardList">
+                <hr style={{ color: LoveLetterColors.WHITE, margin: 0 }}></hr>
+                {cardGuessList.map((card, index) => (
+                  <Fragment>
+                    <div
+                      className="cardName"
+                      style={{
+                        background:
+                          this.state.cardNameClicked === index
+                            ? LoveLetterColors.BACKGROUND_BLUE
+                            : this.state.cardNameHovered === index
+                            ? LoveLetterColors.BACKGROUND_DARK
+                            : LoveLetterColors.BACKGROUND_LIGHT,
+                      }}
+                      onMouseEnter={(event) => this.onCardNameEnter(index)}
+                      onMouseLeave={(event) => this.onCardNameLeave(index)}
+                      onClick={(event) => this.onCardNameClick(index)}
+                    >
+                      <b>{card.toString()}</b>
+                    </div>
+                    <hr
+                      style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                    ></hr>
+                  </Fragment>
+                ))}
+              </div>
+            </Fragment>
+          )}
         </div>
         {this.props.gameState.status === PlayerStatus.SELECTING_CARD &&
           !this.state.actionCompleted && (
@@ -136,6 +331,24 @@ export class LoveLetterGameState extends React.Component<
           !this.state.actionCompleted && (
             <div className="readyButton" onClick={this.onConfirm.bind(this)}>
               <b>OK</b>
+            </div>
+          )}
+        {this.props.gameState.status === PlayerStatus.SELECTING_PLAYER &&
+          this.state.nameClicked > -1 &&
+          !this.state.actionCompleted && (
+            <div
+              className="readyButton"
+              onClick={this.onSelectPlayer.bind(this)}
+            >
+              <b>Select Player</b>
+            </div>
+          )}
+        {this.props.gameState.status === PlayerStatus.GUESSING_CARD &&
+          this.state.nameClicked > -1 &&
+          this.state.cardNameClicked > -1 &&
+          !this.state.actionCompleted && (
+            <div className="readyButton" onClick={this.onGuessCard.bind(this)}>
+              <b>Select Player</b>
             </div>
           )}
       </Fragment>

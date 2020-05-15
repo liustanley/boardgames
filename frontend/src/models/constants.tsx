@@ -1,3 +1,5 @@
+import { Card } from "../love-letter/Card";
+
 /**
  * Colors used in Love Letter
  */
@@ -19,4 +21,18 @@ export enum LoveLetterColors {
   PINK = "#EA85A8",
   PINK_DARK = "#ad617c",
   WHITE = "#ECEFF4",
+  BACKGROUND_LIGHT = "#434c5e",
+  BACKGROUND_DARK = "#3B4252",
+  BACKGROUND_BLUE = "#5e81ac",
+  BACKGROUND_BLACK = "#2e3440",
 }
+
+export const cardGuessList = [
+  Card.PRIEST,
+  Card.BARON,
+  Card.HANDMAID,
+  Card.PRINCE,
+  Card.KING,
+  Card.COUNTESS,
+  Card.PRINCESS,
+];

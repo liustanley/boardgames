@@ -36,6 +36,31 @@ const deck = [
   Card.PRIEST,
   Card.BARON,
 ];
+const dillon = {
+  id: "1",
+  username: "Dillon",
+  immune: true,
+  status: PlayerStatus.WAITING,
+};
+const alex = {
+  id: "2",
+  username: "Alex",
+  immune: false,
+  status: PlayerStatus.WAITING,
+};
+const christina = {
+  id: "3",
+  username: "Christina",
+  immune: false,
+  status: PlayerStatus.WAITING,
+};
+const annette = {
+  id: "4",
+  username: "Annette",
+  immune: false,
+  status: PlayerStatus.WAITING,
+  selfSelectable: false,
+};
 
 export class LoveLetterLobby extends React.Component<
   LoveLetterLobbyProps,
@@ -75,11 +100,25 @@ export class LoveLetterLobby extends React.Component<
       //   discardCards: deck,
       //   status: PlayerStatus.VIEWING_CARD,
       // },
+      // gameState: {
+      //   message: "You compared cards with Stanley and won!",
+      //   visibleCards: [Card.HANDMAID, Card.PRIEST],
+      //   discardCards: deck,
+      //   status: PlayerStatus.COMPARING_CARDS,
+      // },
+      // gameState: {
+      //   message: "Select a player",
+      //   visibleCards: [],
+      //   discardCards: deck,
+      //   visiblePlayers: [dillon, alex, christina, annette],
+      //   status: PlayerStatus.SELECTING_PLAYER,
+      // },
       gameState: {
-        message: "You compared cards with Stanley and won!",
-        visibleCards: [Card.HANDMAID, Card.PRIEST],
+        message: "Select a player and a card",
+        visibleCards: [],
         discardCards: deck,
-        status: PlayerStatus.COMPARING_CARDS,
+        visiblePlayers: [dillon, alex, christina, annette],
+        status: PlayerStatus.GUESSING_CARD,
       },
     };
   }

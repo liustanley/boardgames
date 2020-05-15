@@ -13,3 +13,21 @@
 .card {
   margin: 40px auto;
 }
+
+.playerList {
+  text-align: center;
+}
+
+.playerName {
+  height: 40px;
+  line-height: 40px;
+}
+
+.cardList {
+  text-align: center;
+}
+
+.cardName {
+  height: 35px;
+  line-height: 35px;
+}

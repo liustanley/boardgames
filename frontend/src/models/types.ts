@@ -31,8 +31,22 @@ export interface PlayCardEvent {
   card: Card;
 }
 
+// Sent by front-end
 export interface ConfirmEvent {
   username: string;
+}
+
+// Sent by front-end
+export interface SelectPlayerEvent {
+  username: string;
+  player: Player;
+}
+
+// Sent by front-end
+export interface GuessCardEvent {
+  username: string;
+  player: Player;
+  card: Card;
 }
 
 // Sent by back-end
