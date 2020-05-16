@@ -46,13 +46,13 @@ const alex = {
   id: "2",
   username: "Alex",
   immune: false,
-  status: PlayerStatus.WAITING,
+  status: PlayerStatus.DEAD,
 };
 const christina = {
   id: "3",
   username: "Christina",
   immune: false,
-  status: PlayerStatus.WAITING,
+  status: PlayerStatus.DEAD,
 };
 const annette = {
   id: "4",

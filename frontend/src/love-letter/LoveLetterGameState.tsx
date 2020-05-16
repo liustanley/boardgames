@@ -22,6 +22,7 @@ export interface LoveLetterGameStateState {
   nameClicked: number;
   cardNameClicked: number;
   cardNameHovered: number;
+  hasSelectablePlayers: boolean;
 }
 
 export class LoveLetterGameState extends React.Component<
@@ -39,6 +40,7 @@ export class LoveLetterGameState extends React.Component<
       nameClicked: -1,
       cardNameClicked: -1,
       cardNameHovered: -1,
+      hasSelectablePlayers: this.checkHasSelectablePlayers(),
     };
   }
 
@@ -126,6 +128,21 @@ export class LoveLetterGameState extends React.Component<
     }
   }
 
+  checkHasSelectablePlayers(): boolean {
+    if (this.props.gameState.visiblePlayers) {
+      for (const player of this.props.gameState.visiblePlayers) {
+        if (
+          player.status !== PlayerStatus.DEAD &&
+          !player.immune &&
+          player.selfSelectable !== false
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   render() {
     return (
       <Fragment>
@@ -140,6 +157,19 @@ export class LoveLetterGameState extends React.Component<
             <b>{this.props.gameState.message}</b>
           </div>
           <hr color={LoveLetterColors.WHITE}></hr>
+          {!this.state.hasSelectablePlayers &&
+            (this.props.gameState.status === PlayerStatus.SELECTING_PLAYER ||
+              this.props.gameState.status === PlayerStatus.GUESSING_CARD) && (
+              <Fragment>
+                <div
+                  className="gameMessage"
+                  style={{ color: LoveLetterColors.RED }}
+                >
+                  <b>No players selectable</b>
+                </div>
+                <hr color={LoveLetterColors.WHITE}></hr>
+              </Fragment>
+            )}
           {(this.props.gameState.status === PlayerStatus.WAITING ||
             this.props.gameState.status === PlayerStatus.VIEWING_CARD) && (
             <div className="cardContainer">
@@ -291,32 +321,38 @@ export class LoveLetterGameState extends React.Component<
                 ))}
               </div>
               <br></br>
-              <div className="cardList">
-                <hr style={{ color: LoveLetterColors.WHITE, margin: 0 }}></hr>
-                {cardGuessList.map((card, index) => (
-                  <Fragment>
-                    <div
-                      className="cardName"
-                      style={{
-                        background:
-                          this.state.cardNameClicked === index
-                            ? LoveLetterColors.BACKGROUND_BLUE
-                            : this.state.cardNameHovered === index
-                            ? LoveLetterColors.BACKGROUND_DARK
-                            : LoveLetterColors.BACKGROUND_LIGHT,
-                      }}
-                      onMouseEnter={(event) => this.onCardNameEnter(index)}
-                      onMouseLeave={(event) => this.onCardNameLeave(index)}
-                      onClick={(event) => this.onCardNameClick(index)}
-                    >
-                      <b>{card.toString()}</b>
-                    </div>
+              {this.state.hasSelectablePlayers && (
+                <Fragment>
+                  <div className="cardList">
                     <hr
                       style={{ color: LoveLetterColors.WHITE, margin: 0 }}
                     ></hr>
-                  </Fragment>
-                ))}
-              </div>
+                    {cardGuessList.map((card, index) => (
+                      <Fragment>
+                        <div
+                          className="cardName"
+                          style={{
+                            background:
+                              this.state.cardNameClicked === index
+                                ? LoveLetterColors.BACKGROUND_BLUE
+                                : this.state.cardNameHovered === index
+                                ? LoveLetterColors.BACKGROUND_DARK
+                                : LoveLetterColors.BACKGROUND_LIGHT,
+                          }}
+                          onMouseEnter={(event) => this.onCardNameEnter(index)}
+                          onMouseLeave={(event) => this.onCardNameLeave(index)}
+                          onClick={(event) => this.onCardNameClick(index)}
+                        >
+                          <b>{card.toString()}</b>
+                        </div>
+                        <hr
+                          style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                        ></hr>
+                      </Fragment>
+                    ))}
+                  </div>
+                </Fragment>
+              )}
             </Fragment>
           )}
         </div>
@@ -349,6 +385,13 @@ export class LoveLetterGameState extends React.Component<
           !this.state.actionCompleted && (
             <div className="readyButton" onClick={this.onGuessCard.bind(this)}>
               <b>Select Player</b>
+            </div>
+          )}
+        {(this.props.gameState.status === PlayerStatus.SELECTING_PLAYER ||
+          this.props.gameState.status === PlayerStatus.GUESSING_CARD) &&
+          !this.state.actionCompleted && (
+            <div className="readyButton" onClick={this.onConfirm.bind(this)}>
+              <b>OK</b>
             </div>
           )}
       </Fragment>
