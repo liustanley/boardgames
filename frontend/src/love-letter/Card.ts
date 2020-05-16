@@ -42,4 +42,44 @@ export class Card {
   toString() {
     return this.key;
   }
+
+  /**
+   * Something janky happens when a Card is passed through sockets, so this function solves that problem
+   * by correcting a list of socket cards.
+   * @param cards the list of cards to be corrected
+   */
+  static correct(cards: Card[]) {
+    let corrected: Card[] = [];
+
+    for (let c of cards) {
+      switch (c.value) {
+        case 1:
+          corrected.push(Card.GUARD);
+          break;
+        case 2:
+          corrected.push(Card.PRIEST);
+          break;
+        case 3:
+          corrected.push(Card.BARON);
+          break;
+        case 4:
+          corrected.push(Card.HANDMAID);
+          break;
+        case 5:
+          corrected.push(Card.PRINCE);
+          break;
+        case 6:
+          corrected.push(Card.KING);
+          break;
+        case 7:
+          corrected.push(Card.COUNTESS);
+          break;
+        case 8:
+          corrected.push(Card.PRINCESS);
+          break;
+      }
+    }
+
+    return corrected;
+  }
 }

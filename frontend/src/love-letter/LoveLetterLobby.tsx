@@ -152,6 +152,9 @@ export class LoveLetterLobby extends React.Component<
   }
 
   onGameState(payload: GameStateEvent) {
+    payload.visibleCards = Card.correct(payload.visibleCards);
+    payload.discardCards = Card.correct(payload.discardCards);
+
     this.setState({ gameStarted: true, gameState: payload, roundOver: false });
   }
 
