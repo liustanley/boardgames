@@ -8,6 +8,7 @@ export class LoveLetterModel {
   private discardPile: Card[]; // list of discarded Cards
   private turn: number; // index of Player who's turn it is
   private message: string;
+  private numReady: number;
 
   constructor(deck: Card[]) {
     this.players = [];
@@ -15,6 +16,7 @@ export class LoveLetterModel {
     this.discardPile = [];
     this.turn = Math.floor(Math.random() * 4);
     this.message = "";
+    this.numReady = 0;
   }
 
   /**
@@ -154,6 +156,20 @@ export class LoveLetterModel {
    */
   public getPlayers(): Player[] {
     return this.players;
+  }
+
+  /**
+   * Getter for numready
+   */
+  public getNumReady(): number {
+    return this.numReady;
+  }
+
+  /**
+   * Updates this numReady by 1
+   */
+  public incrementNumReady(): void {
+    this.numReady++;
   }
 
   /**

@@ -6,6 +6,7 @@ import { LoveLetterModel } from "./LoveLetterModel";
 import { Card } from "./Card";
 import { Player } from "./Player";
 import { DECK } from "./constants";
+import { LobbyEvent, ReadyPlayerEvent, RegisterPlayerEvent } from "./types";
 
 export class LoveLetterController {
   private io: SocketIO.Server;
@@ -42,7 +43,7 @@ export class LoveLetterController {
    * @param socketId  the socketId of the client registering a player
    * @param res       the response object, containing the client username
    */
-  private onRegisterPlayer = (socketId: string, res: { username: string }) => {
+  private onRegisterPlayer = (socketId: string, res: RegisterPlayerEvent) => {
     let success: boolean = this.model.addPlayer(socketId, res.username);
     let players: Player[] = this.model.getPlayers();
     let usernames: string[] = [];
@@ -52,12 +53,25 @@ export class LoveLetterController {
       socketIds.push(p.id);
     }
 
-    let lobby = {
+    let lobby: LobbyEvent = {
       success: success,
       usernameList: usernames,
     };
     for (let id of socketIds) {
       this.io.to(id).emit("lobby", lobby);
+    }
+  };
+
+  /**
+   * Listener for readyPlayer events, also responsible for starting the game and sending first game state.
+   */
+  private onReadyPlayer = () => {
+    this.model.incrementNumReady();
+    console.log(this.model.getNumReady());
+    if (this.model.getNumReady() === this.model.getPlayers().length) {
+      this.model.startGame();
+      this.io.emit("gameState", this.model.gameState());
+      console.log(this.model.gameState());
     }
   };
 
@@ -68,9 +82,11 @@ export class LoveLetterController {
     this.io.on(ChatEvent.CONNECT, (socket: socketIo.Socket) => {
       console.log("Connected client on port %s.", this.port);
 
-      socket.on("registerPlayer", (res: { username: string }) =>
+      socket.on("registerPlayer", (res: RegisterPlayerEvent) =>
         this.onRegisterPlayer(socket.id, res)
       );
+
+      socket.on("readyPlayer", (res: ReadyPlayerEvent) => this.onReadyPlayer());
 
       socket.on(ChatEvent.MESSAGE, this.onMessage);
 

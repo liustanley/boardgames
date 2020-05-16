@@ -148,9 +148,10 @@ export class LoveLetterGameState extends React.Component<
       <Fragment>
         <div className="loveLetterGameState">
           <div className="deck">
-            {this.props.gameState.discardCards.map((card, index) => (
-              <LoveLetterDeckCard number={card.value} index={index} />
-            ))}
+            {this.props.gameState.discardCards &&
+              this.props.gameState.discardCards.map((card, index) => (
+                <LoveLetterDeckCard number={card.value} index={index} />
+              ))}
           </div>
           <hr color={LoveLetterColors.WHITE}></hr>
           <div className="gameMessage">
