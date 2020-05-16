@@ -145,6 +145,12 @@ export class LoveLetterLobby extends React.Component<
     this.props.socket.subscribeToRoundOver(this.onRoundOver.bind(this));
   }
 
+  componentDidUpdate() {
+    if (this.props.usernameList !== this.state.usernameList) {
+      this.setState({ usernameList: this.props.usernameList });
+    }
+  }
+
   onGameState(payload: GameStateEvent) {
     this.setState({ gameStarted: true, gameState: payload, roundOver: false });
   }
