@@ -126,8 +126,10 @@ export class Player {
           " of having the " +
           guess +
           " and was ";
-        if (this.card === guess) {
+        if (target.card === guess) {
           target.status = PlayerStatus.DEAD;
+          target.card = undefined;
+          target.visibleCards = [];
           return guardMessage + "correct.";
         } else {
           return guardMessage + "incorrect.";
