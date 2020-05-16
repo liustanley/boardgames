@@ -7,10 +7,14 @@ import { Card } from "./Card";
 import { Player } from "./Player";
 import { DECK } from "./constants";
 import {
+  ConfirmEvent,
   GameState,
   LobbyEvent,
+  PlayCardEvent,
   ReadyPlayerEvent,
   RegisterPlayerEvent,
+  RoundOverEvent,
+  SelectCardEvent,
 } from "./types";
 
 export class LoveLetterController {
@@ -76,14 +80,76 @@ export class LoveLetterController {
 
     if (this.model.getNumReady() === players.length) {
       this.model.startGame();
-      let gameState: GameState[] = this.model.gameState();
-
-      for (let i: number = 0; i < players.length; i++) {
-        this.io.to(players[i].id).emit("gameState", gameState[i]);
-      }
-      console.log(this.model.gameState());
+      this.sendGameState();
     }
   };
+
+  /**
+   * Listener for selectCard events, alters the model accordingly.
+   * @param res the response object of type SelectCardEvent
+   */
+  private onSelectCard = (res: SelectCardEvent) => {
+    this.model.selectCard(res.username, res.card); // TODO: might have to correct this card input
+    this.sendGameState();
+  };
+
+  /**
+   * Listener for playCard events, alters the model accordingly.
+   * @param res the response object of type PlayCardEvent
+   */
+  private onPlayCard = (res: PlayCardEvent) => {
+    this.model.playCard(res.username, res.target, res.guess); // TODO: might have to correct this card input
+
+    if (this.model.roundOver()) {
+      this.sendRoundOverState();
+    } else {
+      this.sendGameState();
+    }
+  };
+
+  /**
+   * Listener for confirm events
+   * @param res the response object
+   */
+  private onConfirm = (res: ConfirmEvent) => {
+    this.model.confirmPlay(res.username);
+
+    if (this.model.roundOver()) {
+      this.sendRoundOverState();
+    } else {
+      this.sendGameState();
+    }
+  };
+
+  /**
+   * Sends each client their respective game state.
+   */
+  private sendGameState(): void {
+    let players: Player[] = this.model.getPlayers();
+    let gameState: GameState[] = this.model.gameState();
+
+    for (let i: number = 0; i < players.length; i++) {
+      this.io.to(players[i].id).emit("gameState", gameState[i]);
+    }
+    console.log(this.model.gameState());
+  }
+
+  /**
+   * Sends each client the model's round over state.
+   */
+  private sendRoundOverState(): void {
+    let players: Player[] = this.model.getPlayers();
+    let message: string = this.model.getMessage();
+
+    let roundOver: RoundOverEvent = {
+      players: players,
+      message: message,
+    };
+
+    for (let p of players) {
+      this.io.to(p.id).emit("roundOver", roundOver);
+    }
+  }
 
   /**
    * Opens up communication to our server and Socket.io events.
@@ -97,6 +163,12 @@ export class LoveLetterController {
       );
 
       socket.on("readyPlayer", (res: ReadyPlayerEvent) => this.onReadyPlayer());
+
+      socket.on("selectCard", (res: SelectCardEvent) => this.onSelectCard(res));
+
+      socket.on("playCard", (res: PlayCardEvent) => this.onPlayCard(res));
+
+      socket.on("confirmEvent", (res: ConfirmEvent) => this.onConfirm(res));
 
       socket.on(ChatEvent.MESSAGE, this.onMessage);
 

@@ -97,9 +97,12 @@ export class LoveLetterModel {
     if (this.lastPlayed === Card.PRINCE) {
       this.discardPile.push(targetPlayer.card);
       targetPlayer.card = this.deck.shift();
-    }
-    if (this.lastPlayed === Card.BARON) {
+    } else if (this.lastPlayed === Card.BARON) {
       this.lastBaronTarget = targetPlayer;
+    } else if (this.lastPlayed === Card.GUARD && guess) {
+      if (guess === targetPlayer.card) {
+        this.discardPile.push(targetPlayer.card);
+      }
     }
 
     currentPlayer.playCard(this.lastPlayed, targetPlayer, guess);
@@ -198,6 +201,13 @@ export class LoveLetterModel {
   }
 
   /**
+   * Returns this game's current message.
+   */
+  public getMessage(): string {
+    return this.message;
+  }
+
+  /**
    * Getter for numready
    */
   public getNumReady(): number {
@@ -215,7 +225,7 @@ export class LoveLetterModel {
    * Determines if this love letter round has ended.
    * A love letter round ends when there are no cards left in the deck or when only one player remains.
    */
-  private roundOver(): boolean {
+  public roundOver(): boolean {
     let numAlive: number = 0;
     let winner: Player = undefined;
     for (let p of this.players) {
