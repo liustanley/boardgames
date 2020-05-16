@@ -44,6 +44,22 @@ export class LoveLetterGameState extends React.Component<
     };
   }
 
+  componentDidUpdate(prevProps: LoveLetterGameStateProps) {
+    if (this.props.gameState !== prevProps.gameState) {
+      this.setState({
+        actionCompleted: false,
+        leftSelected: false,
+        rightSelected: false,
+        cardSelected: undefined,
+        nameHovered: -1,
+        nameClicked: -1,
+        cardNameClicked: -1,
+        cardNameHovered: -1,
+        hasSelectablePlayers: this.checkHasSelectablePlayers(),
+      });
+    }
+  }
+
   onSelectCard(value: Card) {
     this.setState({ cardSelected: value });
   }
@@ -56,9 +72,9 @@ export class LoveLetterGameState extends React.Component<
     this.setState({ rightSelected: false, leftSelected: true });
   }
 
-  onPlayCard() {
+  onSendSelectedCard() {
     if (this.state.cardSelected) {
-      this.props.socket.playCard({
+      this.props.socket.selectCard({
         username: this.props.username,
         card: this.state.cardSelected,
       });
@@ -69,6 +85,21 @@ export class LoveLetterGameState extends React.Component<
         rightSelected: false,
       });
     }
+  }
+
+  onPlayCard() {
+    const payload: any = {};
+    if (this.state.nameClicked > -1 && this.props.gameState.visiblePlayers) {
+      payload.target = this.props.gameState.visiblePlayers[
+        this.state.nameClicked
+      ];
+    }
+    if (this.state.cardNameClicked > -1) {
+      payload.guess = cardGuessList[this.state.cardNameClicked];
+    }
+    payload.username = this.props.username;
+    this.props.socket.playCard(payload);
+    this.setState({ actionCompleted: true });
   }
 
   onConfirm() {
@@ -88,19 +119,6 @@ export class LoveLetterGameState extends React.Component<
     this.setState({ nameClicked: index });
   }
 
-  onSelectPlayer() {
-    if (this.props.gameState.visiblePlayers) {
-      const player = this.props.gameState.visiblePlayers[
-        this.state.nameClicked
-      ];
-      this.props.socket.selectPlayer({
-        username: this.props.username,
-        player,
-      });
-      this.setState({ actionCompleted: true });
-    }
-  }
-
   onCardNameEnter(index: number) {
     this.setState({ cardNameHovered: index });
   }
@@ -111,21 +129,6 @@ export class LoveLetterGameState extends React.Component<
 
   onCardNameClick(index: number) {
     this.setState({ cardNameClicked: index });
-  }
-
-  onGuessCard() {
-    if (this.props.gameState.visiblePlayers) {
-      const player = this.props.gameState.visiblePlayers[
-        this.state.nameClicked
-      ];
-      const card = cardGuessList[this.state.cardNameClicked];
-      this.props.socket.guessCard({
-        username: this.props.username,
-        player,
-        card,
-      });
-      this.setState({ actionCompleted: true });
-    }
   }
 
   checkHasSelectablePlayers(): boolean {
@@ -359,7 +362,10 @@ export class LoveLetterGameState extends React.Component<
         </div>
         {this.props.gameState.status === PlayerStatus.SELECTING_CARD &&
           !this.state.actionCompleted && (
-            <div className="readyButton" onClick={this.onPlayCard.bind(this)}>
+            <div
+              className="readyButton"
+              onClick={this.onSendSelectedCard.bind(this)}
+            >
               <b>{this.state.cardSelected ? "Play Card" : "Select a Card"}</b>
             </div>
           )}
@@ -373,10 +379,7 @@ export class LoveLetterGameState extends React.Component<
         {this.props.gameState.status === PlayerStatus.SELECTING_PLAYER &&
           this.state.nameClicked > -1 &&
           !this.state.actionCompleted && (
-            <div
-              className="readyButton"
-              onClick={this.onSelectPlayer.bind(this)}
-            >
+            <div className="readyButton" onClick={this.onPlayCard.bind(this)}>
               <b>Select Player</b>
             </div>
           )}
@@ -384,14 +387,15 @@ export class LoveLetterGameState extends React.Component<
           this.state.nameClicked > -1 &&
           this.state.cardNameClicked > -1 &&
           !this.state.actionCompleted && (
-            <div className="readyButton" onClick={this.onGuessCard.bind(this)}>
+            <div className="readyButton" onClick={this.onPlayCard.bind(this)}>
               <b>Select Player</b>
             </div>
           )}
         {(this.props.gameState.status === PlayerStatus.SELECTING_PLAYER ||
           this.props.gameState.status === PlayerStatus.GUESSING_CARD) &&
+          !this.state.hasSelectablePlayers &&
           !this.state.actionCompleted && (
-            <div className="readyButton" onClick={this.onConfirm.bind(this)}>
+            <div className="readyButton" onClick={this.onPlayCard.bind(this)}>
               <b>OK</b>
             </div>
           )}

@@ -26,27 +26,21 @@ export interface ReadyPlayerEvent {
 }
 
 // Sent by front-end
+export interface SelectCardEvent {
+  username: string;
+  card: Card;
+}
+
+// Sent by front-end
 export interface PlayCardEvent {
   username: string;
-  card: Card;
+  target?: Player;
+  guess?: Card;
 }
 
-// Sent by front-end
+// Sent by front-end after Baron/Priest play
 export interface ConfirmEvent {
   username: string;
-}
-
-// Sent by front-end
-export interface SelectPlayerEvent {
-  username: string;
-  player: Player;
-}
-
-// Sent by front-end
-export interface GuessCardEvent {
-  username: string;
-  player: Player;
-  card: Card;
 }
 
 // Sent by back-end

@@ -42,7 +42,7 @@ const deck = [
 const dillon = {
   id: "1",
   username: "Dillon",
-  immune: true,
+  immune: false,
   status: PlayerStatus.WAITING,
   tokens: 2,
   card: Card.PRIEST,
