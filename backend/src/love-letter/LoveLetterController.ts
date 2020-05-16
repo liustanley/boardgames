@@ -6,7 +6,12 @@ import { LoveLetterModel } from "./LoveLetterModel";
 import { Card } from "./Card";
 import { Player } from "./Player";
 import { DECK } from "./constants";
-import { LobbyEvent, ReadyPlayerEvent, RegisterPlayerEvent } from "./types";
+import {
+  GameState,
+  LobbyEvent,
+  ReadyPlayerEvent,
+  RegisterPlayerEvent,
+} from "./types";
 
 export class LoveLetterController {
   private io: SocketIO.Server;
@@ -67,10 +72,15 @@ export class LoveLetterController {
    */
   private onReadyPlayer = () => {
     this.model.incrementNumReady();
-    console.log(this.model.getNumReady());
-    if (this.model.getNumReady() === this.model.getPlayers().length) {
+    let players: Player[] = this.model.getPlayers();
+
+    if (this.model.getNumReady() === players.length) {
       this.model.startGame();
-      this.io.emit("gameState", this.model.gameState());
+      let gameState: GameState[] = this.model.gameState();
+
+      for (let i: number = 0; i < players.length; i++) {
+        this.io.to(players[i].id).emit("gameState", gameState[i]);
+      }
       console.log(this.model.gameState());
     }
   };

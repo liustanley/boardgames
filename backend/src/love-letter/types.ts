@@ -18,27 +18,23 @@ export interface ReadyPlayerEvent {
 }
 
 // Sent by front-end
+export interface SelectCardEvent {
+  username: string;
+  card: Card;
+}
+
+// Sent by front-end
 export interface PlayCardEvent {
   username: string;
-  card: Card;
+  selected: Card;
+  target?: string; // If target is undefined, then there are no selectable players and the game will progress to the next turn.
+  guess?: Card;
 }
 
 // Sent by front-end
+// Sent after the play of a Baron or a Priest
 export interface ConfirmEvent {
   username: string;
-}
-
-// Sent by front-end
-export interface SelectPlayerEvent {
-  username: string;
-  player: Player;
-}
-
-// Sent by front-end
-export interface GuessCardEvent {
-  username: string;
-  player: Player;
-  card: Card;
 }
 
 // Sent by back-end

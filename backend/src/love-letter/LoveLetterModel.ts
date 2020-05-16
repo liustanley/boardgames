@@ -9,6 +9,8 @@ export class LoveLetterModel {
   private turn: number; // index of Player who's turn it is
   private message: string;
   private numReady: number;
+  private lastPlayed: Card;
+  private lastBaronTarget: Player;
 
   constructor(deck: Card[]) {
     this.players = [];
@@ -64,6 +66,7 @@ export class LoveLetterModel {
     );
     this.message = currentPlayer.selectCard(selected);
     this.discardPile.push(selected);
+    this.lastPlayed = selected;
 
     // These cards all don't require a Play action, and just progress to the next turn.
     if (
@@ -101,10 +104,52 @@ export class LoveLetterModel {
       this.discardPile.push(targetPlayer.card);
       targetPlayer.card = this.deck.shift();
     }
+    if (selected === Card.BARON) {
+      this.lastBaronTarget = targetPlayer;
+    }
 
     currentPlayer.playCard(selected, targetPlayer, guess);
-    if (!this.roundOver()) {
+
+    if (selected === Card.BARON || selected === Card.PRIEST) {
+      // wait for confirm event
+    } else if (!this.roundOver()) {
       this.nextTurn();
+    }
+  }
+
+  /**
+   * In the case of a Baron or Priest play, confirms and executes the play.
+   * @param username  the username of the player who confirmed the play
+   */
+  public confirmPlay(username: string) {
+    let currentPlayer: Player = this.players.find(
+      (player) => player.username === username
+    );
+
+    if (this.lastPlayed === Card.BARON && this.lastBaronTarget) {
+      if (this.lastBaronTarget.card.value > currentPlayer.card.value) {
+        currentPlayer.status = PlayerStatus.DEAD;
+        currentPlayer.visibleCards = [];
+        this.discardPile.push(currentPlayer.card);
+        this.lastBaronTarget.status = PlayerStatus.WAITING;
+      } else if (currentPlayer.card.value > this.lastBaronTarget.card.value) {
+        this.lastBaronTarget.status = PlayerStatus.DEAD;
+        this.lastBaronTarget.visibleCards = [];
+        this.discardPile.push(this.lastBaronTarget.card);
+        currentPlayer.status = PlayerStatus.WAITING;
+      } else {
+        currentPlayer.status = PlayerStatus.WAITING;
+        this.lastBaronTarget.status = PlayerStatus.WAITING;
+      }
+
+      if (!this.roundOver()) {
+        this.nextTurn();
+      }
+    } else if (this.lastPlayed === Card.PRIEST) {
+      currentPlayer.visibleCards = [currentPlayer.card];
+      if (!this.roundOver()) {
+        this.nextTurn();
+      }
     }
   }
 
