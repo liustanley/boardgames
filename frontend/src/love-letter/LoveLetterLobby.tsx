@@ -3,8 +3,10 @@ import "./LoveLetterLobby.css";
 import { LoveLetterColors } from "../models/constants";
 import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
-import { GameStateEvent, PlayerStatus } from "../models/types";
+import { GameStateEvent, PlayerStatus, RoundOverEvent } from "../models/types";
 import { LoveLetterGameState } from "./LoveLetterGameState";
+import { Card } from "./Card";
+import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
 
 interface LoveLetterLobbyProps {
   usernameList: string[];
@@ -17,32 +19,58 @@ interface LoveLetterLobbyState {
   gameStarted: boolean;
   ready: boolean;
   gameState: GameStateEvent | null;
+  roundOver: boolean;
+  roundState: RoundOverEvent | null;
 }
 
 // TODO:
-const guard = { value: 1, key: "guard", description: "guess someone's card" };
-const priest = { value: 2, key: "priest", description: "view someone's card" };
-const baron = { value: 3, key: "baron", description: "compare cards" };
-const handmaid = { value: 4, key: "handmaid", description: "protection" };
-const prince = { value: 5, key: "prince", description: "draw card" };
-const king = { value: 6, key: "king", description: "swap cards" };
-const countess = { value: 7, key: "countess", description: "have to play" };
-const princess = { value: 8, key: "princess", description: "lose" };
 const deck = [
-  guard,
-  priest,
-  baron,
-  handmaid,
-  prince,
-  king,
-  countess,
-  baron,
-  prince,
-  guard,
-  priest,
-  baron,
-  guard,
+  Card.GUARD,
+  Card.HANDMAID,
+  Card.KING,
+  Card.GUARD,
+  Card.PRINCE,
+  Card.PRINCE,
+  Card.GUARD,
+  Card.PRIEST,
+  Card.BARON,
+  Card.GUARD,
+  Card.PRINCESS,
+  Card.PRIEST,
+  Card.BARON,
 ];
+const dillon = {
+  id: "1",
+  username: "Dillon",
+  immune: true,
+  status: PlayerStatus.WAITING,
+  tokens: 2,
+  card: Card.PRIEST,
+};
+const alex = {
+  id: "2",
+  username: "Alex",
+  immune: false,
+  status: PlayerStatus.DEAD,
+  tokens: 1,
+  card: Card.PRINCESS,
+};
+const christina = {
+  id: "3",
+  username: "Christina",
+  immune: false,
+  status: PlayerStatus.DEAD,
+  tokens: 3,
+  card: Card.KING,
+};
+const annette = {
+  id: "4",
+  username: "Annette",
+  immune: false,
+  status: PlayerStatus.WAITING,
+  selfSelectable: false,
+  tokens: 1,
+};
 
 export class LoveLetterLobby extends React.Component<
   LoveLetterLobbyProps,
@@ -60,92 +88,162 @@ export class LoveLetterLobby extends React.Component<
       gameState: null,
       // gameState: {
       //   message: "Select a card",
-      //   visibleCards: [guard, priest],
-      //   discardCards: [
-      //     guard,
-      //     priest,
-      //     baron,
-      //     handmaid,
-      //     prince,
-      //     king,
-      //     countess,
-      //     princess,
-      //     baron,
-      //     prince,
-      //     handmaid,
-      //     guard,
-      //     guard,
-      //     priest,
-      //     baron,
-      //     guard,
-      //   ],
+      //   visibleCards: [Card.PRIEST, Card.KING],
+      //   discardCards: deck,
       //   status: PlayerStatus.SELECTING_CARD,
       // },
       // gameState: {
       //   message: "It's Stanley's turn",
-      //   visibleCards: [princess],
+      //   visibleCards: [Card.PRINCESS],
+      //   discardCards: deck,
+      //   status: PlayerStatus.WAITING,
+      // },
+      // gameState: {
+      //   message: "Stanley compared cards with you and lost!",
+      //   visibleCards: [Card.PRINCE, Card.COUNTESS],
       //   discardCards: deck,
       //   status: PlayerStatus.WAITING,
       // },
       // gameState: {
       //   message: "You are viewing Stanley's card",
-      //   visibleCards: [king],
+      //   visibleCards: [Card.KING],
       //   discardCards: deck,
       //   status: PlayerStatus.VIEWING_CARD,
       // },
       // gameState: {
       //   message: "You compared cards with Stanley and won!",
-      //   visibleCards: [handmaid, guard],
+      //   visibleCards: [Card.HANDMAID, Card.PRIEST],
       //   discardCards: deck,
       //   status: PlayerStatus.COMPARING_CARDS,
+      // },
+      // gameState: {
+      //   message: "Select a player",
+      //   visibleCards: [],
+      //   discardCards: deck,
+      //   visiblePlayers: [dillon, alex, christina, annette],
+      //   status: PlayerStatus.SELECTING_PLAYER,
+      // },
+      // gameState: {
+      //   message: "Select a player and a card",
+      //   visibleCards: [],
+      //   discardCards: deck,
+      //   visiblePlayers: [dillon, alex, christina, annette],
+      //   status: PlayerStatus.GUESSING_CARD,
+      // },
+      roundOver: false,
+      // roundOver: true,
+      roundState: null,
+      // roundState: {
+      //   message: "Alex wins!",
+      //   players: [dillon, alex, christina, annette],
       // },
     };
   }
 
   componentDidMount() {
     this.props.socket.subscribeToGameState(this.onGameState.bind(this));
+    this.props.socket.subscribeToRoundOver(this.onRoundOver.bind(this));
   }
 
   onGameState(payload: GameStateEvent) {
-    this.setState({ gameStarted: true, gameState: payload });
+    this.setState({ gameStarted: true, gameState: payload, roundOver: false });
   }
 
   onReady() {
     if (!this.state.ready) {
       this.props.socket.readyPlayer({ username: this.props.username });
+      this.setState({ ready: true });
     }
-    this.setState({ ready: !this.state.ready });
+  }
+
+  onRoundOver(payload: RoundOverEvent) {
+    this.setState({ roundOver: true, roundState: payload });
   }
 
   render() {
-    return !this.state.gameStarted || !this.state.gameState ? (
+    return (
       <Fragment>
-        <div className="loveLetterLobby">
-          {this.state.usernameList.map((name) => (
-            <Fragment>
+        {!this.state.gameStarted && !this.state.roundOver && (
+          <Fragment>
+            <div className="loveLetterLobby">
+              {this.state.usernameList.map((name) => (
+                <Fragment>
+                  <hr color={LoveLetterColors.WHITE}></hr>
+                  <div className="lobbyName">{name}</div>
+                </Fragment>
+              ))}
               <hr color={LoveLetterColors.WHITE}></hr>
-              <div className="lobbyName">{name}</div>
-            </Fragment>
-          ))}
-          <hr color={LoveLetterColors.WHITE}></hr>
-        </div>
-        <div
-          className={!this.state.ready ? "readyButton" : "readiedButton"}
-          onClick={this.onReady.bind(this)}
-        >
-          <b>{!this.state.ready ? "OK" : "Waiting for others"}</b>
-        </div>
-        <ChatContainer
-          socket={this.props.socket}
-          username={this.props.username}
-        />
+            </div>
+            <div
+              className={!this.state.ready ? "readyButton" : "readiedButton"}
+              onClick={this.onReady.bind(this)}
+            >
+              <b>{!this.state.ready ? "OK" : "Waiting for others"}</b>
+            </div>
+            <ChatContainer
+              socket={this.props.socket}
+              username={this.props.username}
+            />
+          </Fragment>
+        )}
+        {this.state.gameStarted && this.state.gameState && (
+          <LoveLetterGameState
+            socket={this.props.socket}
+            username={this.props.username}
+            gameState={this.state.gameState}
+          />
+        )}
+        {this.state.roundOver && this.state.roundState && (
+          <Fragment>
+            <div className="roundOverContainer">
+              <br></br>
+              <hr color={LoveLetterColors.WHITE}></hr>
+              <div className="gameMessage">
+                <b>{this.state.roundState.message}</b>
+              </div>
+              <hr color={LoveLetterColors.WHITE}></hr>
+              <br></br>
+              <br></br>
+              <br></br>
+              <div className="playerList">
+                <hr style={{ color: LoveLetterColors.WHITE, margin: 0 }}></hr>
+                {this.state.roundState.players.map((player) => (
+                  <Fragment>
+                    <div
+                      className="roundOverPlayerName"
+                      style={{
+                        background: LoveLetterColors.BACKGROUND_BLACK,
+                      }}
+                    >
+                      {player.card && (
+                        <LoveLetterDeckCard
+                          number={player.card.value}
+                          index={0}
+                        />
+                      )}
+                      <b>
+                        {player.username}{" "}
+                        <span style={{ color: LoveLetterColors.RED }}>
+                          {Array(player.tokens).fill("❤️").join(" ")}
+                        </span>
+                      </b>
+                    </div>
+                    <hr
+                      style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                    ></hr>
+                  </Fragment>
+                ))}
+              </div>
+            </div>
+            <div
+              className={!this.state.ready ? "readyButton" : "readiedButton"}
+              onClick={this.onReady.bind(this)}
+            >
+              <b>{!this.state.ready ? "OK" : "Waiting for others"}</b>
+            </div>
+          </Fragment>
+        )}
       </Fragment>
-    ) : (
-      <LoveLetterGameState
-        socket={this.props.socket}
-        username={this.props.username}
-        gameState={this.state.gameState}
-      />
     );
   }
 }

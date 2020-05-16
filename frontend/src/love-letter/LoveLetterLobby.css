@@ -31,3 +31,13 @@
 .readiedButton:hover {
   background-color: #434c5e;
 }
+
+.roundOverContainer {
+  width: 40%;
+  margin-left: 30%;
+}
+
+.roundOverPlayerName {
+  height: 116px;
+  line-height: 116px;
+}

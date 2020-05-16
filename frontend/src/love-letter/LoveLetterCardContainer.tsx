@@ -1,9 +1,10 @@
 import React from "react";
 import LoveLetterCardComponent from "./LoveLetterCardComponent";
 import { LoveLetterColors } from "../models/constants";
+import { Card } from "./Card";
 
 interface LoveLetterCardContainerProps {
-  number: number;
+  card: Card;
   onSelectCard?: Function;
   selected?: boolean;
   clearSelected?: Function;
@@ -23,37 +24,37 @@ export class LoveLetterCardContainer extends React.Component<
       hovered: false,
     };
   }
-  numberToColor(num: number): LoveLetterColors {
-    switch (num) {
-      case 1:
+  numberToColor(card: Card): LoveLetterColors {
+    switch (card) {
+      case Card.GUARD:
         return this.state.hovered
           ? LoveLetterColors.ORANGE_DARK
           : LoveLetterColors.ORANGE;
-      case 2:
+      case Card.PRIEST:
         return this.state.hovered
           ? LoveLetterColors.YELLOW_DARK
           : LoveLetterColors.YELLOW;
-      case 3:
+      case Card.BARON:
         return this.state.hovered
           ? LoveLetterColors.GREEN_DARK
           : LoveLetterColors.GREEN;
-      case 4:
+      case Card.HANDMAID:
         return this.state.hovered
           ? LoveLetterColors.TEAL_DARK
           : LoveLetterColors.TEAL;
-      case 5:
+      case Card.PRINCE:
         return this.state.hovered
           ? LoveLetterColors.BLUE_DARK
           : LoveLetterColors.BLUE;
-      case 6:
+      case Card.KING:
         return this.state.hovered
           ? LoveLetterColors.VIOLET_DARK
           : LoveLetterColors.VIOLET;
-      case 7:
+      case Card.COUNTESS:
         return this.state.hovered
           ? LoveLetterColors.PINK_DARK
           : LoveLetterColors.PINK;
-      case 8:
+      case Card.PRINCESS:
         return this.state.hovered
           ? LoveLetterColors.RED_DARK
           : LoveLetterColors.RED;
@@ -62,33 +63,14 @@ export class LoveLetterCardContainer extends React.Component<
     }
   }
 
-  numberToName(num: LoveLetterCardContainerProps["number"]): string {
-    switch (num) {
-      case 1:
-        return "GUARD";
-      case 2:
-        return "PRIEST";
-      case 3:
-        return "BARON";
-      case 4:
-        return "HANDMAID";
-      case 5:
-        return "PRINCE";
-      case 6:
-        return "KING";
-      case 7:
-        return "COUNTESS";
-      case 8:
-        return "PRINCESS";
-      default:
-        return "UNKNOWN";
-    }
+  numberToName(card: LoveLetterCardContainerProps["card"]): string {
+    return card.toString();
   }
 
   onClick() {
     if (this.props.clearSelected && this.props.onSelectCard) {
       this.props.clearSelected();
-      this.props.onSelectCard(this.props.number);
+      this.props.onSelectCard(this.props.card);
     }
   }
 
@@ -107,7 +89,7 @@ export class LoveLetterCardContainer extends React.Component<
   render() {
     return (
       <LoveLetterCardComponent
-        number={this.props.number}
+        card={this.props.card}
         numberToColor={this.numberToColor.bind(this)}
         numberToName={this.numberToName.bind(this)}
         onClick={this.onClick.bind(this)}

@@ -6,6 +6,10 @@ import {
   ReadyPlayerEvent,
   GameStateEvent,
   PlayCardEvent,
+  ConfirmEvent,
+  SelectPlayerEvent,
+  GuessCardEvent,
+  RoundOverEvent,
 } from "../models/types";
 
 /**
@@ -44,6 +48,33 @@ export class SocketService {
   playCard(payload: PlayCardEvent) {
     console.log("playing card: " + payload.username + " - " + payload.card);
     this.socket.emit("playCard", payload);
+  }
+
+  confirm(payload: ConfirmEvent) {
+    console.log("confirming: " + payload.username);
+    this.socket.emit("confirm", payload);
+  }
+
+  selectPlayer(payload: SelectPlayerEvent) {
+    console.log(
+      "selecting: " + payload.username + " -> " + payload.player.username
+    );
+    this.socket.emit("selectPLayer", payload);
+  }
+
+  guessCard(payload: GuessCardEvent) {
+    console.log(
+      "guessing card: " +
+        payload.username +
+        " -> " +
+        payload.player.username +
+        " - " +
+        payload.card
+    );
+  }
+
+  subscribeToRoundOver(callback: (result: RoundOverEvent) => void) {
+    this.socket.on("roundOver", (result: RoundOverEvent) => callback(result));
   }
 
   /**
