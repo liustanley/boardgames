@@ -1,7 +1,9 @@
 import * as express from "express";
 import { createServer, Server } from "http";
 import { SocketType } from "../types/constants";
+import { LoveLetterController } from "../love-letter/LoveLetterController";
 import { ChatServer } from "../chat/ChatServer";
+
 var cors = require("cors");
 
 export class ExpressServer {
@@ -43,6 +45,13 @@ export class ExpressServer {
     switch (socketType) {
       case SocketType.CHAT:
         const chatServer: ChatServer = new ChatServer(this.server, this.port);
+        return this;
+
+      case SocketType.LOVE_LETTER:
+        const loveLetter: LoveLetterController = new LoveLetterController(
+          this.server,
+          this.port
+        );
         return this;
     }
     return this;

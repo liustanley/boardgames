@@ -145,7 +145,15 @@ export class LoveLetterModel {
     } else {
       let newPlayer: Player = new Player(socketId, username);
       this.players.push(newPlayer);
+      return true;
     }
+  }
+
+  /**
+   * Returns the current list of players in this game.
+   */
+  public getPlayers(): Player[] {
+    return this.players;
   }
 
   /**
