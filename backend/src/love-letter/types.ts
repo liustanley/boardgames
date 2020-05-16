@@ -26,7 +26,6 @@ export interface SelectCardEvent {
 // Sent by front-end
 export interface PlayCardEvent {
   username: string;
-  selected: Card;
   target?: string; // If target is undefined, then there are no selectable players and the game will progress to the next turn.
   guess?: Card;
 }

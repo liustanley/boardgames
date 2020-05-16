@@ -83,16 +83,10 @@ export class LoveLetterModel {
   /**
    * In the turn stage, modifies this game when a Player executes a play action.
    * @param username  the username of the Player initiating the play
-   * @param selected  the selected Card to be played
    * @param target    the username of the Player being targeted by the play
    * @param guess     the Card being guessed in the case of a Guard play
    */
-  public playCard(
-    username: string,
-    selected: Card,
-    target: string,
-    guess?: Card
-  ): void {
+  public playCard(username: string, target: string, guess?: Card): void {
     let currentPlayer: Player = this.players.find(
       (player) => player.username === username
     );
@@ -100,17 +94,17 @@ export class LoveLetterModel {
       (player) => player.username === target
     );
 
-    if (selected === Card.PRINCE) {
+    if (this.lastPlayed === Card.PRINCE) {
       this.discardPile.push(targetPlayer.card);
       targetPlayer.card = this.deck.shift();
     }
-    if (selected === Card.BARON) {
+    if (this.lastPlayed === Card.BARON) {
       this.lastBaronTarget = targetPlayer;
     }
 
-    currentPlayer.playCard(selected, targetPlayer, guess);
+    currentPlayer.playCard(this.lastPlayed, targetPlayer, guess);
 
-    if (selected === Card.BARON || selected === Card.PRIEST) {
+    if (this.lastPlayed === Card.BARON || this.lastPlayed === Card.PRIEST) {
       // wait for confirm event
     } else if (!this.roundOver()) {
       this.nextTurn();
