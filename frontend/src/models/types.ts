@@ -58,6 +58,12 @@ export interface GameStateEvent {
   status: PlayerStatus;
 }
 
+// Sent by back-end
+export interface RoundOverEvent {
+  message: string;
+  players: Player[];
+}
+
 export enum PlayerStatus {
   WAITING = "WAITING",
   SELECTING_CARD = "SELECTING_CARD",

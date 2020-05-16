@@ -9,6 +9,7 @@ import {
   ConfirmEvent,
   SelectPlayerEvent,
   GuessCardEvent,
+  RoundOverEvent,
 } from "../models/types";
 
 /**
@@ -70,6 +71,10 @@ export class SocketService {
         " - " +
         payload.card
     );
+  }
+
+  subscribeToRoundOver(callback: (result: RoundOverEvent) => void) {
+    this.socket.on("roundOver", (result: RoundOverEvent) => callback(result));
   }
 
   /**
