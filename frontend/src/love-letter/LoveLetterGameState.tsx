@@ -61,7 +61,20 @@ export class LoveLetterGameState extends React.Component<
   }
 
   onSelectCard(value: Card) {
-    this.setState({ cardSelected: value });
+    if (
+      this.props.gameState.visibleCards.includes(Card.COUNTESS) &&
+      (this.props.gameState.visibleCards.includes(Card.KING) ||
+        this.props.gameState.visibleCards.includes(Card.PRINCE)) &&
+      value !== Card.COUNTESS
+    ) {
+      if (this.props.gameState.visibleCards[0] === Card.COUNTESS) {
+        this.setState({ cardSelected: undefined, rightSelected: false });
+      } else {
+        this.setState({ cardSelected: undefined, leftSelected: false });
+      }
+    } else {
+      this.setState({ cardSelected: value });
+    }
   }
 
   clearLeftCard() {
