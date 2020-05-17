@@ -86,31 +86,38 @@ export class LoveLetterModel {
    * @param target    the username of the Player being targeted by the play
    * @param guess     the Card being guessed in the case of a Guard play
    */
-  public playCard(username: string, target: string, guess?: Card): void {
+  public playCard(username: string, target?: string, guess?: Card): void {
     let currentPlayer: Player = this.players.find(
       (player) => player.username === username
     );
-    let targetPlayer: Player = this.players.find(
-      (player) => player.username === target
-    );
 
-    if (this.lastPlayed === Card.PRINCE) {
-      this.discardPile.push(targetPlayer.card);
-      targetPlayer.card = this.deck.shift();
-    } else if (this.lastPlayed === Card.BARON) {
-      this.lastBaronTarget = targetPlayer;
-    } else if (this.lastPlayed === Card.GUARD && guess) {
-      if (guess === targetPlayer.card) {
+    if (target) {
+      let targetPlayer: Player = this.players.find(
+        (player) => player.username === target
+      );
+
+      if (this.lastPlayed === Card.PRINCE) {
         this.discardPile.push(targetPlayer.card);
+        targetPlayer.card = this.deck.shift();
+      } else if (this.lastPlayed === Card.BARON) {
+        this.lastBaronTarget = targetPlayer;
+      } else if (this.lastPlayed === Card.GUARD && guess) {
+        if (guess === targetPlayer.card) {
+          this.discardPile.push(targetPlayer.card);
+        }
       }
-    }
 
-    currentPlayer.playCard(this.lastPlayed, targetPlayer, guess);
+      currentPlayer.playCard(this.lastPlayed, targetPlayer, guess);
 
-    if (this.lastPlayed === Card.BARON || this.lastPlayed === Card.PRIEST) {
-      // wait for confirm event
-    } else if (!this.roundOver()) {
-      this.nextTurn();
+      if (this.lastPlayed === Card.BARON || this.lastPlayed === Card.PRIEST) {
+        // wait for confirm event
+      } else if (!this.roundOver()) {
+        this.nextTurn();
+      }
+    } else {
+      if (!this.roundOver()) {
+        this.nextTurn();
+      }
     }
   }
 

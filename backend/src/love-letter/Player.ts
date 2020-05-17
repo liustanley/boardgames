@@ -55,13 +55,14 @@ export class Player {
       throw Error("Player does not have the selected Card.");
     }
 
-    this.selfSelectable = false;
+    this.selfSelectable = undefined;
     this.visibleCards = [];
     this.immune = false;
 
     switch (selected) {
       case Card.GUARD:
         this.status = PlayerStatus.GUESSING_CARD;
+        this.selfSelectable = false;
         return (
           "Choose another player and name a non-Guard card. " +
           "If that player has that card, he or she is out of the round."
@@ -69,10 +70,12 @@ export class Player {
 
       case Card.PRIEST:
         this.status = PlayerStatus.SELECTING_PLAYER;
+        this.selfSelectable = false;
         return "Look at another player's hand.";
 
       case Card.BARON:
         this.status = PlayerStatus.SELECTING_PLAYER;
+        this.selfSelectable = false;
         return (
           "You and another player secretly compare hands. " +
           "The player with the lower value is out of the round."
@@ -91,6 +94,7 @@ export class Player {
 
       case Card.KING:
         this.status = PlayerStatus.SELECTING_PLAYER;
+        this.selfSelectable = false;
         return "Trade hands with another player of your choice.";
 
       case Card.COUNTESS:
@@ -112,6 +116,8 @@ export class Player {
    * @param guess     the card being guessed by this play, in the case of a Guard
    */
   playCard(selected: Card, target: Player, guess?: Card): string {
+    this.selfSelectable = undefined;
+
     switch (selected) {
       case Card.GUARD:
         this.status = PlayerStatus.WAITING;
