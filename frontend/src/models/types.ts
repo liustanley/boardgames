@@ -34,7 +34,7 @@ export interface SelectCardEvent {
 // Sent by front-end
 export interface PlayCardEvent {
   username: string;
-  target?: Player;
+  target?: string;
   guess?: Card;
 }
 

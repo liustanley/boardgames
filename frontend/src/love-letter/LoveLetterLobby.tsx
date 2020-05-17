@@ -166,7 +166,7 @@ export class LoveLetterLobby extends React.Component<
   }
 
   onRoundOver(payload: RoundOverEvent) {
-    this.setState({ roundOver: true, roundState: payload });
+    this.setState({ roundOver: true, roundState: payload, ready: false });
   }
 
   render() {
@@ -195,13 +195,15 @@ export class LoveLetterLobby extends React.Component<
             />
           </Fragment>
         )}
-        {this.state.gameStarted && this.state.gameState && (
-          <LoveLetterGameState
-            socket={this.props.socket}
-            username={this.props.username}
-            gameState={this.state.gameState}
-          />
-        )}
+        {this.state.gameStarted &&
+          this.state.gameState &&
+          !this.state.roundOver && (
+            <LoveLetterGameState
+              socket={this.props.socket}
+              username={this.props.username}
+              gameState={this.state.gameState}
+            />
+          )}
         {this.state.roundOver && this.state.roundState && (
           <Fragment>
             <div className="roundOverContainer">

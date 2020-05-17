@@ -90,7 +90,7 @@ export class LoveLetterController {
    */
   private onSelectCard = (res: SelectCardEvent) => {
     let selected: Card = Card.correct(res.card);
-    this.model.selectCard(res.username, res.card); // TODO: might have to correct this card input
+    this.model.selectCard(res.username, selected); // TODO: might have to correct this card input
 
     // These cards all don't require a Play action, and just progress to the next turn.
     if (
@@ -104,6 +104,8 @@ export class LoveLetterController {
         this.model.nextTurn();
         this.sendGameState();
       }
+    } else {
+      this.sendGameState();
     }
   };
 
@@ -112,7 +114,11 @@ export class LoveLetterController {
    * @param res the response object of type PlayCardEvent
    */
   private onPlayCard = (res: PlayCardEvent) => {
-    this.model.playCard(res.username, res.target, res.guess); // TODO: might have to correct this card input
+    if (res.guess) {
+      this.model.playCard(res.username, res.target, Card.correct(res.guess)); // T
+    } else {
+      this.model.playCard(res.username, res.target, res.guess); // TODO: might have to correct this card input
+    }
 
     if (this.model.roundOver()) {
       this.sendRoundOverState();

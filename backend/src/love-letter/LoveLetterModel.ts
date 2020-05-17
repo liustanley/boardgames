@@ -136,7 +136,9 @@ export class LoveLetterModel {
         currentPlayer.status = PlayerStatus.WAITING;
         currentPlayer.visibleCards = [currentPlayer.card];
       } else {
+        currentPlayer.visibleCards = [currentPlayer.card];
         currentPlayer.status = PlayerStatus.WAITING;
+        this.lastBaronTarget.visibleCards = [this.lastBaronTarget.card];
         this.lastBaronTarget.status = PlayerStatus.WAITING;
       }
     } else if (this.lastPlayed === Card.PRIEST) {

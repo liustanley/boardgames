@@ -92,7 +92,7 @@ export class LoveLetterGameState extends React.Component<
     if (this.state.nameClicked > -1 && this.props.gameState.visiblePlayers) {
       payload.target = this.props.gameState.visiblePlayers[
         this.state.nameClicked
-      ];
+      ].username;
     }
     if (this.state.cardNameClicked > -1) {
       payload.guess = cardGuessList[this.state.cardNameClicked];

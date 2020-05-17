@@ -119,6 +119,7 @@ export class Player {
   playCard(selected: Card, target: Player, guess?: Card): string {
     this.selfSelectable = undefined;
 
+    console.log(JSON.stringify(target));
     switch (selected) {
       case Card.GUARD:
         this.status = PlayerStatus.WAITING;

@@ -50,13 +50,15 @@ export class SocketService {
   }
 
   playCard(payload: PlayCardEvent) {
-    console.log("playing card: " + payload.username);
+    console.log(
+      "playing card: " + payload.username + " targeting: " + payload.target
+    );
     this.socket.emit("playCard", payload);
   }
 
   confirm(payload: ConfirmEvent) {
     console.log("confirming: " + payload.username);
-    this.socket.emit("confirm", payload);
+    this.socket.emit("confirmEvent", payload);
   }
 
   subscribeToRoundOver(callback: (result: RoundOverEvent) => void) {
