@@ -89,8 +89,22 @@ export class LoveLetterController {
    * @param res the response object of type SelectCardEvent
    */
   private onSelectCard = (res: SelectCardEvent) => {
+    let selected: Card = Card.correct(res.card);
     this.model.selectCard(res.username, res.card); // TODO: might have to correct this card input
-    this.sendGameState();
+
+    // These cards all don't require a Play action, and just progress to the next turn.
+    if (
+      selected === Card.HANDMAID ||
+      selected === Card.COUNTESS ||
+      selected === Card.PRINCESS
+    ) {
+      if (this.model.roundOver()) {
+        this.sendRoundOverState();
+      } else {
+        this.model.nextTurn();
+        this.sendGameState();
+      }
+    }
   };
 
   /**
@@ -103,6 +117,7 @@ export class LoveLetterController {
     if (this.model.roundOver()) {
       this.sendRoundOverState();
     } else {
+      this.model.nextTurn();
       this.sendGameState();
     }
   };
@@ -117,6 +132,7 @@ export class LoveLetterController {
     if (this.model.roundOver()) {
       this.sendRoundOverState();
     } else {
+      this.model.nextTurn();
       this.sendGameState();
     }
   };

@@ -16,7 +16,6 @@ export class LoveLetterModel {
     this.players = [];
     this.deck = deck;
     this.discardPile = [];
-    this.turn = Math.floor(Math.random() * 4);
     this.message = "";
     this.numReady = 0;
   }
@@ -34,7 +33,7 @@ export class LoveLetterModel {
   /**
    * Progresses this game to the next turn.
    */
-  private nextTurn() {
+  public nextTurn() {
     this.message = "";
 
     do {
@@ -56,6 +55,7 @@ export class LoveLetterModel {
     }
 
     // Deal out first draw card
+    this.turn = Math.floor(Math.random() * this.players.length);
     this.players[this.turn].draw(this.deck.shift());
   }
 
@@ -72,15 +72,8 @@ export class LoveLetterModel {
     this.discardPile.push(selected);
     this.lastPlayed = selected;
 
-    // These cards all don't require a Play action, and just progress to the next turn.
-    if (
-      selected === Card.HANDMAID ||
-      selected === Card.COUNTESS ||
-      selected === Card.PRINCESS
-    ) {
-      if (!this.roundOver()) {
-        this.nextTurn();
-      }
+    if (selected === Card.PRINCESS) {
+      this.discardPile.push(currentPlayer.card);
     }
   }
 
@@ -102,7 +95,12 @@ export class LoveLetterModel {
 
       if (this.lastPlayed === Card.PRINCE) {
         this.discardPile.push(targetPlayer.card);
-        targetPlayer.card = this.deck.shift();
+        if (targetPlayer.card === Card.PRINCESS) {
+          targetPlayer.status = PlayerStatus.DEAD;
+          targetPlayer.visibleCards = [];
+        } else {
+          targetPlayer.card = this.deck.shift();
+        }
       } else if (this.lastPlayed === Card.BARON) {
         this.lastBaronTarget = targetPlayer;
       } else if (this.lastPlayed === Card.GUARD && guess) {
@@ -112,16 +110,6 @@ export class LoveLetterModel {
       }
 
       currentPlayer.playCard(this.lastPlayed, targetPlayer, guess);
-
-      if (this.lastPlayed === Card.BARON || this.lastPlayed === Card.PRIEST) {
-        // wait for confirm event
-      } else if (!this.roundOver()) {
-        this.nextTurn();
-      }
-    } else {
-      if (!this.roundOver()) {
-        this.nextTurn();
-      }
     }
   }
 
@@ -151,15 +139,8 @@ export class LoveLetterModel {
         currentPlayer.status = PlayerStatus.WAITING;
         this.lastBaronTarget.status = PlayerStatus.WAITING;
       }
-
-      if (!this.roundOver()) {
-        this.nextTurn();
-      }
     } else if (this.lastPlayed === Card.PRIEST) {
       currentPlayer.visibleCards = [currentPlayer.card];
-      if (!this.roundOver()) {
-        this.nextTurn();
-      }
     }
   }
 
