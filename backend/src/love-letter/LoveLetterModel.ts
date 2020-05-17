@@ -94,11 +94,12 @@ export class LoveLetterModel {
       );
 
       if (this.lastPlayed === Card.PRINCE) {
-        this.discardPile.push(targetPlayer.card);
         if (targetPlayer.card === Card.PRINCESS) {
           targetPlayer.status = PlayerStatus.DEAD;
           targetPlayer.visibleCards = [];
+          this.discardPile.push(targetPlayer.card);
         } else {
+          this.discardPile.push(targetPlayer.card);
           targetPlayer.card = this.deck.shift();
         }
       } else if (this.lastPlayed === Card.BARON) {
@@ -110,6 +111,10 @@ export class LoveLetterModel {
       }
 
       currentPlayer.playCard(this.lastPlayed, targetPlayer, guess);
+    } else {
+      currentPlayer.selfSelectable = undefined;
+      currentPlayer.status = PlayerStatus.WAITING;
+      currentPlayer.visibleCards = [currentPlayer.card];
     }
   }
 
@@ -142,6 +147,7 @@ export class LoveLetterModel {
         this.lastBaronTarget.status = PlayerStatus.WAITING;
       }
     } else if (this.lastPlayed === Card.PRIEST) {
+      currentPlayer.status = PlayerStatus.WAITING;
       currentPlayer.visibleCards = [currentPlayer.card];
     }
   }
@@ -201,6 +207,13 @@ export class LoveLetterModel {
    */
   public getMessage(): string {
     return this.message;
+  }
+
+  /**
+   * Returns this game's last played card.
+   */
+  public getLastPlayed(): Card {
+    return this.lastPlayed;
   }
 
   /**

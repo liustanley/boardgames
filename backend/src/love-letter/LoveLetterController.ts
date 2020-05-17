@@ -24,7 +24,7 @@ export class LoveLetterController {
 
   constructor(server: Server, port: string | number) {
     this.port = port;
-    this.model = new LoveLetterModel(DECK); // TODO
+    this.model = new LoveLetterModel(DECK);
     this.initSocket(server);
     this.listen();
   }
@@ -90,7 +90,7 @@ export class LoveLetterController {
    */
   private onSelectCard = (res: SelectCardEvent) => {
     let selected: Card = Card.correct(res.card);
-    this.model.selectCard(res.username, selected); // TODO: might have to correct this card input
+    this.model.selectCard(res.username, selected);
 
     // These cards all don't require a Play action, and just progress to the next turn.
     if (
@@ -114,14 +114,20 @@ export class LoveLetterController {
    * @param res the response object of type PlayCardEvent
    */
   private onPlayCard = (res: PlayCardEvent) => {
-    if (res.guess) {
-      this.model.playCard(res.username, res.target, Card.correct(res.guess)); // T
-    } else {
-      this.model.playCard(res.username, res.target, res.guess); // TODO: might have to correct this card input
-    }
+    let guess: Card | undefined = res.guess
+      ? Card.correct(res.guess)
+      : undefined;
+    this.model.playCard(res.username, res.target, guess);
+
+    let lastPlayed: Card = this.model.getLastPlayed();
 
     if (this.model.roundOver()) {
       this.sendRoundOverState();
+    } else if (
+      (lastPlayed === Card.PRIEST || lastPlayed === Card.BARON) &&
+      res.target
+    ) {
+      this.sendGameState();
     } else {
       this.model.nextTurn();
       this.sendGameState();
