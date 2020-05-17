@@ -37,14 +37,10 @@ export class LoveLetterModel {
   private nextTurn() {
     this.message = "";
 
-    let alive: Player[] = [];
-    for (let p of this.players) {
-      if (p.status !== PlayerStatus.DEAD) {
-        alive.push(p);
-      }
-    }
-    this.turn = this.turn === alive.length - 1 ? 0 : this.turn + 1;
-    alive[this.turn].draw(this.deck.shift());
+    do {
+      this.turn = this.turn === this.players.length - 1 ? 0 : this.turn + 1;
+    } while (this.players[this.turn].status === PlayerStatus.DEAD);
+    this.players[this.turn].draw(this.deck.shift());
   }
 
   /**
