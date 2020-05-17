@@ -35,8 +35,16 @@ export class LoveLetterModel {
    * Progresses this game to the next turn.
    */
   private nextTurn() {
-    this.turn = this.turn === this.players.length - 1 ? 0 : this.turn + 1;
-    this.players[this.turn].draw(this.deck.shift());
+    this.message = "";
+
+    let alive: Player[] = [];
+    for (let p of this.players) {
+      if (p.status !== PlayerStatus.DEAD) {
+        alive.push(p);
+      }
+    }
+    this.turn = this.turn === alive.length - 1 ? 0 : this.turn + 1;
+    alive[this.turn].draw(this.deck.shift());
   }
 
   /**
@@ -136,11 +144,13 @@ export class LoveLetterModel {
         currentPlayer.visibleCards = [];
         this.discardPile.push(currentPlayer.card);
         this.lastBaronTarget.status = PlayerStatus.WAITING;
+        this.lastBaronTarget.visibleCards = [this.lastBaronTarget.card];
       } else if (currentPlayer.card.value > this.lastBaronTarget.card.value) {
         this.lastBaronTarget.status = PlayerStatus.DEAD;
         this.lastBaronTarget.visibleCards = [];
         this.discardPile.push(this.lastBaronTarget.card);
         currentPlayer.status = PlayerStatus.WAITING;
+        currentPlayer.visibleCards = [currentPlayer.card];
       } else {
         currentPlayer.status = PlayerStatus.WAITING;
         this.lastBaronTarget.status = PlayerStatus.WAITING;

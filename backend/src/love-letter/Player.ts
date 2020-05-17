@@ -104,6 +104,7 @@ export class Player {
 
       case Card.PRINCESS:
         this.status = PlayerStatus.DEAD;
+        this.visibleCards = [];
         return this.username + " played the Princess";
     }
   }
@@ -121,6 +122,7 @@ export class Player {
     switch (selected) {
       case Card.GUARD:
         this.status = PlayerStatus.WAITING;
+        this.visibleCards = [this.card];
         if (!guess) {
           throw Error("Guard play must have a guessed card.");
         }
@@ -163,6 +165,7 @@ export class Player {
 
       case Card.PRINCE:
         this.status = PlayerStatus.WAITING;
+        this.visibleCards = [this.card];
         target.visibleCards = [target.card];
         return this.username + " played the Prince on " + target.username;
 
