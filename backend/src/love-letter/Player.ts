@@ -105,6 +105,7 @@ export class Player {
       case Card.PRINCESS:
         this.status = PlayerStatus.DEAD;
         this.visibleCards = [];
+        this.card = undefined;
         return this.username + " played the Princess";
     }
   }

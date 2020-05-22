@@ -121,13 +121,13 @@ export class LoveLetterController {
 
     let lastPlayed: Card = this.model.getLastPlayed();
 
-    if (this.model.roundOver()) {
-      this.sendRoundOverState();
-    } else if (
+    if (
       (lastPlayed === Card.PRIEST || lastPlayed === Card.BARON) &&
       res.target
     ) {
       this.sendGameState();
+    } else if (this.model.roundOver()) {
+      this.sendRoundOverState();
     } else {
       this.model.nextTurn();
       this.sendGameState();

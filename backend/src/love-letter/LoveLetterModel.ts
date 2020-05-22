@@ -130,12 +130,14 @@ export class LoveLetterModel {
     if (this.lastPlayed === Card.BARON && this.lastBaronTarget) {
       if (this.lastBaronTarget.card.value > currentPlayer.card.value) {
         currentPlayer.status = PlayerStatus.DEAD;
+        currentPlayer.card = undefined;
         currentPlayer.visibleCards = [];
         this.discardPile.push(currentPlayer.card);
         this.lastBaronTarget.status = PlayerStatus.WAITING;
         this.lastBaronTarget.visibleCards = [this.lastBaronTarget.card];
       } else if (currentPlayer.card.value > this.lastBaronTarget.card.value) {
         this.lastBaronTarget.status = PlayerStatus.DEAD;
+        this.lastBaronTarget.card = undefined;
         this.lastBaronTarget.visibleCards = [];
         this.discardPile.push(this.lastBaronTarget.card);
         currentPlayer.status = PlayerStatus.WAITING;
