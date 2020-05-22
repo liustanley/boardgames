@@ -15,6 +15,7 @@ import {
   RegisterPlayerEvent,
   RoundOverEvent,
   SelectCardEvent,
+  ReadyStatus,
 } from "./types";
 
 export class LoveLetterController {
@@ -73,14 +74,32 @@ export class LoveLetterController {
 
   /**
    * Listener for readyPlayer events, also responsible for starting the game and sending first game state.
+   * Also responsible for restarting rounds/games.
    */
-  private onReadyPlayer = () => {
+  private onReadyPlayer = (res: ReadyPlayerEvent) => {
     this.model.incrementNumReady();
     let players: Player[] = this.model.getPlayers();
 
-    if (this.model.getNumReady() === players.length) {
-      this.model.startGame();
-      this.sendGameState();
+    // For now, game action will be prevented when only one person readys up.
+    // This can be transformed into an event to display on the frontend later.
+    if (
+      this.model.getNumReady() === players.length &&
+      this.model.getNumReady() !== 1
+    ) {
+      if ((res.status = ReadyStatus.GAME_START)) {
+        this.model.startGame();
+        this.sendGameState();
+      } else if ((res.status = ReadyStatus.ROUND_START)) {
+        this.model.resetRound();
+        this.model.startGame();
+        this.sendGameState();
+      } else if ((res.status = ReadyStatus.GAME_RESTART)) {
+        this.model.resetRound();
+        this.model.startGame();
+        this.sendGameState();
+      }
+
+      this.model.resetNumReady();
     }
   };
 
@@ -190,7 +209,9 @@ export class LoveLetterController {
         this.onRegisterPlayer(socket.id, res)
       );
 
-      socket.on("readyPlayer", (res: ReadyPlayerEvent) => this.onReadyPlayer());
+      socket.on("readyPlayer", (res: ReadyPlayerEvent) =>
+        this.onReadyPlayer(res)
+      );
 
       socket.on("selectCard", (res: SelectCardEvent) => this.onSelectCard(res));
 

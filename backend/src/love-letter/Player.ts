@@ -15,19 +15,20 @@ export class Player {
   constructor(id: string, username: string) {
     this.id = id;
     this.username = username;
+    this.tokens = 0;
   }
 
   /**
-   * Modifies this Player when they are first dealt into a game.
+   * Modifies this Player when they are first dealt into a round.
    * @param card  the given card being dealt to this Player
    */
   public deal(card: Card): void {
-    this.tokens = 0;
     this.card = card;
     this.drawCard = undefined;
     this.visibleCards = [card];
     this.immune = false;
     this.status = PlayerStatus.WAITING;
+    this.selfSelectable = undefined;
   }
 
   /**

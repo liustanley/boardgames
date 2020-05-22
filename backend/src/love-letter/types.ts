@@ -15,6 +15,7 @@ export interface LobbyEvent {
 // Sent by front-end
 export interface ReadyPlayerEvent {
   username: string;
+  status: ReadyStatus;
 }
 
 // Sent by front-end
@@ -59,6 +60,12 @@ export enum PlayerStatus {
   COMPARING_CARDS = "COMPARING_CARDS",
   SELECTING_PLAYER = "SELECTING_PLAYER",
   DEAD = "DEAD",
+}
+
+export enum ReadyStatus {
+  GAME_START = "GAME_START",
+  ROUND_START = "ROUND_START",
+  GAME_RESTART = "GAME_RESTART",
 }
 
 export interface GameState {

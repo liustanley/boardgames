@@ -3,6 +3,7 @@ import { Player } from "./Player";
 import { Card } from "./Card";
 
 export class LoveLetterModel {
+  private deckCards: Card[]; // list of constant deck cards for this game
   private players: Player[]; // list of Players in this LoveLetter Game
   private deck: Card[]; // list of remaining Cards
   private discardPile: Card[]; // list of discarded Cards
@@ -15,6 +16,7 @@ export class LoveLetterModel {
   constructor(deck: Card[]) {
     this.players = [];
     this.deck = deck;
+    this.deckCards = deck;
     this.discardPile = [];
     this.message = "";
     this.numReady = 0;
@@ -57,6 +59,27 @@ export class LoveLetterModel {
     // Deal out first draw card
     this.turn = Math.floor(Math.random() * this.players.length);
     this.players[this.turn].draw(this.deck.shift());
+  }
+
+  /**
+   * Resets this love letter model for another round.
+   */
+  public resetRound(): void {
+    this.deck = this.deckCards;
+    this.discardPile = [];
+    this.message = "";
+    this.numReady = 0;
+  }
+
+  /**
+   * Resets this love letter model for a new game.
+   */
+  public resetGame(): void {
+    this.resetRound();
+
+    for (let p of this.players) {
+      p.tokens = 0;
+    }
   }
 
   /**
@@ -230,6 +253,13 @@ export class LoveLetterModel {
    */
   public incrementNumReady(): void {
     this.numReady++;
+  }
+
+  /**
+   * Resets this numReady count to 0
+   */
+  public resetNumReady(): void {
+    this.numReady = 0;
   }
 
   /**
