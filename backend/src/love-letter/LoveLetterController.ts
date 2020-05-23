@@ -86,14 +86,14 @@ export class LoveLetterController {
       this.model.getNumReady() === players.length &&
       this.model.getNumReady() !== 1
     ) {
-      if ((res.status = ReadyStatus.GAME_START)) {
+      if (res.status === ReadyStatus.GAME_START) {
         this.model.startGame();
         this.sendGameState();
-      } else if ((res.status = ReadyStatus.ROUND_START)) {
+      } else if (res.status === ReadyStatus.ROUND_START) {
         this.model.resetRound();
         this.model.startGame();
         this.sendGameState();
-      } else if ((res.status = ReadyStatus.GAME_RESTART)) {
+      } else if (res.status === ReadyStatus.GAME_RESTART) {
         this.model.resetRound();
         this.model.startGame();
         this.sendGameState();
