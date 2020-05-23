@@ -16,6 +16,7 @@ import {
   RoundOverEvent,
   SelectCardEvent,
   ReadyStatus,
+  GameOverEvent,
 } from "./types";
 
 export class LoveLetterController {
@@ -94,7 +95,7 @@ export class LoveLetterController {
         this.model.startGame();
         this.sendGameState();
       } else if ((res.status = ReadyStatus.GAME_RESTART)) {
-        this.model.resetRound();
+        this.model.resetGame();
         this.model.startGame();
         this.sendGameState();
       }
@@ -118,7 +119,9 @@ export class LoveLetterController {
       selected === Card.PRINCESS
     ) {
       if (this.model.roundOver()) {
-        this.sendRoundOverState();
+        this.model.gameOver()
+          ? this.sendGameOverState()
+          : this.sendRoundOverState();
       } else {
         this.model.nextTurn();
         this.sendGameState();
@@ -146,7 +149,9 @@ export class LoveLetterController {
     ) {
       this.sendGameState();
     } else if (this.model.roundOver()) {
-      this.sendRoundOverState();
+      this.model.gameOver()
+        ? this.sendGameOverState()
+        : this.sendRoundOverState();
     } else {
       this.model.nextTurn();
       this.sendGameState();
@@ -161,7 +166,9 @@ export class LoveLetterController {
     this.model.confirmPlay(res.username);
 
     if (this.model.roundOver()) {
-      this.sendRoundOverState();
+      this.model.gameOver()
+        ? this.sendGameOverState()
+        : this.sendRoundOverState();
     } else {
       this.model.nextTurn();
       this.sendGameState();
@@ -195,6 +202,23 @@ export class LoveLetterController {
 
     for (let p of players) {
       this.io.to(p.id).emit("roundOver", roundOver);
+    }
+  }
+
+  /**
+   * Sends each client the model's game over state.
+   */
+  private sendGameOverState(): void {
+    let players: Player[] = this.model.getPlayers();
+    let message: string = this.model.getMessage();
+
+    let gameOver: GameOverEvent = {
+      players: players,
+      message: message,
+    };
+
+    for (let p of players) {
+      this.io.to(p.id).emit("gameOver", gameOver);
     }
   }
 

@@ -281,7 +281,6 @@ export class LoveLetterModel {
     if (this.deck.length === 0 || numAlive === 1) {
       winner.tokens++;
       this.message = winner.username + "'s love letter reached the princess.";
-      this.gameOver();
       return true;
     }
 
@@ -292,7 +291,7 @@ export class LoveLetterModel {
    * Determines if this love letter game has ended.
    * A love letter game ends when one player has obtained 4 tokens.
    */
-  private gameOver(): boolean {
+  public gameOver(): boolean {
     for (let p of this.players) {
       if (p.tokens === 4) {
         this.message =
