@@ -36,7 +36,7 @@ export class SocketService {
   }
 
   readyPlayer(payload: ReadyPlayerEvent) {
-    console.log("ready player: " + payload.username);
+    console.log("ready player: " + payload.username + " - " + payload.status);
     this.socket.emit("readyPlayer", payload);
   }
 

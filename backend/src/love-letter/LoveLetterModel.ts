@@ -91,13 +91,12 @@ export class LoveLetterModel {
     let currentPlayer: Player = this.players.find(
       (player) => player.username === username
     );
-    this.message = currentPlayer.selectCard(selected);
-    this.discardPile.push(selected);
-    this.lastPlayed = selected;
-
     if (selected === Card.PRINCESS) {
       this.discardPile.push(currentPlayer.card);
     }
+    this.message = currentPlayer.selectCard(selected);
+    this.discardPile.push(selected);
+    this.lastPlayed = selected;
   }
 
   /**
@@ -153,16 +152,16 @@ export class LoveLetterModel {
     if (this.lastPlayed === Card.BARON && this.lastBaronTarget) {
       if (this.lastBaronTarget.card.value > currentPlayer.card.value) {
         currentPlayer.status = PlayerStatus.DEAD;
-        currentPlayer.card = undefined;
         currentPlayer.visibleCards = [];
         this.discardPile.push(currentPlayer.card);
+        currentPlayer.card = undefined;
         this.lastBaronTarget.status = PlayerStatus.WAITING;
         this.lastBaronTarget.visibleCards = [this.lastBaronTarget.card];
       } else if (currentPlayer.card.value > this.lastBaronTarget.card.value) {
         this.lastBaronTarget.status = PlayerStatus.DEAD;
-        this.lastBaronTarget.card = undefined;
         this.lastBaronTarget.visibleCards = [];
         this.discardPile.push(this.lastBaronTarget.card);
+        this.lastBaronTarget.card = undefined;
         currentPlayer.status = PlayerStatus.WAITING;
         currentPlayer.visibleCards = [currentPlayer.card];
       } else {

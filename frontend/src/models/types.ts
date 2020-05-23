@@ -23,6 +23,13 @@ export interface LobbyEvent {
 // Sent by front-end
 export interface ReadyPlayerEvent {
   username: string;
+  status: ReadyStatus;
+}
+
+export enum ReadyStatus {
+  GAME_START = "GAME_START",
+  ROUND_START = "ROUND_START",
+  GAME_RESTART = "GAME_RESTART",
 }
 
 // Sent by front-end

@@ -3,7 +3,12 @@ import "./LoveLetterLobby.css";
 import { LoveLetterColors } from "../models/constants";
 import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
-import { GameStateEvent, PlayerStatus, RoundOverEvent } from "../models/types";
+import {
+  GameStateEvent,
+  PlayerStatus,
+  RoundOverEvent,
+  ReadyStatus,
+} from "../models/types";
 import { LoveLetterGameState } from "./LoveLetterGameState";
 import { Card } from "./Card";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
@@ -158,11 +163,24 @@ export class LoveLetterLobby extends React.Component<
     this.setState({ gameStarted: true, gameState: payload, roundOver: false });
   }
 
-  onReady() {
+  onReadyStart() {
     if (!this.state.ready) {
-      this.props.socket.readyPlayer({ username: this.props.username });
+      this.props.socket.readyPlayer({
+        username: this.props.username,
+        status: ReadyStatus.GAME_START,
+      });
       this.setState({ ready: true });
     }
+  }
+
+  onReadyContinue() {
+    if (!this.state.ready) {
+      this.props.socket.readyPlayer({
+        username: this.props.username,
+        status: ReadyStatus.ROUND_START,
+      });
+    }
+    this.setState({ ready: true });
   }
 
   onRoundOver(payload: RoundOverEvent) {
@@ -185,7 +203,7 @@ export class LoveLetterLobby extends React.Component<
             </div>
             <div
               className={!this.state.ready ? "readyButton" : "readiedButton"}
-              onClick={this.onReady.bind(this)}
+              onClick={this.onReadyStart.bind(this)}
             >
               <b>{!this.state.ready ? "OK" : "Waiting for others"}</b>
             </div>
@@ -248,7 +266,7 @@ export class LoveLetterLobby extends React.Component<
             </div>
             <div
               className={!this.state.ready ? "readyButton" : "readiedButton"}
-              onClick={this.onReady.bind(this)}
+              onClick={this.onReadyContinue.bind(this)}
             >
               <b>{!this.state.ready ? "OK" : "Waiting for others"}</b>
             </div>
