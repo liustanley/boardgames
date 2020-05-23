@@ -15,8 +15,8 @@ export class LoveLetterModel {
 
   constructor(deck: Card[]) {
     this.players = [];
-    this.deck = deck;
-    this.deckCards = deck;
+    this.deck = [...deck];
+    this.deckCards = [...deck];
     this.discardPile = [];
     this.message = "";
     this.numReady = 0;
@@ -65,7 +65,7 @@ export class LoveLetterModel {
    * Resets this love letter model for another round.
    */
   public resetRound(): void {
-    this.deck = this.deckCards;
+    this.deck = [...this.deckCards];
     this.discardPile = [];
     this.message = "";
     this.numReady = 0;
