@@ -223,6 +223,34 @@ export class LoveLetterController {
   }
 
   /**
+   * Removes the disconnected player from the game and sends everyone to a new lobby.
+   * @param socketId the socket id of the disconnected player
+   */
+  private onDisconnectPlayer(socketId: string): void {
+    this.model.removePlayer(socketId);
+    this.model.resetGame();
+
+    let players: Player[] = this.model.getPlayers();
+    let usernames: string[] = [];
+    let socketIds: string[] = [];
+    for (let p of players) {
+      usernames.push(p.username);
+      socketIds.push(p.id);
+    }
+
+    let lobby: LobbyEvent = {
+      success: true,
+      usernameList: usernames,
+      reset: true,
+    };
+    for (let id of socketIds) {
+      this.io.to(id).emit("lobby", lobby);
+    }
+
+    console.log("Client disconnected");
+  }
+
+  /**
    * Opens up communication to our server and Socket.io events.
    */
   private listen(): void {
@@ -246,7 +274,7 @@ export class LoveLetterController {
       socket.on(ChatEvent.MESSAGE, this.onMessage);
 
       socket.on(ChatEvent.DISCONNECT, () => {
-        console.log("Client disconnected");
+        this.onDisconnectPlayer(socket.id);
       });
     });
   }

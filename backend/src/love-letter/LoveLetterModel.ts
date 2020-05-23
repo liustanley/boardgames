@@ -220,6 +220,17 @@ export class LoveLetterModel {
   }
 
   /**
+   * Removes the player with the given socket id in the case that they have disconnected.
+   * @param socketId the socketId associated with this player
+   */
+  public removePlayer(socketId: string): void {
+    let playerIndex: number = this.players.indexOf(
+      this.players.find((player) => player.id === socketId)
+    );
+    this.players.splice(playerIndex, 1);
+  }
+
+  /**
    * Returns the current list of players in this game.
    */
   public getPlayers(): Player[] {

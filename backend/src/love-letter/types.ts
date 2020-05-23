@@ -10,6 +10,7 @@ export interface RegisterPlayerEvent {
 export interface LobbyEvent {
   success: boolean;
   usernameList: string[];
+  reset?: boolean;
 }
 
 // Sent by front-end
