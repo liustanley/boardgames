@@ -20,6 +20,7 @@ interface LoveLetterLobbyProps {
   socket: SocketService;
   username: string;
   reset?: boolean;
+  setReset: Function;
 }
 
 interface LoveLetterLobbyState {
@@ -167,7 +168,7 @@ export class LoveLetterLobby extends React.Component<
     if (this.props.usernameList !== this.state.usernameList) {
       this.setState({ usernameList: this.props.usernameList });
     }
-    if (this.props.reset === true && this.state.gameStarted === true) {
+    if (this.props.reset === true) {
       this.setState({
         gameStarted: false,
         gameState: null,
@@ -177,6 +178,7 @@ export class LoveLetterLobby extends React.Component<
         gameOverState: null,
         ready: false,
       });
+      this.props.setReset();
     }
   }
 
