@@ -9,6 +9,7 @@ import {
   ConfirmEvent,
   PlayCardEvent,
   RoundOverEvent,
+  GameOverEvent,
 } from "../models/types";
 
 /**
@@ -63,6 +64,10 @@ export class SocketService {
 
   subscribeToRoundOver(callback: (result: RoundOverEvent) => void) {
     this.socket.on("roundOver", (result: RoundOverEvent) => callback(result));
+  }
+
+  subscribeToGameOver(callback: (result: GameOverEvent) => void) {
+    this.socket.on("gameOver", (result: GameOverEvent) => callback(result));
   }
 
   /**

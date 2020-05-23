@@ -13,6 +13,7 @@ interface LoveLetterContainerState {
   input: string;
   roomFullMessage: string;
   usernameList: string[];
+  reset?: boolean;
 }
 
 export class LoveLetterContainer extends React.Component<
@@ -31,6 +32,7 @@ export class LoveLetterContainer extends React.Component<
       // TODO:
       usernameList: [],
       // usernameList: ["Stanley", "Alex", "Annette", "Christina"],
+      reset: false,
     };
   }
 
@@ -39,10 +41,12 @@ export class LoveLetterContainer extends React.Component<
   }
 
   onLobby(payload: LobbyEvent) {
+    console.log(JSON.stringify(payload));
     if (payload.success) {
       this.setState({
         usernameEntered: true,
         usernameList: payload.usernameList,
+        reset: payload.reset || undefined,
       });
     } else {
       this.setState({ roomFullMessage: "Room is full!" });
@@ -80,6 +84,7 @@ export class LoveLetterContainer extends React.Component<
         socket={socket}
         usernameList={this.state.usernameList}
         username={this.state.username}
+        reset={this.state.reset}
       />
     );
   }

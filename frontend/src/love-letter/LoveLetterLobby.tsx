@@ -8,15 +8,18 @@ import {
   PlayerStatus,
   RoundOverEvent,
   ReadyStatus,
+  GameOverEvent,
 } from "../models/types";
 import { LoveLetterGameState } from "./LoveLetterGameState";
 import { Card } from "./Card";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
+import { read } from "fs";
 
 interface LoveLetterLobbyProps {
   usernameList: string[];
   socket: SocketService;
   username: string;
+  reset?: boolean;
 }
 
 interface LoveLetterLobbyState {
@@ -26,6 +29,8 @@ interface LoveLetterLobbyState {
   gameState: GameStateEvent | null;
   roundOver: boolean;
   roundState: RoundOverEvent | null;
+  gameOver: boolean;
+  gameOverState: GameOverEvent | null;
 }
 
 // TODO:
@@ -142,17 +147,36 @@ export class LoveLetterLobby extends React.Component<
       //   message: "Alex wins!",
       //   players: [dillon, alex, christina, annette],
       // },
+      gameOver: false,
+      // gameOver: true,
+      gameOverState: null,
+      // gameOverState: {
+      //   message: "Christina wins!",
+      //   players: [dillon, alex, christina, annette],
+      // },
     };
   }
 
   componentDidMount() {
     this.props.socket.subscribeToGameState(this.onGameState.bind(this));
     this.props.socket.subscribeToRoundOver(this.onRoundOver.bind(this));
+    this.props.socket.subscribeToGameOver(this.onGameOver.bind(this));
   }
 
   componentDidUpdate() {
     if (this.props.usernameList !== this.state.usernameList) {
       this.setState({ usernameList: this.props.usernameList });
+    }
+    if (this.props.reset === true && this.state.gameStarted === true) {
+      this.setState({
+        gameStarted: false,
+        gameState: null,
+        roundOver: false,
+        roundState: null,
+        gameOver: false,
+        gameOverState: null,
+        ready: false,
+      });
     }
   }
 
@@ -160,7 +184,12 @@ export class LoveLetterLobby extends React.Component<
     payload.visibleCards = Card.correct(payload.visibleCards);
     payload.discardCards = Card.correct(payload.discardCards);
 
-    this.setState({ gameStarted: true, gameState: payload, roundOver: false });
+    this.setState({
+      gameStarted: true,
+      gameState: payload,
+      roundOver: false,
+      gameOver: false,
+    });
   }
 
   onReadyStart() {
@@ -183,8 +212,22 @@ export class LoveLetterLobby extends React.Component<
     this.setState({ ready: true });
   }
 
+  onReadyRestart() {
+    if (!this.state.ready) {
+      this.props.socket.readyPlayer({
+        username: this.props.username,
+        status: ReadyStatus.GAME_RESTART,
+      });
+    }
+    this.setState({ ready: true });
+  }
+
   onRoundOver(payload: RoundOverEvent) {
     this.setState({ roundOver: true, roundState: payload, ready: false });
+  }
+
+  onGameOver(payload: GameOverEvent) {
+    this.setState({ gameOver: true, gameOverState: payload, ready: false });
   }
 
   render() {
@@ -215,7 +258,8 @@ export class LoveLetterLobby extends React.Component<
         )}
         {this.state.gameStarted &&
           this.state.gameState &&
-          !this.state.roundOver && (
+          !this.state.roundOver &&
+          !this.state.gameOver && (
             <LoveLetterGameState
               socket={this.props.socket}
               username={this.props.username}
@@ -269,6 +313,56 @@ export class LoveLetterLobby extends React.Component<
               onClick={this.onReadyContinue.bind(this)}
             >
               <b>{!this.state.ready ? "OK" : "Waiting for others"}</b>
+            </div>
+          </Fragment>
+        )}
+        {this.state.gameOver && this.state.gameOverState && (
+          <Fragment>
+            <div className="roundOverContainer">
+              <br></br>
+              <hr color={LoveLetterColors.WHITE}></hr>
+              <div className="gameMessage">
+                <b>{this.state.gameOverState.message}</b>
+              </div>
+              <hr color={LoveLetterColors.WHITE}></hr>
+              <br></br>
+              <br></br>
+              <br></br>
+              <div className="playerList">
+                <hr style={{ color: LoveLetterColors.WHITE, margin: 0 }}></hr>
+                {this.state.gameOverState.players.map((player) => (
+                  <Fragment>
+                    <div
+                      className="roundOverPlayerName"
+                      style={{
+                        background: LoveLetterColors.BACKGROUND_BLACK,
+                      }}
+                    >
+                      {player.card && (
+                        <LoveLetterDeckCard
+                          number={player.card.value}
+                          index={0}
+                        />
+                      )}
+                      <b>
+                        {player.username}{" "}
+                        <span style={{ color: LoveLetterColors.RED }}>
+                          {Array(player.tokens).fill("❤️").join(" ")}
+                        </span>
+                      </b>
+                    </div>
+                    <hr
+                      style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                    ></hr>
+                  </Fragment>
+                ))}
+              </div>
+            </div>
+            <div
+              className={!this.state.ready ? "readyButton" : "readiedButton"}
+              onClick={this.onReadyRestart.bind(this)}
+            >
+              <b>{!this.state.ready ? "Play Again" : "Waiting for others"}</b>
             </div>
           </Fragment>
         )}

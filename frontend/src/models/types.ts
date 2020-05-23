@@ -18,6 +18,7 @@ export interface RegisterPlayerEvent {
 export interface LobbyEvent {
   success: boolean;
   usernameList: string[];
+  reset?: boolean;
 }
 
 // Sent by front-end
@@ -61,6 +62,12 @@ export interface GameStateEvent {
 
 // Sent by back-end
 export interface RoundOverEvent {
+  message: string;
+  players: Player[];
+}
+
+// Sent by back-end
+export interface GameOverEvent {
   message: string;
   players: Player[];
 }
