@@ -105,6 +105,16 @@ export class LoveLetterController {
   };
 
   /**
+   * Sends the given death message if it is not empty.
+   * @param deathMessage  the death message to emit
+   */
+  private sendDeathMessage(deathMessage: string) {
+    if (deathMessage !== "") {
+      this.io.emit(ChatEvent.MESSAGE, deathMessage);
+    }
+  }
+
+  /**
    * Listener for selectCard events, alters the model accordingly.
    * @param res the response object of type SelectCardEvent
    */
@@ -118,6 +128,8 @@ export class LoveLetterController {
       selected === Card.COUNTESS ||
       selected === Card.PRINCESS
     ) {
+      this.sendDeathMessage(this.model.getDeathMessage());
+
       if (this.model.roundOver()) {
         this.model.gameOver()
           ? this.sendGameOverState()
@@ -149,10 +161,12 @@ export class LoveLetterController {
     ) {
       this.sendGameState();
     } else if (this.model.roundOver()) {
+      this.sendDeathMessage(this.model.getDeathMessage());
       this.model.gameOver()
         ? this.sendGameOverState()
         : this.sendRoundOverState();
     } else {
+      this.sendDeathMessage(this.model.getDeathMessage());
       this.model.nextTurn();
       this.sendGameState();
     }
@@ -164,6 +178,7 @@ export class LoveLetterController {
    */
   private onConfirm = (res: ConfirmEvent) => {
     this.model.confirmPlay(res.username);
+    this.sendDeathMessage(this.model.getDeathMessage());
 
     if (this.model.roundOver()) {
       this.model.gameOver()

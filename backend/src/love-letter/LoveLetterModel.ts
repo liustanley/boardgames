@@ -9,6 +9,7 @@ export class LoveLetterModel {
   private discardPile: Card[]; // list of discarded Cards
   private turn: number; // index of Player who's turn it is
   private message: string;
+  private deathMessage: string;
   private numReady: number;
   private lastPlayed: Card;
   private lastBaronTarget: Player;
@@ -19,6 +20,7 @@ export class LoveLetterModel {
     this.deckCards = [...deck];
     this.discardPile = [];
     this.message = "";
+    this.deathMessage = "";
     this.numReady = 0;
   }
 
@@ -37,6 +39,7 @@ export class LoveLetterModel {
    */
   public nextTurn() {
     this.message = "";
+    this.deathMessage = "";
 
     do {
       this.turn = this.turn === this.players.length - 1 ? 0 : this.turn + 1;
@@ -93,7 +96,9 @@ export class LoveLetterModel {
     );
     if (selected === Card.PRINCESS) {
       this.discardPile.push(currentPlayer.card);
+      this.deathMessage = `☠️ ${username} played the PRINCESS and died. ☠️`;
     }
+
     this.message = currentPlayer.selectCard(selected);
     this.discardPile.push(selected);
     this.lastPlayed = selected;
@@ -120,6 +125,8 @@ export class LoveLetterModel {
           targetPlayer.status = PlayerStatus.DEAD;
           targetPlayer.visibleCards = [];
           this.discardPile.push(targetPlayer.card);
+          targetPlayer.card = undefined;
+          this.deathMessage = `☠️ ${target} has been PRINCE'D by ${username}. ☠️`;
         } else {
           this.discardPile.push(targetPlayer.card);
           targetPlayer.card = this.deck.shift();
@@ -129,10 +136,15 @@ export class LoveLetterModel {
       } else if (this.lastPlayed === Card.GUARD && guess) {
         if (guess === targetPlayer.card) {
           this.discardPile.push(targetPlayer.card);
+          this.deathMessage = `☠️ ${target} has been GUARD'ED by ${username} ☠️`;
         }
       }
 
-      currentPlayer.playCard(this.lastPlayed, targetPlayer, guess);
+      this.message = currentPlayer.playCard(
+        this.lastPlayed,
+        targetPlayer,
+        guess
+      );
     } else {
       currentPlayer.selfSelectable = undefined;
       currentPlayer.status = PlayerStatus.WAITING;
@@ -157,6 +169,7 @@ export class LoveLetterModel {
         currentPlayer.card = undefined;
         this.lastBaronTarget.status = PlayerStatus.WAITING;
         this.lastBaronTarget.visibleCards = [this.lastBaronTarget.card];
+        this.deathMessage = `☠️ ${username} tried to BARON ${this.lastBaronTarget.username} but DIED ☠️`;
       } else if (currentPlayer.card.value > this.lastBaronTarget.card.value) {
         this.lastBaronTarget.status = PlayerStatus.DEAD;
         this.lastBaronTarget.visibleCards = [];
@@ -164,6 +177,7 @@ export class LoveLetterModel {
         this.lastBaronTarget.card = undefined;
         currentPlayer.status = PlayerStatus.WAITING;
         currentPlayer.visibleCards = [currentPlayer.card];
+        this.deathMessage = `☠️ ${this.lastBaronTarget.username} has been BARON'ED by ${username} ☠️`;
       } else {
         currentPlayer.visibleCards = [currentPlayer.card];
         currentPlayer.status = PlayerStatus.WAITING;
@@ -270,6 +284,13 @@ export class LoveLetterModel {
    */
   public resetNumReady(): void {
     this.numReady = 0;
+  }
+
+  /**
+   * Returns the current death message.
+   */
+  public getDeathMessage(): string {
+    return this.deathMessage;
   }
 
   /**
