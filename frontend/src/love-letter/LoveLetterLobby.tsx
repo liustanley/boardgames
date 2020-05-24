@@ -252,10 +252,12 @@ export class LoveLetterLobby extends React.Component<
             >
               <b>{!this.state.ready ? "OK" : "Waiting for others"}</b>
             </div>
-            <ChatContainer
-              socket={this.props.socket}
-              username={this.props.username}
-            />
+            <div className="loveLetterChat">
+              <ChatContainer
+                socket={this.props.socket}
+                username={this.props.username}
+              />
+            </div>
           </Fragment>
         )}
         {this.state.gameStarted &&

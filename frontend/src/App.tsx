@@ -3,7 +3,11 @@ import { LoveLetterContainer } from "./love-letter/LoveLetterContainer";
 import "./App.css";
 
 function App() {
-  return <LoveLetterContainer />;
+  return (
+    <div className="loveLetterContainer">
+      <LoveLetterContainer />
+    </div>
+  );
 }
 
 export default App;

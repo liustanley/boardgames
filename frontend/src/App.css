@@ -5,6 +5,8 @@
   background-color: #2e3440;
 }
 
-.loveLetterPage {
+.loveLetterContainer {
   text-align: center;
+  display: flex;
+  height: 100%;
 }
