@@ -110,7 +110,7 @@ export class LoveLetterController {
    */
   private sendDeathMessage(deathMessage: string) {
     if (deathMessage !== "") {
-      this.io.emit(ChatEvent.MESSAGE, deathMessage);
+      this.io.emit(ChatEvent.MESSAGE, { author: "God", message: deathMessage });
     }
   }
 
