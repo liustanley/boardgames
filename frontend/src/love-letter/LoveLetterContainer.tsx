@@ -63,6 +63,10 @@ export class LoveLetterContainer extends React.Component<
     }
   }
 
+  setReset() {
+    this.setState({ reset: false });
+  }
+
   render() {
     return this.state.usernameList.length === 0 ? (
       <div className="usernameInput">
@@ -85,6 +89,7 @@ export class LoveLetterContainer extends React.Component<
         usernameList={this.state.usernameList}
         username={this.state.username}
         reset={this.state.reset}
+        setReset={this.setReset.bind(this)}
       />
     );
   }

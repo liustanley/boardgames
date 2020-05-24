@@ -6,6 +6,7 @@ import "./LoveLetterGameState.css";
 import { LoveLetterCardContainer } from "./LoveLetterCardContainer";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
 import { Card } from "./Card";
+import { ChatContainer } from "../chat/ChatContainer";
 
 export interface LoveLetterGameStateProps {
   socket: SocketService;
@@ -412,6 +413,12 @@ export class LoveLetterGameState extends React.Component<
               <b>OK</b>
             </div>
           )}
+        <div className="loveLetterChat">
+          <ChatContainer
+            socket={this.props.socket}
+            username={this.props.username}
+          />
+        </div>
       </Fragment>
     );
   }
