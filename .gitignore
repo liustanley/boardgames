@@ -105,3 +105,5 @@ dist
 
 boardgames.code-workspace
 .idea/
+package-lock.json
+frontend/package-lock.json
