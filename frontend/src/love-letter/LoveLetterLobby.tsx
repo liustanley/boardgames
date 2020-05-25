@@ -252,12 +252,6 @@ export class LoveLetterLobby extends React.Component<
             >
               <b>{!this.state.ready ? "OK" : "Waiting for others"}</b>
             </div>
-            <div className="loveLetterChat">
-              <ChatContainer
-                socket={this.props.socket}
-                username={this.props.username}
-              />
-            </div>
           </Fragment>
         )}
         {this.state.gameStarted &&
@@ -370,6 +364,12 @@ export class LoveLetterLobby extends React.Component<
             </div>
           </Fragment>
         )}
+        <div className="loveLetterChat">
+          <ChatContainer
+            socket={this.props.socket}
+            username={this.props.username}
+          />
+        </div>
       </Fragment>
     );
   }
