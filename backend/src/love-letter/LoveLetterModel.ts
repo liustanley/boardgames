@@ -75,6 +75,7 @@ export class LoveLetterModel {
     this.deck = [...this.deckCards];
     this.discardPile = [];
     this.message = "";
+    this.deathMessage = "";
     this.numReady = 0;
   }
 
