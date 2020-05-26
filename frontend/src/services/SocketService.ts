@@ -10,6 +10,7 @@ import {
   PlayCardEvent,
   RoundOverEvent,
   GameOverEvent,
+  HighlightEvent,
 } from "../models/types";
 
 /**
@@ -60,6 +61,18 @@ export class SocketService {
   confirm(payload: ConfirmEvent) {
     console.log("confirming: " + payload.username);
     this.socket.emit("confirmEvent", payload);
+  }
+
+  highlight(payload: HighlightEvent) {
+    console.log(
+      "highlighting: " +
+        payload.username +
+        " - " +
+        payload.player +
+        " - " +
+        payload.card
+    );
+    this.socket.emit("highlight", payload);
   }
 
   subscribeToRoundOver(callback: (result: RoundOverEvent) => void) {

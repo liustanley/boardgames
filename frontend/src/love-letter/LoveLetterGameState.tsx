@@ -112,7 +112,11 @@ export class LoveLetterGameState extends React.Component<
     }
     payload.username = this.props.username;
     this.props.socket.playCard(payload);
-    this.setState({ actionCompleted: true });
+    this.setState({
+      actionCompleted: true,
+      nameClicked: -1,
+      cardNameClicked: -1,
+    });
   }
 
   onConfirm() {
@@ -129,6 +133,22 @@ export class LoveLetterGameState extends React.Component<
   }
 
   onNameClick(index: number) {
+    if (this.state.cardNameClicked > -1) {
+      this.props.socket.highlight({
+        username: this.props.username,
+        player:
+          this.props.gameState.visiblePlayers &&
+          this.props.gameState.visiblePlayers[index],
+        card: cardGuessList[this.state.cardNameClicked],
+      });
+    } else {
+      this.props.socket.highlight({
+        username: this.props.username,
+        player:
+          this.props.gameState.visiblePlayers &&
+          this.props.gameState.visiblePlayers[index],
+      });
+    }
     this.setState({ nameClicked: index });
   }
 
@@ -141,6 +161,20 @@ export class LoveLetterGameState extends React.Component<
   }
 
   onCardNameClick(index: number) {
+    if (this.state.nameClicked > -1) {
+      this.props.socket.highlight({
+        username: this.props.username,
+        player:
+          this.props.gameState.visiblePlayers &&
+          this.props.gameState.visiblePlayers[this.state.nameClicked],
+        card: cardGuessList[index],
+      });
+    } else {
+      this.props.socket.highlight({
+        username: this.props.username,
+        card: cardGuessList[index],
+      });
+    }
     this.setState({ cardNameClicked: index });
   }
 
@@ -196,6 +230,68 @@ export class LoveLetterGameState extends React.Component<
                 </div>
               ))}
             </div>
+          )}
+          {this.props.gameState.status === PlayerStatus.WATCHING && (
+            <Fragment>
+              <br></br>
+              <div className="playerList">
+                <hr style={{ color: LoveLetterColors.WHITE, margin: 0 }}></hr>
+                {this.props.gameState.visiblePlayers?.map((player, index) => (
+                  <Fragment>
+                    <div
+                      className="playerName"
+                      style={{
+                        background:
+                          this.props.gameState.visiblePlayers &&
+                          JSON.stringify(
+                            this.props.gameState.highlightedPlayer
+                          ) ===
+                            JSON.stringify(
+                              this.props.gameState.visiblePlayers[index]
+                            )
+                            ? LoveLetterColors.BACKGROUND_BLUE
+                            : LoveLetterColors.BACKGROUND_DARK,
+                      }}
+                    >
+                      <b>{player.username}</b>
+                    </div>
+                    <hr
+                      style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                    ></hr>
+                  </Fragment>
+                ))}
+              </div>
+              <br></br>
+              {this.props.gameState.watchingGuardPlay && (
+                <Fragment>
+                  <div className="cardList">
+                    <hr
+                      style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                    ></hr>
+                    {cardGuessList.map((card, index) => (
+                      <Fragment>
+                        <div
+                          className="cardName"
+                          style={{
+                            background:
+                              JSON.stringify(
+                                this.props.gameState.highlightedCard
+                              ) === JSON.stringify(cardGuessList[index])
+                                ? LoveLetterColors.BACKGROUND_BLUE
+                                : LoveLetterColors.BACKGROUND_DARK,
+                          }}
+                        >
+                          <b>{card.toString()}</b>
+                        </div>
+                        <hr
+                          style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                        ></hr>
+                      </Fragment>
+                    ))}
+                  </div>
+                </Fragment>
+              )}
+            </Fragment>
           )}
           {this.props.gameState.status === PlayerStatus.SELECTING_CARD && (
             <div className="cardContainer">
