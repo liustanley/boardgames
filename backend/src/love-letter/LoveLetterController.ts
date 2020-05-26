@@ -249,10 +249,21 @@ export class LoveLetterController {
    * @param socketId the socket id of the disconnected player
    */
   private onDisconnectPlayer(socketId: string): void {
+    let players: Player[] = this.model.getPlayers();
+    let disconnected: Player | undefined = players.find(
+      (player) => player.id === socketId
+    );
+    if (disconnected) {
+      this.io.emit(ChatEvent.MESSAGE, {
+        author: disconnected.username,
+        message: "has left the game.",
+      });
+    }
+
     this.model.removePlayer(socketId);
     this.model.resetGame();
 
-    let players: Player[] = this.model.getPlayers();
+    players = this.model.getPlayers();
     let usernames: string[] = [];
     let socketIds: string[] = [];
     for (let p of players) {
