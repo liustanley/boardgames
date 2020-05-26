@@ -147,8 +147,34 @@ export class LoveLetterController {
         this.model.nextTurn();
         this.sendGameState();
       }
+    } else if (
+      selected === Card.GUARD ||
+      selected === Card.PRIEST ||
+      selected === Card.BARON ||
+      selected === Card.PRINCE ||
+      selected === Card.KING
+    ) {
+      let players: Player[] = this.model.getPlayers();
+      let gameState: GameState[] = this.model.gameState();
+
+      let player: Player = players.find(
+        (player) => player.username === res.username
+      );
+      let playerIndex: number = players.indexOf(player);
+      for (let i = 0; i < gameState.length; i++) {
+        if (i !== playerIndex) {
+          gameState[i].visiblePlayers = players;
+          if (selected === Card.GUARD) {
+            gameState[i].watchingGuardPlay = true;
+          }
+        }
+      }
+
+      for (let i: number = 0; i < players.length; i++) {
+        this.io.to(players[i].id).emit("gameState", gameState[i]);
+      }
     } else {
-      this.sendGameState(true, res.username);
+      this.sendGameState();
     }
   };
 
