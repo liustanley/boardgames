@@ -17,6 +17,7 @@ import {
   SelectCardEvent,
   ReadyStatus,
   GameOverEvent,
+  HighlightEvent,
 } from "./types";
 
 export class LoveLetterController {
@@ -284,6 +285,24 @@ export class LoveLetterController {
   }
 
   /**
+   * Communicates the given highlight event to the rest of the game clients
+   * @param res the response object
+   */
+  private onHighlight(res: HighlightEvent): void {
+    let players: Player[] = this.model.getPlayers();
+    let gameState: GameState[] = this.model.gameState();
+
+    for (let gs of gameState) {
+      gs.highlightedPlayer = res.player;
+      gs.highlightedCard = res.card;
+    }
+
+    for (let i: number = 0; i < players.length; i++) {
+      this.io.to(players[i].id).emit("gameState", gameState[i]);
+    }
+  }
+
+  /**
    * Opens up communication to our server and Socket.io events.
    */
   private listen(): void {
@@ -303,6 +322,8 @@ export class LoveLetterController {
       socket.on("playCard", (res: PlayCardEvent) => this.onPlayCard(res));
 
       socket.on("confirmEvent", (res: ConfirmEvent) => this.onConfirm(res));
+
+      socket.on("highlight", (res: HighlightEvent) => this.onHighlight(res));
 
       socket.on(ChatEvent.MESSAGE, this.onMessage);
 

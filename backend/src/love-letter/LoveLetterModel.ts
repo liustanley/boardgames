@@ -104,6 +104,20 @@ export class LoveLetterModel {
       this.deathMessage = `☠️ ${username} played the PRINCESS and died. ☠️`;
     }
 
+    if (
+      selected === Card.GUARD ||
+      selected === Card.PRIEST ||
+      selected === Card.BARON ||
+      selected === Card.PRINCE ||
+      selected === Card.KING
+    ) {
+      for (let p of this.players) {
+        if (p.username !== username) {
+          p.status = PlayerStatus.WATCHING;
+        }
+      }
+    }
+
     this.message = currentPlayer.selectCard(selected);
     this.discardPile.push(selected);
     this.lastPlayed = selected;
@@ -116,6 +130,20 @@ export class LoveLetterModel {
    * @param guess     the Card being guessed in the case of a Guard play
    */
   public playCard(username: string, target?: string, guess?: Card): void {
+    if (
+      this.lastPlayed === Card.GUARD ||
+      this.lastPlayed === Card.PRIEST ||
+      this.lastPlayed === Card.BARON ||
+      this.lastPlayed === Card.PRINCE ||
+      this.lastPlayed === Card.KING
+    ) {
+      for (let p of this.players) {
+        if (p.username !== username) {
+          p.status = PlayerStatus.WAITING;
+        }
+      }
+    }
+
     let currentPlayer: Player = this.players.find(
       (player) => player.username === username
     );

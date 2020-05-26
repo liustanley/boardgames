@@ -45,6 +45,8 @@ export interface GameStateEvent {
   discardCards: Card[];
   visiblePlayers?: Player[];
   status: PlayerStatus;
+  highlightedPlayer?: Player;
+  highlightedCard?: Card;
 }
 
 // Sent by back-end
@@ -59,6 +61,13 @@ export interface GameOverEvent {
   players: Player[];
 }
 
+// Sent by front-end
+export interface HighlightEvent {
+  username: string; // player doing the selecting
+  player?: Player; // highlighted player
+  card?: Card; // highlighted card
+}
+
 export enum PlayerStatus {
   WAITING = "WAITING",
   SELECTING_CARD = "SELECTING_CARD",
@@ -67,6 +76,7 @@ export enum PlayerStatus {
   COMPARING_CARDS = "COMPARING_CARDS",
   SELECTING_PLAYER = "SELECTING_PLAYER",
   DEAD = "DEAD",
+  WATCHING = "WATCHING",
 }
 
 export enum ReadyStatus {
@@ -81,4 +91,6 @@ export interface GameState {
   discardCards: Card[];
   visiblePlayers?: Player[];
   status: PlayerStatus;
+  highlightedPlayer?: Player;
+  highlightedCard?: Card;
 }
