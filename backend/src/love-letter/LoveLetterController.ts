@@ -55,21 +55,28 @@ export class LoveLetterController {
    * @param res       the response object, containing the client username
    */
   private onRegisterPlayer = (socketId: string, res: RegisterPlayerEvent) => {
-    let success: boolean = this.model.addPlayer(socketId, res.username);
-    let players: Player[] = this.model.getPlayers();
-    let usernames: string[] = [];
-    let socketIds: string[] = [];
-    for (let p of players) {
-      usernames.push(p.username);
-      socketIds.push(p.id);
-    }
+    if (this.model.getGameProgressState()) {
+      this.io.to(socketId).emit("lobby", {
+        success: false,
+        usernameList: [],
+      });
+    } else {
+      let success: boolean = this.model.addPlayer(socketId, res.username);
+      let players: Player[] = this.model.getPlayers();
+      let usernames: string[] = [];
+      let socketIds: string[] = [];
+      for (let p of players) {
+        usernames.push(p.username);
+        socketIds.push(p.id);
+      }
 
-    let lobby: LobbyEvent = {
-      success: success,
-      usernameList: usernames,
-    };
-    for (let id of socketIds) {
-      this.io.to(id).emit("lobby", lobby);
+      let lobby: LobbyEvent = {
+        success: success,
+        usernameList: usernames,
+      };
+      for (let id of socketIds) {
+        this.io.to(id).emit("lobby", lobby);
+      }
     }
   };
 

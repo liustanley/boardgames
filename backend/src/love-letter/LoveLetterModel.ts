@@ -13,6 +13,7 @@ export class LoveLetterModel {
   private numReady: number;
   private lastPlayed: Card;
   private lastBaronTarget: Player;
+  private gameInProgress: boolean;
 
   constructor(deck: Card[]) {
     this.players = [];
@@ -22,6 +23,7 @@ export class LoveLetterModel {
     this.message = "";
     this.deathMessage = "";
     this.numReady = 0;
+    this.gameInProgress = false;
   }
 
   /**
@@ -62,6 +64,8 @@ export class LoveLetterModel {
     // Deal out first draw card
     this.turn = Math.floor(Math.random() * this.players.length);
     this.players[this.turn].draw(this.deck.shift());
+
+    this.gameInProgress = true;
   }
 
   /**
@@ -78,6 +82,7 @@ export class LoveLetterModel {
    * Resets this love letter model for a new game.
    */
   public resetGame(): void {
+    this.gameInProgress = false;
     this.resetRound();
 
     for (let p of this.players) {
@@ -291,6 +296,13 @@ export class LoveLetterModel {
    */
   public getDeathMessage(): string {
     return this.deathMessage;
+  }
+
+  /**
+   * Returns whether this love letter game is currently in progress.
+   */
+  public getGameProgressState(): boolean {
+    return this.gameInProgress;
   }
 
   /**
