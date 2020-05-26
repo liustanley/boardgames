@@ -297,6 +297,7 @@ export class LoveLetterController {
     for (let gs of gameState) {
       gs.highlightedPlayer = res.player;
       gs.highlightedCard = res.card;
+      gs.visiblePlayers = players;
       if (this.model.getLastPlayed() === Card.GUARD) {
         gs.watchingGuardPlay = true;
       }
