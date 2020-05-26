@@ -210,7 +210,8 @@ export class LoveLetterGameState extends React.Component<
           <hr color={LoveLetterColors.WHITE}></hr>
           {!this.state.hasSelectablePlayers &&
             (this.props.gameState.status === PlayerStatus.SELECTING_PLAYER ||
-              this.props.gameState.status === PlayerStatus.GUESSING_CARD) && (
+              this.props.gameState.status === PlayerStatus.GUESSING_CARD ||
+              this.props.gameState.status === PlayerStatus.WATCHING) && (
               <Fragment>
                 <div
                   className="gameMessage"
@@ -238,26 +239,49 @@ export class LoveLetterGameState extends React.Component<
                 <hr style={{ color: LoveLetterColors.WHITE, margin: 0 }}></hr>
                 {this.props.gameState.visiblePlayers?.map((player, index) => (
                   <Fragment>
-                    <div
-                      className="playerName"
-                      style={{
-                        background:
-                          this.props.gameState.visiblePlayers &&
-                          JSON.stringify(
-                            this.props.gameState.highlightedPlayer
-                          ) ===
-                            JSON.stringify(
-                              this.props.gameState.visiblePlayers[index]
-                            )
-                            ? LoveLetterColors.BACKGROUND_BLUE
-                            : LoveLetterColors.BACKGROUND_DARK,
-                      }}
-                    >
-                      <b>{player.username}</b>
-                    </div>
-                    <hr
-                      style={{ color: LoveLetterColors.WHITE, margin: 0 }}
-                    ></hr>
+                    {this.props.gameState.visiblePlayers &&
+                    !this.props.gameState.visiblePlayers[index].immune &&
+                    this.props.gameState.visiblePlayers[index].status !==
+                      PlayerStatus.DEAD &&
+                    this.props.gameState.visiblePlayers[index]
+                      .selfSelectable !== false ? (
+                      <Fragment>
+                        <div
+                          className="playerName"
+                          style={{
+                            background:
+                              this.props.gameState.visiblePlayers &&
+                              JSON.stringify(
+                                this.props.gameState.highlightedPlayer
+                              ) ===
+                                JSON.stringify(
+                                  this.props.gameState.visiblePlayers[index]
+                                )
+                                ? LoveLetterColors.BACKGROUND_BLUE
+                                : LoveLetterColors.BACKGROUND_DARK,
+                          }}
+                        >
+                          <b>{player.username}</b>
+                        </div>
+                        <hr
+                          style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                        ></hr>
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        <div
+                          className="playerName"
+                          style={{
+                            background: LoveLetterColors.BACKGROUND_BLACK,
+                          }}
+                        >
+                          <b>{player.username}</b>
+                        </div>
+                        <hr
+                          style={{ color: LoveLetterColors.WHITE, margin: 0 }}
+                        ></hr>
+                      </Fragment>
+                    )}
                   </Fragment>
                 ))}
               </div>
