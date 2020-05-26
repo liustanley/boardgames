@@ -1,4 +1,5 @@
 import * as socketIo from "socket.io";
+import { CARDS } from "./constants";
 import { ChatEvent } from "../types/constants";
 import { ChatMessage } from "../types/types";
 import { Server } from "http";
@@ -259,26 +260,26 @@ export class LoveLetterController {
         author: disconnected.username,
         message: "has left the game.",
       });
-    }
 
-    this.model.removePlayer(socketId);
-    this.model.resetGame();
+      this.model.removePlayer(socketId);
+      this.model.resetGame();
 
-    players = this.model.getPlayers();
-    let usernames: string[] = [];
-    let socketIds: string[] = [];
-    for (let p of players) {
-      usernames.push(p.username);
-      socketIds.push(p.id);
-    }
+      players = this.model.getPlayers();
+      let usernames: string[] = [];
+      let socketIds: string[] = [];
+      for (let p of players) {
+        usernames.push(p.username);
+        socketIds.push(p.id);
+      }
 
-    let lobby: LobbyEvent = {
-      success: true,
-      usernameList: usernames,
-      reset: true,
-    };
-    for (let id of socketIds) {
-      this.io.to(id).emit("lobby", lobby);
+      let lobby: LobbyEvent = {
+        success: true,
+        usernameList: usernames,
+        reset: true,
+      };
+      for (let id of socketIds) {
+        this.io.to(id).emit("lobby", lobby);
+      }
     }
 
     console.log("Client disconnected");
@@ -286,19 +287,25 @@ export class LoveLetterController {
 
   /**
    * Communicates the given highlight event to the rest of the game clients
+   * @param scoketId the socket id of this player
    * @param res the response object
    */
-  private onHighlight(res: HighlightEvent): void {
+  private onHighlight(socketId: string, res: HighlightEvent): void {
     let players: Player[] = this.model.getPlayers();
     let gameState: GameState[] = this.model.gameState();
 
     for (let gs of gameState) {
       gs.highlightedPlayer = res.player;
       gs.highlightedCard = res.card;
+      if (this.model.getLastPlayed() === Card.GUARD) {
+        gs.watchingGuardPlay = true;
+      }
     }
 
     for (let i: number = 0; i < players.length; i++) {
-      this.io.to(players[i].id).emit("gameState", gameState[i]);
+      if (players[i].id !== socketId) {
+        this.io.to(players[i].id).emit("gameState", gameState[i]);
+      }
     }
   }
 
@@ -323,7 +330,9 @@ export class LoveLetterController {
 
       socket.on("confirmEvent", (res: ConfirmEvent) => this.onConfirm(res));
 
-      socket.on("highlight", (res: HighlightEvent) => this.onHighlight(res));
+      socket.on("highlight", (res: HighlightEvent) =>
+        this.onHighlight(socket.id, res)
+      );
 
       socket.on(ChatEvent.MESSAGE, this.onMessage);
 

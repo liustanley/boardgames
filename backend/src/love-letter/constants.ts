@@ -18,3 +18,14 @@ export const DECK: Card[] = [
   Card.COUNTESS,
   Card.PRINCESS,
 ];
+
+export const CARDS: Card[] = [
+  Card.GUARD,
+  Card.PRIEST,
+  Card.BARON,
+  Card.HANDMAID,
+  Card.PRINCE,
+  Card.KING,
+  Card.COUNTESS,
+  Card.PRINCESS,
+];

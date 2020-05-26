@@ -93,4 +93,5 @@ export interface GameState {
   status: PlayerStatus;
   highlightedPlayer?: Player;
   highlightedCard?: Card;
+  watchingGuardPlay?: boolean;
 }
