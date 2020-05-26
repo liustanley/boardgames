@@ -148,7 +148,7 @@ export class LoveLetterController {
         this.sendGameState();
       }
     } else {
-      this.sendGameState();
+      this.sendGameState(true, res.username);
     }
   };
 
@@ -202,9 +202,24 @@ export class LoveLetterController {
   /**
    * Sends each client their respective game state.
    */
-  private sendGameState(): void {
+  private sendGameState(
+    watchingGuardPlay?: boolean,
+    guardPlayerUsername?: string
+  ): void {
     let players: Player[] = this.model.getPlayers();
     let gameState: GameState[] = this.model.gameState();
+
+    if (watchingGuardPlay && guardPlayerUsername) {
+      let player: Player = players.find(
+        (player) => player.username === guardPlayerUsername
+      );
+      let playerIndex: number = players.indexOf(player);
+      for (let i = 0; i < gameState.length; i++) {
+        if (i !== playerIndex) {
+          gameState[i].watchingGuardPlay = true;
+        }
+      }
+    }
 
     for (let i: number = 0; i < players.length; i++) {
       this.io.to(players[i].id).emit("gameState", gameState[i]);
