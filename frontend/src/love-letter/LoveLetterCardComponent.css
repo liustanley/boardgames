@@ -1,13 +1,29 @@
 .loveLetterCard {
   width: 248px;
   height: 396px;
-  display: inline-block;
-  text-align: center;
+  display: flex;
+  flex-flow: column;
   border-radius: 25px;
   border: 8px solid #4c566a;
 }
 
-.loveLetterCardName {
-  line-height: 396px;
+.loveLetterCardTop {
+  flex: 4;
   font-size: 36px;
+}
+
+.loveLetterCardName {
+  line-height: 246px;
+}
+
+.loveLetterCardDescription {
+  flex: 1;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.loveLetterCardBottom {
+  flex: 1;
 }

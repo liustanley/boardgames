@@ -24,6 +24,7 @@ export class LoveLetterCardContainer extends React.Component<
       hovered: false,
     };
   }
+
   numberToColor(card: Card): LoveLetterColors {
     switch (card) {
       case Card.GUARD:
@@ -63,6 +64,45 @@ export class LoveLetterCardContainer extends React.Component<
     }
   }
 
+  numberToColorDark(card: Card): LoveLetterColors {
+    switch (card) {
+      case Card.GUARD:
+        return this.state.hovered
+          ? LoveLetterColors.ORANGE_DARKEST
+          : LoveLetterColors.ORANGE_DARK;
+      case Card.PRIEST:
+        return this.state.hovered
+          ? LoveLetterColors.YELLOW_DARKEST
+          : LoveLetterColors.YELLOW_DARK;
+      case Card.BARON:
+        return this.state.hovered
+          ? LoveLetterColors.GREEN_DARKEST
+          : LoveLetterColors.GREEN_DARK;
+      case Card.HANDMAID:
+        return this.state.hovered
+          ? LoveLetterColors.TEAL_DARKEST
+          : LoveLetterColors.TEAL_DARK;
+      case Card.PRINCE:
+        return this.state.hovered
+          ? LoveLetterColors.BLUE_DARKEST
+          : LoveLetterColors.BLUE_DARK;
+      case Card.KING:
+        return this.state.hovered
+          ? LoveLetterColors.VIOLET_DARKEST
+          : LoveLetterColors.VIOLET_DARK;
+      case Card.COUNTESS:
+        return this.state.hovered
+          ? LoveLetterColors.PINK_DARKEST
+          : LoveLetterColors.PINK_DARK;
+      case Card.PRINCESS:
+        return this.state.hovered
+          ? LoveLetterColors.RED_DARKEST
+          : LoveLetterColors.RED_DARK;
+      default:
+        return LoveLetterColors.WHITE;
+    }
+  }
+
   numberToName(card: LoveLetterCardContainerProps["card"]): string {
     return card.toString();
   }
@@ -96,6 +136,7 @@ export class LoveLetterCardContainer extends React.Component<
         onMouseEnter={this.onMouseEnter.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}
         selected={this.props.selected}
+        numberToColorDark={this.numberToColorDark.bind(this)}
       />
     );
   }

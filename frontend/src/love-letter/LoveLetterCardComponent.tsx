@@ -10,6 +10,7 @@ interface LoveLetterCardComponentProps {
   selected?: boolean;
   onMouseEnter: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onMouseLeave: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  numberToColorDark: Function;
 }
 
 function LoveLetterCardComponent(props: LoveLetterCardComponentProps) {
@@ -24,9 +25,20 @@ function LoveLetterCardComponent(props: LoveLetterCardComponentProps) {
           props.onClick(e)
         }
       >
-        <div className="loveLetterCardName">
-          <b>{props.numberToName(props.card)}</b>
+        <div className="loveLetterCardTop">
+          <div className="loveLetterCardName">
+            <b>{props.card.toString()}</b>
+          </div>
         </div>
+        <div
+          className="loveLetterCardDescription"
+          style={{ background: props.numberToColorDark(props.card) }}
+        >
+          <p>
+            <b>{props.card.description}</b>
+          </p>
+        </div>
+        <div className="loveLetterCardBottom"></div>
       </div>
       <br></br>
       {props.selected && (
