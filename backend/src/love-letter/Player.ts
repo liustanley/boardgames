@@ -166,7 +166,6 @@ export class Player {
         }
 
       case Card.PRINCE:
-        this.status = PlayerStatus.WAITING;
         this.visibleCards = [this.card];
         target.visibleCards = [target.card];
         return this.username + " played the Prince on " + target.username;

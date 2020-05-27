@@ -153,6 +153,7 @@ export class LoveLetterModel {
       let targetPlayer: Player = this.players.find(
         (player) => player.username === target
       );
+      currentPlayer.status = PlayerStatus.WAITING;
 
       if (this.lastPlayed === Card.PRINCE) {
         if (targetPlayer.card === Card.PRINCESS) {
