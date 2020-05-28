@@ -1,7 +1,7 @@
 import React from "react";
 import { SocketService } from "../services/SocketService";
-import { LobbyEvent } from "../models/types";
-import { LoveLetterColors } from "../models/types";
+import { LobbyEvent } from "../models/LoveLetterTypes";
+import { LoveLetterColors } from "../models/LoveLetterTypes";
 import "./LoveLetterContainer.css";
 import { LoveLetterLobby } from "./LoveLetterLobby";
 

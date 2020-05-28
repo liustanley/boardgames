@@ -1,5 +1,5 @@
 import React from "react";
-import { ChatMessageEvent } from "../models/types";
+import { ChatMessageEvent } from "../models/LoveLetterTypes";
 import "./ChatComponent.css";
 
 function ChatComponent(props: any) {

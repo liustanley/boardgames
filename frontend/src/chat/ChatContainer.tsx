@@ -1,8 +1,8 @@
 import React, { createRef } from "react";
 import ChatComponent from "./ChatComponent";
-import { ChatState, ChatMessageEvent } from "../models/types";
+import { ChatState, ChatMessageEvent } from "../models/LoveLetterTypes";
 import { SocketService } from "../services/SocketService";
-import { LoveLetterColors } from "../models/types";
+import { LoveLetterColors } from "../models/LoveLetterTypes";
 import "./ChatContainer.css";
 
 interface ChatContainerProps {

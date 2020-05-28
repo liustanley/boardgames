@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import "./LoveLetterLobby.css";
-import { LoveLetterColors } from "../models/types";
+import { LoveLetterColors } from "../models/LoveLetterTypes";
 import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
 import {
@@ -9,7 +9,7 @@ import {
   RoundOverEvent,
   ReadyStatus,
   GameOverEvent,
-} from "../models/types";
+} from "../models/LoveLetterTypes";
 import { LoveLetterGameState } from "./LoveLetterGameState";
 import { Card } from "./Card";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";

@@ -11,7 +11,7 @@ import {
   RoundOverEvent,
   GameOverEvent,
   HighlightEvent,
-} from "../models/types";
+} from "../models/LoveLetterTypes";
 
 /**
  * Represents a service object that manages socket connection to the server.

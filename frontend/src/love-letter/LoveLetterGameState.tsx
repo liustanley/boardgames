@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import { GameStateEvent, PlayerStatus } from "../models/types";
+import { GameStateEvent, PlayerStatus } from "../models/LoveLetterTypes";
 import { SocketService } from "../services/SocketService";
-import { LoveLetterColors, cardGuessList } from "../models/types";
+import { LoveLetterColors, cardGuessList } from "../models/LoveLetterTypes";
 import "./LoveLetterGameState.css";
 import { LoveLetterCardContainer } from "./LoveLetterCardContainer";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
