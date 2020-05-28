@@ -1,5 +1,5 @@
 .chatComponent {
-  height: 70%;
+  height: calc(100% - 250px);
   padding: 50px;
   text-align: center;
 }
