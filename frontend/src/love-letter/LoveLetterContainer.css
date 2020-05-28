@@ -1,3 +1,9 @@
+.loveLetterContainer {
+  text-align: center;
+  display: flex;
+  height: 100%;
+}
+
 .usernameInput {
   padding-top: 350px;
   padding-left: 40%;

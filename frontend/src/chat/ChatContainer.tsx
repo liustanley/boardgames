@@ -2,7 +2,7 @@ import React, { createRef } from "react";
 import ChatComponent from "./ChatComponent";
 import { ChatState, ChatMessageEvent } from "../models/types";
 import { SocketService } from "../services/SocketService";
-import { LoveLetterColors } from "../models/constants";
+import { LoveLetterColors } from "../models/types";
 import "./ChatContainer.css";
 
 interface ChatContainerProps {

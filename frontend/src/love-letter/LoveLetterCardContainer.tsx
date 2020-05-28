@@ -1,6 +1,6 @@
 import React from "react";
 import LoveLetterCardComponent from "./LoveLetterCardComponent";
-import { LoveLetterColors } from "../models/constants";
+import { LoveLetterColors } from "../models/types";
 import { Card } from "./Card";
 
 interface LoveLetterCardContainerProps {

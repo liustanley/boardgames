@@ -2,12 +2,10 @@ import React from "react";
 import { LoveLetterContainer } from "./love-letter/LoveLetterContainer";
 import "./App.css";
 
-function App() {
-  return (
-    <div className="loveLetterContainer">
-      <LoveLetterContainer />
-    </div>
-  );
-}
+interface AppState {}
 
-export default App;
+export class App extends React.Component<{}, AppState> {
+  render() {
+    return <LoveLetterContainer />;
+  }
+}

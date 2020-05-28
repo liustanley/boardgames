@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import "./LoveLetterLobby.css";
-import { LoveLetterColors } from "../models/constants";
+import { LoveLetterColors } from "../models/types";
 import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
 import {

@@ -1,6 +1,6 @@
 import React from "react";
 import "./LoveLetterDeckCard.css";
-import { LoveLetterColors } from "../models/constants";
+import { LoveLetterColors } from "../models/types";
 
 interface LoveLetterDeckCardProps {
   number: number;

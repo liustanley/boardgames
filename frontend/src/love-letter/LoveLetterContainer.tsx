@@ -1,7 +1,7 @@
 import React from "react";
 import { SocketService } from "../services/SocketService";
 import { LobbyEvent } from "../models/types";
-import { LoveLetterColors } from "../models/constants";
+import { LoveLetterColors } from "../models/types";
 import "./LoveLetterContainer.css";
 import { LoveLetterLobby } from "./LoveLetterLobby";
 
@@ -68,29 +68,33 @@ export class LoveLetterContainer extends React.Component<
   }
 
   render() {
-    return this.state.usernameList.length === 0 ? (
-      <div className="usernameInput">
-        <input
-          className="input"
-          value={this.state.username}
-          placeholder="Enter your name"
-          onChange={this.onUsernameChange.bind(this)}
-          onKeyPress={this.onUsernameKeyPress.bind(this)}
-        />
-        {this.state.roomFullMessage && (
-          <p style={{ color: LoveLetterColors.RED }}>
-            {this.state.roomFullMessage}
-          </p>
+    return (
+      <div className="loveLetterContainer">
+        {this.state.usernameList.length === 0 ? (
+          <div className="usernameInput">
+            <input
+              className="input"
+              value={this.state.username}
+              placeholder="Enter your name"
+              onChange={this.onUsernameChange.bind(this)}
+              onKeyPress={this.onUsernameKeyPress.bind(this)}
+            />
+            {this.state.roomFullMessage && (
+              <p style={{ color: LoveLetterColors.RED }}>
+                {this.state.roomFullMessage}
+              </p>
+            )}
+          </div>
+        ) : (
+          <LoveLetterLobby
+            socket={socket}
+            usernameList={this.state.usernameList}
+            username={this.state.username}
+            reset={this.state.reset}
+            setReset={this.setReset.bind(this)}
+          />
         )}
       </div>
-    ) : (
-      <LoveLetterLobby
-        socket={socket}
-        usernameList={this.state.usernameList}
-        username={this.state.username}
-        reset={this.state.reset}
-        setReset={this.setReset.bind(this)}
-      />
     );
   }
 }
