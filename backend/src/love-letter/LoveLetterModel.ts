@@ -113,7 +113,7 @@ export class LoveLetterModel {
       selected === Card.KING
     ) {
       for (let p of this.players) {
-        if (p.username !== username) {
+        if (p.username !== username && p.status !== PlayerStatus.DEAD) {
           p.status = PlayerStatus.WATCHING;
         }
       }
@@ -139,7 +139,7 @@ export class LoveLetterModel {
       this.lastPlayed === Card.KING
     ) {
       for (let p of this.players) {
-        if (p.username !== username) {
+        if (p.username !== username && p.status !== PlayerStatus.DEAD) {
           p.status = PlayerStatus.WAITING;
         }
       }
