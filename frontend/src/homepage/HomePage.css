@@ -1,0 +1,17 @@
+.homePageContainer {
+  display: flex;
+  height: 100%;
+}
+
+.homepageLeft {
+  flex: 1;
+}
+
+.homepageCenter {
+  flex: 2;
+  text-align: center;
+}
+
+.homepageRight {
+  flex: 1;
+}

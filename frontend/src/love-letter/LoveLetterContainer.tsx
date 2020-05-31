@@ -4,6 +4,7 @@ import { LobbyEvent } from "../models/LoveLetterTypes";
 import { LoveLetterColors } from "../models/LoveLetterTypes";
 import "./LoveLetterContainer.css";
 import { LoveLetterLobby } from "./LoveLetterLobby";
+import { RouteComponentProps } from "react-router-dom";
 
 const socket: SocketService = new SocketService().init();
 
@@ -17,7 +18,7 @@ interface LoveLetterContainerState {
 }
 
 export class LoveLetterContainer extends React.Component<
-  {},
+  RouteComponentProps,
   LoveLetterContainerState
 > {
   constructor(props: any) {
@@ -92,6 +93,7 @@ export class LoveLetterContainer extends React.Component<
             username={this.state.username}
             reset={this.state.reset}
             setReset={this.setReset.bind(this)}
+            roomCode={this.props.match.params}
           />
         )}
       </div>

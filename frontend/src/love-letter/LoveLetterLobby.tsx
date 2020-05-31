@@ -13,7 +13,6 @@ import {
 import { LoveLetterGameState } from "./LoveLetterGameState";
 import { Card } from "./Card";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
-import { read } from "fs";
 
 interface LoveLetterLobbyProps {
   usernameList: string[];
@@ -21,6 +20,7 @@ interface LoveLetterLobbyProps {
   username: string;
   reset?: boolean;
   setReset: Function;
+  roomCode: any;
 }
 
 interface LoveLetterLobbyState {
@@ -238,6 +238,10 @@ export class LoveLetterLobby extends React.Component<
         {!this.state.gameStarted && !this.state.roundOver && (
           <Fragment>
             <div className="loveLetterLobby">
+              <hr color={LoveLetterColors.BACKGROUND_BLUE}></hr>
+              <b>Room Code: {this.props.roomCode.room_id}</b>
+              <hr color={LoveLetterColors.BACKGROUND_BLUE}></hr>
+              <br></br>
               {this.state.usernameList.map((name) => (
                 <Fragment>
                   <hr color={LoveLetterColors.WHITE}></hr>

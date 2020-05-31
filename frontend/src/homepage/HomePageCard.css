@@ -1,0 +1,36 @@
+.button {
+  display: inline-block;
+  margin-top: 50px;
+  height: 150px;
+  width: 80%;
+  border-radius: 10px;
+}
+
+.buttonContents {
+  display: flex;
+  font-weight: bold;
+}
+
+.buttonLabel {
+  flex: 2;
+  font-size: 48px;
+  line-height: 150px;
+}
+
+.buttonOptions {
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+}
+
+.buttonOption {
+  flex: 1;
+  margin: 10px;
+  font-size: 30px;
+  line-height: 55px;
+  border-radius: 8px;
+}
+
+.buttonOption:hover {
+  cursor: pointer;
+}
