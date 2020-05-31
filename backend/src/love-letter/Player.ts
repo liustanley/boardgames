@@ -167,7 +167,7 @@ export class Player {
 
       case Card.PRINCE:
         this.visibleCards = [this.card];
-        target.visibleCards = [target.card];
+        target.visibleCards = target.card ? [target.card] : [];
         return this.username + " played the Prince on " + target.username;
 
       case Card.KING:

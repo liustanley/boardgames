@@ -337,7 +337,7 @@ export class LoveLetterModel {
 
   /**
    * Determines if this love letter round has ended.
-   * A love letter round ends when there are no cards left in the deck or when only one player remains.
+   * A love letter round ends when there is one card left in the deck or when only one player remains.
    */
   public roundOver(): boolean {
     let numAlive: number = 0;
@@ -351,7 +351,7 @@ export class LoveLetterModel {
       }
     }
 
-    if (this.deck.length === 0 || numAlive === 1) {
+    if (this.deck.length <= 1 || numAlive === 1) {
       winner.tokens++;
       this.message = winner.username + "'s love letter reached the princess.";
       return true;
