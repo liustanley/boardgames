@@ -5,6 +5,7 @@ import { LoveLetterColors } from "../models/LoveLetterTypes";
 import "./LoveLetterContainer.css";
 import { LoveLetterLobby } from "./LoveLetterLobby";
 import { RouteComponentProps } from "react-router-dom";
+import { UsernameInput } from "../homepage/UsernameInput";
 
 const socket: SocketService = new SocketService().init();
 
@@ -54,14 +55,9 @@ export class LoveLetterContainer extends React.Component<
     }
   }
 
-  onUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ username: e.target.value });
-  }
-
-  onUsernameKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      socket.registerPlayer({ username: this.state.username });
-    }
+  onEnter(username: string) {
+    this.setState({ username });
+    socket.registerPlayer({ username });
   }
 
   setReset() {
@@ -73,13 +69,7 @@ export class LoveLetterContainer extends React.Component<
       <div className="loveLetterContainer">
         {this.state.usernameList.length === 0 ? (
           <div className="usernameInput">
-            <input
-              className="input"
-              value={this.state.username}
-              placeholder="Enter your name"
-              onChange={this.onUsernameChange.bind(this)}
-              onKeyPress={this.onUsernameKeyPress.bind(this)}
-            />
+            <UsernameInput onEnter={this.onEnter.bind(this)} />
             {this.state.roomFullMessage && (
               <p style={{ color: LoveLetterColors.RED }}>
                 {this.state.roomFullMessage}

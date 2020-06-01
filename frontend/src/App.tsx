@@ -18,7 +18,16 @@ export class App extends React.Component<{}, {}> {
               path={`/${Games.LOVE_LETTER}/:room_id`}
               component={LoveLetterContainer}
             />
-            <Route exact path={`/:gameType`} component={JoinGameContainer} />
+            <Route
+              exact
+              path={`/:gameType`}
+              render={(props) => (
+                <JoinGameContainer
+                  {...props}
+                  gameType={props.match.params.gameType}
+                />
+              )}
+            />
           </Switch>
         </Router>
       </Fragment>

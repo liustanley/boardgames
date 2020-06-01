@@ -6,8 +6,12 @@ interface JoinGameState {
   code: string;
 }
 
+interface JoinGameProps extends RouteComponentProps {
+  gameType: string;
+}
+
 export class JoinGameContainer extends React.Component<
-  RouteComponentProps,
+  JoinGameProps,
   JoinGameState
 > {
   constructor(props: any) {
@@ -23,8 +27,7 @@ export class JoinGameContainer extends React.Component<
 
   onRoomCodeKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
-      let temp: any = this.props.match.params;
-      this.props.history.push(`/${temp.gameType}/${this.state.code}`);
+      this.props.history.push(`/${this.props.gameType}/${this.state.code}`);
     }
   }
 
