@@ -8,6 +8,7 @@ interface LoveLetterCardContainerProps {
   onSelectCard?: Function;
   selected?: boolean;
   clearSelected?: Function;
+  selectable?: boolean;
 }
 
 interface LoveLetterCardContainerState {
@@ -137,6 +138,7 @@ export class LoveLetterCardContainer extends React.Component<
         onMouseLeave={this.onMouseLeave.bind(this)}
         selected={this.props.selected}
         numberToColorDark={this.numberToColorDark.bind(this)}
+        selectable={this.props.selectable}
       />
     );
   }

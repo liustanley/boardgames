@@ -7,6 +7,10 @@
   border: 8px solid #4c566a;
 }
 
+.selectableCard.loveLetterCard {
+  cursor: pointer;
+}
+
 .loveLetterCardTop {
   flex: 4;
   font-size: 36px;

@@ -11,13 +11,16 @@ interface LoveLetterCardComponentProps {
   onMouseEnter: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onMouseLeave: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   numberToColorDark: Function;
+  selectable?: boolean;
 }
 
 function LoveLetterCardComponent(props: LoveLetterCardComponentProps) {
   return (
     <Fragment>
       <div
-        className="loveLetterCard"
+        className={
+          "loveLetterCard" + (props.selectable ? " selectableCard" : "")
+        }
         style={{ background: props.numberToColor(props.card) }}
         onMouseEnter={props.onMouseEnter}
         onMouseLeave={props.onMouseLeave}

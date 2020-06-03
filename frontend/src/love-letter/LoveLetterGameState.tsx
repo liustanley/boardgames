@@ -325,6 +325,7 @@ export class LoveLetterGameState extends React.Component<
                   onSelectCard={this.onSelectCard.bind(this)}
                   selected={this.state.leftSelected}
                   clearSelected={this.clearRightCard.bind(this)}
+                  selectable
                 />
               </div>
               <div className="card">
@@ -333,6 +334,7 @@ export class LoveLetterGameState extends React.Component<
                   onSelectCard={this.onSelectCard.bind(this)}
                   selected={this.state.rightSelected}
                   clearSelected={this.clearLeftCard.bind(this)}
+                  selectable
                 />
               </div>
             </div>
@@ -374,6 +376,7 @@ export class LoveLetterGameState extends React.Component<
                                 : this.state.nameHovered === index
                                 ? LoveLetterColors.BACKGROUND_DARK
                                 : LoveLetterColors.BACKGROUND_LIGHT,
+                            cursor: "pointer",
                           }}
                           onMouseEnter={(event) => this.onNameEnter(index)}
                           onMouseLeave={(event) => this.onNameLeave(index)}
@@ -428,6 +431,7 @@ export class LoveLetterGameState extends React.Component<
                                 : this.state.nameHovered === index
                                 ? LoveLetterColors.BACKGROUND_DARK
                                 : LoveLetterColors.BACKGROUND_LIGHT,
+                            cursor: "pointer",
                           }}
                           onMouseEnter={(event) => this.onNameEnter(index)}
                           onMouseLeave={(event) => this.onNameLeave(index)}
@@ -475,6 +479,7 @@ export class LoveLetterGameState extends React.Component<
                                 : this.state.cardNameHovered === index
                                 ? LoveLetterColors.BACKGROUND_DARK
                                 : LoveLetterColors.BACKGROUND_LIGHT,
+                            cursor: "pointer",
                           }}
                           onMouseEnter={(event) => this.onCardNameEnter(index)}
                           onMouseLeave={(event) => this.onCardNameLeave(index)}
