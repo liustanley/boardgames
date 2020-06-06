@@ -19,6 +19,7 @@ export class ExpressServer {
     this._app.options("*", cors());
     this.server = createServer(this._app);
     this.listen();
+    this._app.get("/knockknock", (req, res) => res.send("Who's there?"));
   }
 
   /**
