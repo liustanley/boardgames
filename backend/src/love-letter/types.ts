@@ -87,6 +87,7 @@ export enum ReadyStatus {
 
 export interface GameState {
   message: string;
+  turnMessage?: string;
   visibleCards: Card[];
   discardCards: Card[];
   visiblePlayers?: Player[];

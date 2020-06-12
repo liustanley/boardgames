@@ -204,10 +204,23 @@ export class LoveLetterGameState extends React.Component<
               ))}
           </div>
           <hr color={LoveLetterColors.WHITE}></hr>
-          <div className="gameMessage">
-            <b>{this.props.gameState.message}</b>
-          </div>
-          <hr color={LoveLetterColors.WHITE}></hr>
+          {this.props.gameState.message !== "" && (
+            <Fragment>
+              <div className="gameMessage">
+                <b>{this.props.gameState.message}</b>
+              </div>
+              <hr color={LoveLetterColors.WHITE}></hr>
+            </Fragment>
+          )}
+          {this.props.gameState.turnMessage && (
+            <Fragment>
+              <div className="gameMessage">
+                <b>{this.props.gameState.turnMessage}</b>
+              </div>
+              <hr color={LoveLetterColors.WHITE}></hr>
+            </Fragment>
+          )}
+
           {!this.state.hasSelectablePlayers &&
             (this.props.gameState.status === PlayerStatus.SELECTING_PLAYER ||
               this.props.gameState.status === PlayerStatus.GUESSING_CARD ||

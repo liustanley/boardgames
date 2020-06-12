@@ -231,7 +231,9 @@ export class LoveLetterModel {
   public gameState(): GameState[] {
     let result: GameState[] = [];
 
-    for (let p of this.players) {
+    for (let i = 0; i < this.players.length; i++) {
+      let p: Player = this.players[i];
+
       let gs: GameState = {
         message: this.message,
         visibleCards: p.visibleCards,
@@ -244,6 +246,12 @@ export class LoveLetterModel {
         p.status === PlayerStatus.SELECTING_PLAYER
       ) {
         gs.visiblePlayers = this.players;
+      }
+
+      let turnMessage: string =
+        "It's " + this.players[this.turn].username + "'s turn";
+      if (i !== this.turn) {
+        gs.turnMessage = turnMessage;
       }
 
       result.push(gs);

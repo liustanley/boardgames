@@ -54,6 +54,7 @@ export interface ConfirmEvent {
 // Sent by back-end
 export interface GameStateEvent {
   message: string;
+  turnMessage?: string;
   visibleCards: Card[];
   discardCards: Card[];
   visiblePlayers?: Player[];
