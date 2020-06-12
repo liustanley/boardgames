@@ -29,7 +29,10 @@ function LoveLetterCardComponent(props: LoveLetterCardComponentProps) {
         }
       >
         <div className="loveLetterCardTop">
-          <div className="loveLetterCardName">
+          <div
+            className="loveLetterCardName"
+            style={{ background: props.numberToColorDark(props.card) }}
+          >
             <b>{props.card.toString()}</b>
           </div>
         </div>
@@ -37,11 +40,11 @@ function LoveLetterCardComponent(props: LoveLetterCardComponentProps) {
           className="loveLetterCardDescription"
           style={{ background: props.numberToColorDark(props.card) }}
         >
-          <p>
+          <div className="loveLetterCardValue">{props.card.value}</div>
+          <div>
             <b>{props.card.description}</b>
-          </p>
+          </div>
         </div>
-        <div className="loveLetterCardBottom"></div>
       </div>
       <br></br>
       {props.selected && (
