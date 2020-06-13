@@ -27,16 +27,16 @@ export class LoveLetterContainer extends React.Component<
   constructor(props: any) {
     super(props);
     this.state = {
-      // usernameEntered: false,
-      usernameEntered: true,
+      usernameEntered: false,
+      // usernameEntered: true,
       // TODO:
-      // username: "",
-      username: "Dillon",
+      username: "",
+      // username: "Dillon",
       input: "",
       roomFullMessage: "",
       // TODO:
-      // usernameList: [],
-      usernameList: ["Stanley", "Alex", "Annette", "Christina"],
+      usernameList: [],
+      // usernameList: ["Stanley", "Alex", "Annette", "Christina"],
       reset: false,
     };
   }

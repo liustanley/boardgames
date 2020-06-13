@@ -1,6 +1,5 @@
 import * as express from "express";
 import { createServer, Server } from "http";
-import { SocketType } from "../types/constants";
 import { LoveLetterController } from "../love-letter/LoveLetterController";
 import { ChatServer } from "../chat/ChatServer";
 import { SocketController } from "./SocketController";

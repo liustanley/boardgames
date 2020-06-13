@@ -6,8 +6,9 @@ import {
   ChatMessage,
   Games,
 } from "../types/types";
-import { ChatEvent } from "../types/constants";
-import { LoveLetterController } from "../love-letter/LoveLetterController";
+import { SocketEvent } from "../types/constants";
+import { RegisterPlayerPayload as LL_RegisterPlayerPayload } from "../love-letter/types";
+import { LoveLetterManager } from "../love-letter/LoveLetterManager";
 
 export class SocketController {
   private io: SocketIO.Server;
@@ -16,7 +17,7 @@ export class SocketController {
   private rooms: string[];
   private socketToRoom: Map<string, string>;
   private socketToGame: Map<string, Games>;
-  // private loveLetterManager: LoveLetterManager;
+  private loveLetterManager: LoveLetterManager;
 
   constructor(server: Server, port: string | number) {
     this.port = port;
@@ -24,8 +25,8 @@ export class SocketController {
     this.rooms = [];
     this.socketToRoom = new Map<string, string>();
     this.socketToGame = new Map<string, Games>();
-    // this.loveLetterManager = new LoveLetterManager();
     this.initSocket(server);
+    this.loveLetterManager = new LoveLetterManager(this.io);
     this.listen();
   }
 
@@ -59,13 +60,24 @@ export class SocketController {
   ) {
     try {
       let code: string;
+
       do {
         code = this.makeid(1);
         console.log("Trying code: " + code);
       } while (this.rooms.includes(code));
+
       this.rooms.push(code);
       this.socketToRoom.set(socket.id, code);
       this.socketToGame.set(socket.id, payload.gameType);
+
+      switch (payload.gameType) {
+        case Games.LOVE_LETTER:
+          this.loveLetterManager.createGame(code);
+          break;
+        case Games.CODENAMES:
+          // TODO
+          break;
+      }
 
       // Leave all other games before joining
       Object.keys(socket.rooms).forEach((roomId) => {
@@ -117,36 +129,47 @@ export class SocketController {
 
   private onChatMessage(payload: ChatMessage, socket: SocketIO.Socket) {
     const room = this.socketToRoom.get(socket.id);
-    this.io.to(room).emit(ChatEvent.MESSAGE, payload);
+    this.io.to(room).emit(SocketEvent.MESSAGE, payload);
   }
 
   /**
    * Opens up communication to our server and Socket.io events.
    */
   private listen(): void {
-    this.io.on("connect", (socket: socketIo.Socket) => {
+    this.io.on(SocketEvent.CONNECT, (socket: socketIo.Socket) => {
       console.log("Connected client on port %s.", this.port);
       this.sockets.push(socket.id);
 
       socket.on(
-        "createGame",
+        SocketEvent.CREATE_GAME,
         (payload: CreateGameEvent, callback: Function) => {
           this.onCreateGame(payload, socket, callback);
         }
       );
 
-      socket.on("joinGame", (payload: JoinGameEvent, callback: Function) => {
-        this.onJoinGame(payload, socket, callback);
-      });
+      socket.on(
+        SocketEvent.JOIN_GAME,
+        (payload: JoinGameEvent, callback: Function) => {
+          this.onJoinGame(payload, socket, callback);
+        }
+      );
 
-      socket.on(ChatEvent.MESSAGE, (payload: ChatMessage) => {
+      socket.on(SocketEvent.MESSAGE, (payload: ChatMessage) => {
         this.onChatMessage(payload, socket);
       });
 
-      socket.on("disconnect", () => {
+      socket.on(SocketEvent.DISCONNECT, () => {
         this.onDisconnect(socket.id);
         console.log("client disconnected");
       });
+
+      socket.on(
+        SocketEvent.LL_REGISTER_PLAYER,
+        (payload: LL_RegisterPlayerPayload) => {
+          const room = this.socketToRoom.get(socket.id);
+          this.loveLetterManager.registerPlayer(room, socket.id, payload);
+        }
+      );
     });
   }
 }

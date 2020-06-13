@@ -12,7 +12,11 @@ import {
   GameOverEvent,
   HighlightEvent,
 } from "../models/LoveLetterTypes";
-import { CreateGameEvent, JoinGameEvent } from "../models/GameTypes";
+import {
+  CreateGameEvent,
+  JoinGameEvent,
+  SocketEvent,
+} from "../models/GameTypes";
 
 /**
  * Represents a service object that manages socket connection to the server.
@@ -32,21 +36,23 @@ export class SocketService {
 
   createGame(payload: CreateGameEvent, callback: Function) {
     console.log("creating game - " + payload.gameType);
-    this.socket.emit("createGame", payload, callback);
+    this.socket.emit(SocketEvent.CREATE_GAME, payload, callback);
   }
 
   joinGame(payload: JoinGameEvent, callback: Function) {
     console.log("joining game - " + payload.gameType + " - " + payload.roomId);
-    this.socket.emit("joinGame", payload, callback);
+    this.socket.emit(SocketEvent.JOIN_GAME, payload, callback);
   }
 
   registerPlayer(payload: RegisterPlayerEvent) {
     console.log("registering player: " + payload.username);
-    this.socket.emit("registerPlayer", payload);
+    this.socket.emit(SocketEvent.LL_REGISTER_PLAYER, payload);
   }
 
   subscribeToLobby(callback: (result: LobbyEvent) => void) {
-    this.socket.on("lobby", (result: LobbyEvent) => callback(result));
+    this.socket.on(SocketEvent.LL_LOBBY, (result: LobbyEvent) =>
+      callback(result)
+    );
   }
 
   readyPlayer(payload: ReadyPlayerEvent) {

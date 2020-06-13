@@ -1,6 +1,5 @@
 import * as socketIo from "socket.io";
 import { CARDS } from "./constants";
-import { ChatEvent } from "../types/constants";
 import { ChatMessage } from "../types/types";
 import { Server } from "http";
 import { LoveLetterModel } from "./LoveLetterModel";
@@ -10,39 +9,28 @@ import { DECK } from "./constants";
 import {
   ConfirmEvent,
   GameState,
-  LobbyEvent,
-  PlayCardEvent,
-  ReadyPlayerEvent,
-  RegisterPlayerEvent,
-  RoundOverEvent,
-  SelectCardEvent,
+  LobbyPayload,
+  PlayCardPayload,
+  ReadyPlayerPayload,
+  RegisterPlayerPayload,
+  RoundOverPayload,
+  SelectCardPayload,
   ReadyStatus,
-  GameOverEvent,
-  HighlightEvent,
+  GameOverPayload,
+  HighlightPayload,
 } from "./types";
+import { SocketEvent } from "../types/constants";
 
 export class LoveLetterController {
   private io: SocketIO.Server;
   private port: string | number;
+  private room: string;
   private model: LoveLetterModel;
 
-  // constructor(server: Server, port: string | number) {
-  //   this.port = port;
-  //   this.model = new LoveLetterModel(DECK);
-  //   this.initSocket(server);
-  //   this.listen();
-  // }
-
-  constructor(server: SocketIO.Server) {
+  constructor(server: SocketIO.Server, room: string) {
     this.io = server;
+    this.room = room;
     this.model = new LoveLetterModel(DECK);
-  }
-
-  /**
-   * Initializes socketIO instance.
-   */
-  private initSocket(server: Server): void {
-    this.io = socketIo(server);
   }
 
   /**
@@ -60,7 +48,7 @@ export class LoveLetterController {
     console.log("Room: " + room);
 
     // Emits the ChatMessage to all connected clients via a MESSAGE event.
-    this.io.to(room).emit(ChatEvent.MESSAGE, m);
+    this.io.to(room).emit(SocketEvent.MESSAGE, m);
   };
 
   /**
@@ -68,14 +56,14 @@ export class LoveLetterController {
    * @param socketId  the socketId of the client registering a player
    * @param res       the response object, containing the client username
    */
-  private onRegisterPlayer = (socketId: string, res: RegisterPlayerEvent) => {
+  registerPlayer(socketId: string, payload: RegisterPlayerPayload) {
     if (this.model.getGameProgressState()) {
       this.io.to(socketId).emit("lobby", {
         success: false,
         usernameList: [],
       });
     } else {
-      let success: boolean = this.model.addPlayer(socketId, res.username);
+      let success: boolean = this.model.addPlayer(socketId, payload.username);
       let players: Player[] = this.model.getPlayers();
       let usernames: string[] = [];
       let socketIds: string[] = [];
@@ -84,21 +72,25 @@ export class LoveLetterController {
         socketIds.push(p.id);
       }
 
-      let lobby: LobbyEvent = {
+      let lobby: LobbyPayload = {
         success: success,
         usernameList: usernames,
       };
-      for (let id of socketIds) {
-        this.io.to(id).emit("lobby", lobby);
+
+      const sockets = Object.keys(
+        this.io.sockets.adapter.rooms[this.room].sockets
+      );
+      for (let id of sockets) {
+        this.io.to(id).emit(SocketEvent.LL_LOBBY, lobby);
       }
     }
-  };
+  }
 
   /**
    * Listener for readyPlayer events, also responsible for starting the game and sending first game state.
    * Also responsible for restarting rounds/games.
    */
-  private onReadyPlayer = (res: ReadyPlayerEvent) => {
+  private onReadyPlayer = (res: ReadyPlayerPayload) => {
     this.model.incrementNumReady();
     let players: Player[] = this.model.getPlayers();
 
@@ -131,7 +123,10 @@ export class LoveLetterController {
    */
   private sendDeathMessage(deathMessage: string) {
     if (deathMessage !== "") {
-      this.io.emit(ChatEvent.MESSAGE, { author: "God", message: deathMessage });
+      this.io.emit(SocketEvent.MESSAGE, {
+        author: "God",
+        message: deathMessage,
+      });
     }
   }
 
@@ -139,7 +134,7 @@ export class LoveLetterController {
    * Listener for selectCard events, alters the model accordingly.
    * @param res the response object of type SelectCardEvent
    */
-  private onSelectCard = (res: SelectCardEvent) => {
+  private onSelectCard = (res: SelectCardPayload) => {
     let selected: Card = Card.correct(res.card);
     this.model.selectCard(res.username, selected);
 
@@ -194,7 +189,7 @@ export class LoveLetterController {
    * Listener for playCard events, alters the model accordingly.
    * @param res the response object of type PlayCardEvent
    */
-  private onPlayCard = (res: PlayCardEvent) => {
+  private onPlayCard = (res: PlayCardPayload) => {
     let guess: Card | undefined = res.guess
       ? Card.correct(res.guess)
       : undefined;
@@ -272,7 +267,7 @@ export class LoveLetterController {
     let players: Player[] = this.model.getPlayers();
     let message: string = this.model.getMessage();
 
-    let roundOver: RoundOverEvent = {
+    let roundOver: RoundOverPayload = {
       players: players,
       message: message,
     };
@@ -289,7 +284,7 @@ export class LoveLetterController {
     let players: Player[] = this.model.getPlayers();
     let message: string = this.model.getMessage();
 
-    let gameOver: GameOverEvent = {
+    let gameOver: GameOverPayload = {
       players: players,
       message: message,
     };
@@ -309,7 +304,7 @@ export class LoveLetterController {
       (player) => player.id === socketId
     );
     if (disconnected) {
-      this.io.emit(ChatEvent.MESSAGE, {
+      this.io.emit(SocketEvent.MESSAGE, {
         author: disconnected.username,
         message: "has left the game.",
       });
@@ -325,7 +320,7 @@ export class LoveLetterController {
         socketIds.push(p.id);
       }
 
-      let lobby: LobbyEvent = {
+      let lobby: LobbyPayload = {
         success: true,
         usernameList: usernames,
         reset: true,
@@ -343,7 +338,7 @@ export class LoveLetterController {
    * @param scoketId the socket id of this player
    * @param res the response object
    */
-  private onHighlight(socketId: string, res: HighlightEvent): void {
+  private onHighlight(socketId: string, res: HighlightPayload): void {
     let players: Player[] = this.model.getPlayers();
     let gameState: GameState[] = this.model.gameState();
 
@@ -367,32 +362,30 @@ export class LoveLetterController {
    * Opens up communication to our server and Socket.io events.
    */
   private listen(): void {
-    this.io.on(ChatEvent.CONNECT, (socket: socketIo.Socket) => {
+    this.io.on(SocketEvent.CONNECT, (socket: socketIo.Socket) => {
       console.log("Connected client on port %s.", this.port);
 
-      socket.on("registerPlayer", (res: RegisterPlayerEvent) =>
-        this.onRegisterPlayer(socket.id, res)
-      );
-
-      socket.on("readyPlayer", (res: ReadyPlayerEvent) =>
+      socket.on("readyPlayer", (res: ReadyPlayerPayload) =>
         this.onReadyPlayer(res)
       );
 
-      socket.on("selectCard", (res: SelectCardEvent) => this.onSelectCard(res));
+      socket.on("selectCard", (res: SelectCardPayload) =>
+        this.onSelectCard(res)
+      );
 
-      socket.on("playCard", (res: PlayCardEvent) => this.onPlayCard(res));
+      socket.on("playCard", (res: PlayCardPayload) => this.onPlayCard(res));
 
       socket.on("confirmEvent", (res: ConfirmEvent) => this.onConfirm(res));
 
-      socket.on("highlight", (res: HighlightEvent) =>
+      socket.on("highlight", (res: HighlightPayload) =>
         this.onHighlight(socket.id, res)
       );
 
-      socket.on(ChatEvent.MESSAGE, (res: ChatMessage) =>
+      socket.on(SocketEvent.MESSAGE, (res: ChatMessage) =>
         this.onMessage(res, socket)
       );
 
-      socket.on(ChatEvent.DISCONNECT, () => {
+      socket.on(SocketEvent.DISCONNECT, () => {
         this.onDisconnectPlayer(socket.id);
       });
     });
