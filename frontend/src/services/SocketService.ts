@@ -12,6 +12,7 @@ import {
   GameOverEvent,
   HighlightEvent,
 } from "../models/LoveLetterTypes";
+import { CreateGameEvent, JoinGameEvent } from "../models/GameTypes";
 
 /**
  * Represents a service object that manages socket connection to the server.
@@ -24,8 +25,19 @@ export class SocketService {
    */
   public init(): SocketService {
     console.log("initiating socket service");
+    // this.socket = io("https://tranquil-river-48506.herokuapp.com");
     this.socket = io("localhost:8080");
     return this;
+  }
+
+  createGame(payload: CreateGameEvent, callback: Function) {
+    console.log("creating game - " + payload.gameType);
+    this.socket.emit("createGame", payload, callback);
+  }
+
+  joinGame(payload: JoinGameEvent, callback: Function) {
+    console.log("joining game - " + payload.gameType + " - " + payload.roomId);
+    this.socket.emit("joinGame", payload, callback);
   }
 
   registerPlayer(payload: RegisterPlayerEvent) {

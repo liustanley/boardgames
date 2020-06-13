@@ -372,6 +372,7 @@ export class LoveLetterLobby extends React.Component<
           <ChatContainer
             socket={this.props.socket}
             username={this.props.username}
+            size="big"
           />
         </div>
       </Fragment>

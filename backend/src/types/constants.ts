@@ -2,6 +2,7 @@
  * Represents a type of socket connection defined in our context.
  */
 export enum SocketType {
+  HOMEPAGE = "homepage",
   CHAT = "chat",
   LOVE_LETTER = "love_letter",
 }

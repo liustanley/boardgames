@@ -7,7 +7,9 @@ import { LoveLetterLobby } from "./LoveLetterLobby";
 import { RouteComponentProps } from "react-router-dom";
 import { UsernameInput } from "../homepage/UsernameInput";
 
-const socket: SocketService = new SocketService().init();
+interface LoveLetterContainerProps extends RouteComponentProps {
+  socket: SocketService;
+}
 
 interface LoveLetterContainerState {
   usernameEntered: boolean;
@@ -19,27 +21,28 @@ interface LoveLetterContainerState {
 }
 
 export class LoveLetterContainer extends React.Component<
-  RouteComponentProps,
+  LoveLetterContainerProps,
   LoveLetterContainerState
 > {
   constructor(props: any) {
     super(props);
     this.state = {
-      usernameEntered: false,
+      // usernameEntered: false,
+      usernameEntered: true,
       // TODO:
-      username: "",
-      // username: "Dillon",
+      // username: "",
+      username: "Dillon",
       input: "",
       roomFullMessage: "",
       // TODO:
-      usernameList: [],
-      // usernameList: ["Stanley", "Alex", "Annette", "Christina"],
+      // usernameList: [],
+      usernameList: ["Stanley", "Alex", "Annette", "Christina"],
       reset: false,
     };
   }
 
   componentDidMount() {
-    socket.subscribeToLobby(this.onLobby.bind(this));
+    this.props.socket.subscribeToLobby(this.onLobby.bind(this));
   }
 
   onLobby(payload: LobbyEvent) {
@@ -57,7 +60,7 @@ export class LoveLetterContainer extends React.Component<
 
   onEnter(username: string) {
     this.setState({ username });
-    socket.registerPlayer({ username });
+    this.props.socket.registerPlayer({ username });
   }
 
   setReset() {
@@ -78,7 +81,7 @@ export class LoveLetterContainer extends React.Component<
           </div>
         ) : (
           <LoveLetterLobby
-            socket={socket}
+            socket={this.props.socket}
             usernameList={this.state.usernameList}
             username={this.state.username}
             reset={this.state.reset}

@@ -8,6 +8,7 @@ import "./ChatContainer.css";
 interface ChatContainerProps {
   socket: SocketService;
   username: string;
+  size: "big" | "small";
 }
 
 export class ChatContainer extends React.Component<
@@ -111,6 +112,7 @@ export class ChatContainer extends React.Component<
         messageOnKeyPress={this.onKeyPress.bind(this)}
         userToColor={this.userToColor.bind(this)}
         chatRef={this.chatRef}
+        size={this.props.size}
       />
     );
   }

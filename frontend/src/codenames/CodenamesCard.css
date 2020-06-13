@@ -1,0 +1,8 @@
+.codenamesCardContainer {
+  display: inline-block;
+  width: 120px;
+  height: 100px;
+  margin: 4px;
+  font-size: 24px;
+  line-height: 100px;
+}

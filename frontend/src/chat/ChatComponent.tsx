@@ -4,7 +4,14 @@ import "./ChatComponent.css";
 
 function ChatComponent(props: any) {
   return (
-    <div className="chatComponent">
+    <div
+      className="chatComponent"
+      style={{
+        fontSize: props.size === "big" ? 24 : 20,
+        padding: props.size === "big" ? 50 : 20,
+        lineHeight: props.size === "big" ? "48px" : "30px",
+      }}
+    >
       <div className="chatMessages" ref={props.chatRef}>
         {props.messages.map((msg: ChatMessageEvent, index: number) => (
           <div key={index}>

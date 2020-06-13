@@ -26,11 +26,16 @@ export class LoveLetterController {
   private port: string | number;
   private model: LoveLetterModel;
 
-  constructor(server: Server, port: string | number) {
-    this.port = port;
+  // constructor(server: Server, port: string | number) {
+  //   this.port = port;
+  //   this.model = new LoveLetterModel(DECK);
+  //   this.initSocket(server);
+  //   this.listen();
+  // }
+
+  constructor(server: SocketIO.Server) {
+    this.io = server;
     this.model = new LoveLetterModel(DECK);
-    this.initSocket(server);
-    this.listen();
   }
 
   /**
@@ -44,11 +49,18 @@ export class LoveLetterController {
    * Listener for message events. Emits the given message to all connected clients via a message event.
    * @param m the given Chat Message to be emitted
    */
-  private onMessage = (m: ChatMessage): void => {
+  public onMessage = (m: ChatMessage, socket: socketIo.Socket): void => {
     console.log("[server](message): %s", JSON.stringify(m));
+    let room: string;
+    Object.keys(socket.rooms).forEach((roomId) => {
+      if (roomId !== socket.id) {
+        room = roomId;
+      }
+    });
+    console.log("Room: " + room);
 
     // Emits the ChatMessage to all connected clients via a MESSAGE event.
-    this.io.emit(ChatEvent.MESSAGE, m);
+    this.io.to(room).emit(ChatEvent.MESSAGE, m);
   };
 
   /**
@@ -376,7 +388,9 @@ export class LoveLetterController {
         this.onHighlight(socket.id, res)
       );
 
-      socket.on(ChatEvent.MESSAGE, this.onMessage);
+      socket.on(ChatEvent.MESSAGE, (res: ChatMessage) =>
+        this.onMessage(res, socket)
+      );
 
       socket.on(ChatEvent.DISCONNECT, () => {
         this.onDisconnectPlayer(socket.id);

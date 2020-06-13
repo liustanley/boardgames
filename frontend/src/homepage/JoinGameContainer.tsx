@@ -1,13 +1,16 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import "./JoinGameContainer.css";
+import { SocketService } from "../services/SocketService";
+import { Games } from "../models/GameTypes";
 
 interface JoinGameState {
   code: string;
 }
 
 interface JoinGameProps extends RouteComponentProps {
-  gameType: string;
+  socket: SocketService;
+  gameType: Games;
 }
 
 export class JoinGameContainer extends React.Component<
@@ -22,12 +25,26 @@ export class JoinGameContainer extends React.Component<
   }
 
   onRoomCodeChange(e: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ code: e.target.value });
+    this.setState({ code: e.target.value.toUpperCase() });
   }
 
   onRoomCodeKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
-      this.props.history.push(`/${this.props.gameType}/${this.state.code}`);
+      this.props.socket.joinGame(
+        {
+          gameType: this.props.gameType,
+          roomId: this.state.code,
+        },
+        (success: boolean) => {
+          if (success) {
+            this.props.history.push(
+              `/${this.props.gameType}/${this.state.code}`
+            );
+          } else {
+            // TODO error msg
+          }
+        }
+      );
     }
   }
 

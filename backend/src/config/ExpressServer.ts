@@ -3,6 +3,7 @@ import { createServer, Server } from "http";
 import { SocketType } from "../types/constants";
 import { LoveLetterController } from "../love-letter/LoveLetterController";
 import { ChatServer } from "../chat/ChatServer";
+import { HomePageController } from "./HomePageController";
 
 var cors = require("cors");
 
@@ -44,16 +45,23 @@ export class ExpressServer {
    */
   public addSocket(socketType: SocketType): ExpressServer {
     switch (socketType) {
-      case SocketType.CHAT:
-        const chatServer: ChatServer = new ChatServer(this.server, this.port);
-        return this;
-
-      case SocketType.LOVE_LETTER:
-        const loveLetter: LoveLetterController = new LoveLetterController(
+      case SocketType.HOMEPAGE:
+        const homepage: HomePageController = new HomePageController(
           this.server,
           this.port
         );
         return this;
+
+      case SocketType.CHAT:
+        const chatServer: ChatServer = new ChatServer(this.server, this.port);
+        return this;
+
+      // case SocketType.LOVE_LETTER:
+      //   const loveLetter: LoveLetterController = new LoveLetterController(
+      //     this.server,
+      //     this.port
+      //   );
+      //   return this;
     }
     return this;
   }
