@@ -1,7 +1,5 @@
 import * as socketIo from "socket.io";
-import { CARDS } from "./constants";
 import { ChatMessage } from "../types/types";
-import { Server } from "http";
 import { LoveLetterModel } from "./LoveLetterModel";
 import { Card } from "./Card";
 import { Player } from "./Player";
@@ -21,7 +19,7 @@ import {
 } from "./types";
 import { SocketEvent } from "../types/constants";
 
-export class LoveLetterController {
+export class LoveLetterGame {
   private io: SocketIO.Server;
   private port: string | number;
   private room: string;

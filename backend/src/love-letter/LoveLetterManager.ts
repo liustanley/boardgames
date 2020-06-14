@@ -5,19 +5,19 @@ import {
   PlayCardPayload,
   HighlightPayload,
 } from "./types";
-import { LoveLetterController } from "./LoveLetterController";
+import { LoveLetterGame } from "./LoveLetterGame";
 
 export class LoveLetterManager {
   private io: SocketIO.Server;
-  private codeToGame: Map<string, LoveLetterController>;
+  private codeToGame: Map<string, LoveLetterGame>;
 
   constructor(io: SocketIO.Server) {
     this.io = io;
-    this.codeToGame = new Map<string, LoveLetterController>();
+    this.codeToGame = new Map<string, LoveLetterGame>();
   }
 
   createGame(room: string) {
-    this.codeToGame.set(room, new LoveLetterController(this.io, room));
+    this.codeToGame.set(room, new LoveLetterGame(this.io, room));
   }
 
   registerPlayer(

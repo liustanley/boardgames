@@ -46,8 +46,7 @@ export class SocketController {
 
   private makeid(length: number) {
     var result = "";
-    // var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    var characters = "ABCD";
+    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     var charactersLength = characters.length;
 
     if (this.rooms.length === Math.pow(charactersLength, length)) {
@@ -69,7 +68,7 @@ export class SocketController {
       let code: string;
 
       do {
-        code = this.makeid(1);
+        code = this.makeid(4);
         console.log("Trying code: " + code);
       } while (this.rooms.includes(code));
 

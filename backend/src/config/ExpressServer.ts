@@ -1,6 +1,6 @@
 import * as express from "express";
 import { createServer, Server } from "http";
-import { LoveLetterController } from "../love-letter/LoveLetterController";
+import { LoveLetterGame } from "../love-letter/LoveLetterGame";
 import { ChatServer } from "../chat/ChatServer";
 import { SocketController } from "./SocketController";
 
