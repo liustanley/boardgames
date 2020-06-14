@@ -1,28 +1,20 @@
 import { Card } from "../love-letter/Card";
-
-/**
- * The message object to be used by Socket.io events.
- */
-// Sent by front-end and back-end
-export interface ChatMessageEvent {
-  author: string;
-  message: string;
-}
+import { ChatMessagePayload } from "./GameTypes";
 
 // Sent by front-end
-export interface RegisterPlayerEvent {
+export interface RegisterPlayerPayload {
   username: string;
 }
 
 // Sent by back-end
-export interface LobbyEvent {
+export interface LobbyPayload {
   success: boolean;
   usernameList: string[];
   reset?: boolean;
 }
 
 // Sent by front-end
-export interface ReadyPlayerEvent {
+export interface ReadyPlayerPayload {
   username: string;
   status: ReadyStatus;
 }
@@ -34,25 +26,25 @@ export enum ReadyStatus {
 }
 
 // Sent by front-end
-export interface SelectCardEvent {
+export interface SelectCardPayload {
   username: string;
   card: Card;
 }
 
 // Sent by front-end
-export interface PlayCardEvent {
+export interface PlayCardPayload {
   username: string;
   target?: string;
   guess?: Card;
 }
 
 // Sent by front-end after Baron/Priest play
-export interface ConfirmEvent {
+export interface ConfirmPayload {
   username: string;
 }
 
 // Sent by back-end
-export interface GameStateEvent {
+export interface GameStatePayload {
   message: string;
   turnMessage?: string;
   visibleCards: Card[];
@@ -65,20 +57,20 @@ export interface GameStateEvent {
 }
 
 // Sent by front-end
-export interface HighlightEvent {
+export interface HighlightPayload {
   username: string; // player doing the selecting
   player?: Player; // highlighted player
   card?: Card; // highlighted card
 }
 
 // Sent by back-end
-export interface RoundOverEvent {
+export interface RoundOverPayload {
   message: string;
   players: Player[];
 }
 
 // Sent by back-end
-export interface GameOverEvent {
+export interface GameOverPayload {
   message: string;
   players: Player[];
 }
@@ -114,7 +106,7 @@ export interface Player {
 export interface ChatState {
   username: string;
   input: string;
-  messages: ChatMessageEvent[];
+  messages: ChatMessagePayload[];
   userColors: Array<String>;
   userToColorMap: Map<String, String>;
 }

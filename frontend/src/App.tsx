@@ -42,7 +42,9 @@ export class App extends React.Component<{}, {}> {
             <Route
               exact
               path={`/${Games.CODENAMES}/:room_id`}
-              component={CodenamesContainer}
+              render={(props) => (
+                <CodenamesContainer {...props} socket={socket} />
+              )}
             />
           </Switch>
         </Router>

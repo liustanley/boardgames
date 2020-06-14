@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { GameStateEvent, PlayerStatus } from "../models/LoveLetterTypes";
+import { GameStatePayload, PlayerStatus } from "../models/LoveLetterTypes";
 import { SocketService } from "../services/SocketService";
 import { LoveLetterColors, cardGuessList } from "../models/LoveLetterTypes";
 import "./LoveLetterGameState.css";
@@ -10,7 +10,7 @@ import { Card } from "./Card";
 export interface LoveLetterGameStateProps {
   socket: SocketService;
   username: string;
-  gameState: GameStateEvent;
+  gameState: GameStatePayload;
 }
 
 export interface LoveLetterGameStateState {
@@ -87,7 +87,7 @@ export class LoveLetterGameState extends React.Component<
 
   onSendSelectedCard() {
     if (this.state.cardSelected) {
-      this.props.socket.selectCard({
+      this.props.socket.LOVE_LETTER.selectCard({
         username: this.props.username,
         card: this.state.cardSelected,
       });
@@ -111,7 +111,7 @@ export class LoveLetterGameState extends React.Component<
       payload.guess = cardGuessList[this.state.cardNameClicked];
     }
     payload.username = this.props.username;
-    this.props.socket.playCard(payload);
+    this.props.socket.LOVE_LETTER.playCard(payload);
     this.setState({
       actionCompleted: true,
       nameClicked: -1,
@@ -120,7 +120,7 @@ export class LoveLetterGameState extends React.Component<
   }
 
   onConfirm() {
-    this.props.socket.confirm({ username: this.props.username });
+    this.props.socket.LOVE_LETTER.confirm({ username: this.props.username });
     this.setState({ actionCompleted: true });
   }
 
@@ -134,7 +134,7 @@ export class LoveLetterGameState extends React.Component<
 
   onNameClick(index: number) {
     if (this.state.cardNameClicked > -1) {
-      this.props.socket.highlight({
+      this.props.socket.LOVE_LETTER.highlight({
         username: this.props.username,
         player:
           this.props.gameState.visiblePlayers &&
@@ -142,7 +142,7 @@ export class LoveLetterGameState extends React.Component<
         card: cardGuessList[this.state.cardNameClicked],
       });
     } else {
-      this.props.socket.highlight({
+      this.props.socket.LOVE_LETTER.highlight({
         username: this.props.username,
         player:
           this.props.gameState.visiblePlayers &&
@@ -162,7 +162,7 @@ export class LoveLetterGameState extends React.Component<
 
   onCardNameClick(index: number) {
     if (this.state.nameClicked > -1) {
-      this.props.socket.highlight({
+      this.props.socket.LOVE_LETTER.highlight({
         username: this.props.username,
         player:
           this.props.gameState.visiblePlayers &&
@@ -170,7 +170,7 @@ export class LoveLetterGameState extends React.Component<
         card: cardGuessList[index],
       });
     } else {
-      this.props.socket.highlight({
+      this.props.socket.LOVE_LETTER.highlight({
         username: this.props.username,
         card: cardGuessList[index],
       });

@@ -3,24 +3,29 @@ export enum Games {
   CODENAMES = "codenames",
 }
 
+export interface ChatMessagePayload {
+  author: string;
+  message: string;
+}
+
 // Sent by frontend
-export interface CreateGameEvent {
+export interface CreateGamePayload {
   gameType: Games;
 }
 
 // Sent by backend
-export interface CreateGameResponseEvent {
+export interface CreateGameResponsePayload {
   roomId: string;
 }
 
 // Sent by frontend
-export interface JoinGameEvent {
+export interface JoinGamePayload {
   gameType: Games;
   roomId: string;
 }
 
 // Sent by backend
-export interface JoinGameResponseEvent {
+export interface JoinGameResponsePayload {
   success: boolean;
 }
 

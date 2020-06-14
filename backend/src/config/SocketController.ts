@@ -187,7 +187,6 @@ export class SocketController {
       );
 
       socket.on(SocketEvent.LL_SELECT_CARD, (payload: LL_SelectCardPayload) => {
-        console.log("SELECT HEARD");
         const room = this.socketToRoom.get(socket.id);
         this.loveLetterManager.selectCard(room, socket.id, payload);
       });

@@ -1,7 +1,7 @@
 import React from "react";
 import { SocketService } from "../services/SocketService";
 import {
-  GameStateEvent,
+  GameStatePayload,
   CodenamesColors,
   Team,
   Player,
@@ -14,7 +14,7 @@ import { CodenamesBoard } from "./CodenamesBoard";
 interface CodenamesGameStateProps {
   socket: SocketService;
   username: string;
-  gameState: GameStateEvent;
+  gameState: GameStatePayload;
 }
 
 interface CodenamesGameStateState {

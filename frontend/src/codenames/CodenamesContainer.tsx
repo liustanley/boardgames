@@ -6,7 +6,9 @@ import { Player, Team } from "../models/CodenamesTypes";
 import "./CodenamesContainer.css";
 import { CodenamesTeamSelection } from "./CodenamesTeamSelection";
 
-const socket: SocketService = new SocketService().init();
+interface CodenamesContainerProps extends RouteComponentProps {
+  socket: SocketService;
+}
 
 interface CodenamesContainerState {
   username: string;
@@ -37,10 +39,10 @@ const annette: Player = {
 };
 
 export class CodenamesContainer extends React.Component<
-  RouteComponentProps,
+  CodenamesContainerProps,
   CodenamesContainerState
 > {
-  constructor(props: RouteComponentProps) {
+  constructor(props: CodenamesContainerProps) {
     super(props);
     this.state = {
       // username: "",
@@ -51,6 +53,9 @@ export class CodenamesContainer extends React.Component<
   }
 
   // ON LOBBY
+  componentDidMount() {
+    // this.props.socket;
+  }
 
   onEnter(username: string) {
     this.setState({ username });
@@ -66,7 +71,7 @@ export class CodenamesContainer extends React.Component<
           </div>
         ) : (
           <CodenamesTeamSelection
-            socket={socket}
+            socket={this.props.socket}
             username={this.state.username}
             playerList={this.state.playerList}
             roomCode={this.props.match.params}

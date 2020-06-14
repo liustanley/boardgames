@@ -1,6 +1,6 @@
 import React from "react";
-import { ChatMessageEvent } from "../models/LoveLetterTypes";
 import "./ChatComponent.css";
+import { ChatMessagePayload } from "../models/GameTypes";
 
 function ChatComponent(props: any) {
   return (
@@ -13,7 +13,7 @@ function ChatComponent(props: any) {
       }}
     >
       <div className="chatMessages" ref={props.chatRef}>
-        {props.messages.map((msg: ChatMessageEvent, index: number) => (
+        {props.messages.map((msg: ChatMessagePayload, index: number) => (
           <div key={index}>
             <p>
               <span style={{ color: props.userToColor(msg.author) }}>

@@ -24,14 +24,8 @@ export enum Team {
   NONE = "NONE",
 }
 
-// Sent by front-end and back-end
-export interface ChatMessageEvent {
-  author: string;
-  message: string;
-}
-
 // Sent by front-end
-export interface RegisterPlayerEvent {
+export interface RegisterPlayerPayload {
   username: string;
 }
 
@@ -43,30 +37,30 @@ export interface LobbyEvent {
 }
 
 // Sent by front-end
-export interface ChooseRoleEvent {
+export interface ChooseRolePayload {
   username: string;
   team: Team;
   spymaster: boolean;
 }
 
 // Sent by front-end
-export interface StartGameEvent {}
+export interface StartGamePayload {}
 
 // Sent by back-end
-export interface GameStateEvent {
+export interface GameStatePayload {
   playerList: Player[];
   cards: Card[];
   status: PlayerStatus;
 }
 
 // Sent by front-end
-export interface SelectCardEvent {
+export interface SelectCardPayload {
   team: Team;
   word: string;
 }
 
 // Sent by front-end
-export interface EndTurnEvent {
+export interface EndTurnPayload {
   team: Team;
 }
 

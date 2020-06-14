@@ -4,7 +4,7 @@ import {
   Player,
   CodenamesColors,
   Team,
-  GameStateEvent,
+  GameStatePayload,
   PlayerStatus,
   testCards,
 } from "../models/CodenamesTypes";
@@ -25,7 +25,7 @@ interface CodenamesTeamSelectionState {
   spymasterHovered: boolean;
   startHovered: boolean;
   gameStarted: boolean;
-  gameState: GameStateEvent | null;
+  gameState: GameStatePayload | null;
 }
 
 export class CodenamesTeamSelection extends React.Component<
