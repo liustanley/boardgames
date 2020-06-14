@@ -3,8 +3,8 @@ import {
   RegisterPlayerPayload as LL_RegisterPlayerPayload,
   LobbyPayload as LL_LobbyPayload,
   ReadyPlayerPayload,
-  GameStatePayload,
-  SelectCardPayload,
+  GameStatePayload as LL_GameStatePayload,
+  SelectCardPayload as LL_SelectCardPayload,
   ConfirmPayload,
   PlayCardPayload,
   RoundOverPayload,
@@ -20,6 +20,11 @@ import {
 import {
   LobbyPayload as CN_LobbyPayload,
   RegisterPlayerPayload as CN_RegisterPlayerPayload,
+  GameStatePayload as CN_GameStatePayload,
+  ChooseRolePayload,
+  SelectCardPayload as CN_SelectCardPayload,
+  StartGamePayload,
+  EndTurnPayload,
 } from "../models/CodenamesTypes";
 
 /**
@@ -88,13 +93,13 @@ export class SocketService {
       this.socket.emit(SocketEvent.LL_READY_PLAYER, payload);
     },
 
-    subscribeToGameState: (callback: (result: GameStatePayload) => void) => {
-      this.socket.on(SocketEvent.LL_GAME_STATE, (result: GameStatePayload) =>
+    subscribeToGameState: (callback: (result: LL_GameStatePayload) => void) => {
+      this.socket.on(SocketEvent.LL_GAME_STATE, (result: LL_GameStatePayload) =>
         callback(result)
       );
     },
 
-    selectCard: (payload: SelectCardPayload) => {
+    selectCard: (payload: LL_SelectCardPayload) => {
       console.log("selecting card: " + payload.username + " - " + payload.card);
       this.socket.emit(SocketEvent.LL_SELECT_CARD, payload);
     },
@@ -146,6 +151,28 @@ export class SocketService {
       this.socket.on(SocketEvent.CN_LOBBY, (result: CN_LobbyPayload) =>
         callback(result)
       );
+    },
+
+    subscribeToGameState: (callback: (result: CN_GameStatePayload) => void) => {
+      this.socket.on(SocketEvent.CN_GAME_STATE, (result: CN_GameStatePayload) =>
+        callback(result)
+      );
+    },
+
+    chooseRole: (payload: ChooseRolePayload) => {
+      this.socket.emit(SocketEvent.CN_CHOOSE_ROLE, payload);
+    },
+
+    startGame: (payload: StartGamePayload) => {
+      this.socket.emit(SocketEvent.CN_START_GAME, payload);
+    },
+
+    selectCard: (payload: CN_SelectCardPayload) => {
+      this.socket.emit(SocketEvent.CN_SELECT_CARD, payload);
+    },
+
+    endTurn: (payload: EndTurnPayload) => {
+      this.socket.emit(SocketEvent.CN_END_TURN, payload);
     },
   };
 }

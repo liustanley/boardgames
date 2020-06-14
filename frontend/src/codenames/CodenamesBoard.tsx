@@ -9,8 +9,10 @@ import {
 import { CodenamesCard } from "./CodenamesCard";
 import "./CodenamesBoard.css";
 import { PlayerStatus } from "../models/CodenamesTypes";
+import { SocketService } from "../services/SocketService";
 
 interface CodenamesBoardProps {
+  socket: SocketService;
   cards: Card[];
   player?: Player;
   status: PlayerStatus;
@@ -85,6 +87,7 @@ export class CodenamesBoard extends React.Component<
           <div className="codenamesBoardRow">
             {row.map((card) => (
               <CodenamesCard
+                socket={this.props.socket}
                 card={card}
                 spymaster={this.props.player?.spymaster}
                 status={this.props.status}

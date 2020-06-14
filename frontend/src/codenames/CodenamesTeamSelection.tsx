@@ -21,11 +21,13 @@ interface CodenamesTeamSelectionProps {
 interface CodenamesTeamSelectionState {
   playerList: Player[];
   currentTeam: Team;
+  spymaster: boolean;
   joinButtonHovered: Team;
   spymasterHovered: boolean;
   startHovered: boolean;
   gameStarted: boolean;
   gameState: GameStatePayload | null;
+  canStartGame: boolean;
 }
 
 export class CodenamesTeamSelection extends React.Component<
@@ -37,9 +39,32 @@ export class CodenamesTeamSelection extends React.Component<
     const player = props.playerList.find(
       (player) => player.username === props.username
     );
+    let allOnTeams = true;
+    let redSpymaster = false;
+    let blueSpymaster = false;
+    let redGuesser = false;
+    let blueGuesser = false;
+    this.props.playerList.map((player) => {
+      if (player.team === Team.RED) {
+        if (player.spymaster) {
+          redSpymaster = true;
+        } else {
+          redGuesser = true;
+        }
+      } else if (player.team === Team.BLUE) {
+        if (player.spymaster) {
+          blueSpymaster = true;
+        } else {
+          blueGuesser = true;
+        }
+      } else if (player.team === Team.NONE) {
+        allOnTeams = false;
+      }
+    });
     this.state = {
       playerList: props.playerList,
       currentTeam: player ? player.team : Team.NONE,
+      spymaster: player ? player.spymaster : false,
       joinButtonHovered: Team.NONE,
       spymasterHovered: false,
       startHovered: false,
@@ -51,10 +76,30 @@ export class CodenamesTeamSelection extends React.Component<
         cards: testCards,
         status: PlayerStatus.BLUE_GUESSING,
       },
+      canStartGame:
+        allOnTeams &&
+        redSpymaster &&
+        blueSpymaster &&
+        redGuesser &&
+        blueGuesser,
     };
   }
 
-  // SUBSCRIBE to GameStateEvent
+  componentDidMount() {
+    this.props.socket.CODENAMES.subscribeToGameState(
+      this.onGameState.bind(this)
+    );
+  }
+
+  componentDidUpdate() {
+    if (this.props.playerList !== this.state.playerList) {
+      this.setState({ playerList: this.props.playerList });
+    }
+  }
+
+  onGameState(payload: GameStatePayload) {
+    this.setState({ gameStarted: true, gameState: payload });
+  }
 
   joinButtonColor(team: Team): CodenamesColors {
     if (team === Team.RED) {
@@ -81,7 +126,13 @@ export class CodenamesTeamSelection extends React.Component<
   }
 
   onClickJoinTeam(team: Team) {
-    // SEND SOCKET ChooseRoleEvent
+    if (team !== this.state.currentTeam) {
+      this.props.socket.CODENAMES.chooseRole({
+        username: this.props.username,
+        team,
+        spymaster: this.state.spymaster,
+      });
+    }
   }
 
   spymasterButtonColor() {
@@ -96,7 +147,13 @@ export class CodenamesTeamSelection extends React.Component<
   }
 
   onClickSpymasterButton() {
-    // SEND SOCKET ChooseRoleEvent
+    if (!this.state.spymaster) {
+      this.props.socket.CODENAMES.chooseRole({
+        username: this.props.username,
+        team: this.state.currentTeam,
+        spymaster: true,
+      });
+    }
   }
 
   startButtonColor() {
@@ -108,7 +165,7 @@ export class CodenamesTeamSelection extends React.Component<
   }
 
   onClickStartButton() {
-    // SEND SOCKET StartGameEvent
+    this.props.socket.CODENAMES.startGame({});
   }
 
   render() {
@@ -165,20 +222,21 @@ export class CodenamesTeamSelection extends React.Component<
         </div>
         {this.state.currentTeam !== Team.NONE && (
           <Fragment>
-            {this.state.playerList[0].username === this.props.username && (
-              <div
-                className="codenamesStartButton"
-                style={{
-                  background: this.startButtonColor(),
-                  cursor: "pointer",
-                }}
-                onMouseEnter={() => this.setState({ startHovered: true })}
-                onMouseLeave={() => this.setState({ startHovered: false })}
-                onClick={this.onClickStartButton}
-              >
-                <b>Start Game</b>
-              </div>
-            )}
+            {this.state.playerList[0].username === this.props.username &&
+              this.state.canStartGame && (
+                <div
+                  className="codenamesStartButton"
+                  style={{
+                    background: this.startButtonColor(),
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={() => this.setState({ startHovered: true })}
+                  onMouseLeave={() => this.setState({ startHovered: false })}
+                  onClick={this.onClickStartButton}
+                >
+                  <b>Start Game</b>
+                </div>
+              )}
             <div
               className="codenamesBeSpymasterButton"
               style={{

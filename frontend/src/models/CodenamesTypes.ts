@@ -53,14 +53,11 @@ export interface GameStatePayload {
 
 // Sent by front-end
 export interface SelectCardPayload {
-  team: Team;
   word: string;
 }
 
 // Sent by front-end
-export interface EndTurnPayload {
-  team: Team;
-}
+export interface EndTurnPayload {}
 
 export interface Card {
   word: string;

@@ -38,7 +38,7 @@ export class CodenamesGameState extends React.Component<
   }
 
   onClickEndTurn() {
-    // SOCKET EndTurnEvent
+    this.props.socket.CODENAMES.endTurn({});
   }
 
   render() {
@@ -104,6 +104,7 @@ export class CodenamesGameState extends React.Component<
         </div>
         <div className="codenamesBoard">
           <CodenamesBoard
+            socket={this.props.socket}
             cards={this.props.gameState.cards}
             player={this.state.player}
             status={this.props.gameState.status}
