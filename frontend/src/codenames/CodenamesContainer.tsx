@@ -2,7 +2,7 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { SocketService } from "../services/SocketService";
 import { UsernameInput } from "../homepage/UsernameInput";
-import { Player, Team } from "../models/CodenamesTypes";
+import { Player, Team, LobbyPayload } from "../models/CodenamesTypes";
 import "./CodenamesContainer.css";
 import { CodenamesTeamSelection } from "./CodenamesTeamSelection";
 
@@ -52,14 +52,17 @@ export class CodenamesContainer extends React.Component<
     };
   }
 
-  // ON LOBBY
   componentDidMount() {
-    // this.props.socket;
+    this.props.socket.CODENAMES.subscribeToLobby(this.onLobby.bind(this));
+  }
+
+  onLobby(payload: LobbyPayload) {
+    this.setState({ playerList: payload.playerList });
   }
 
   onEnter(username: string) {
     this.setState({ username });
-    // SOCKET registerPlayer
+    this.props.socket.CODENAMES.registerPlayer({ username });
   }
 
   render() {

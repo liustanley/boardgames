@@ -30,10 +30,8 @@ export interface RegisterPlayerPayload {
 }
 
 // Sent by back-end
-export interface LobbyEvent {
-  unassigned: string[];
-  blueTeam: string[];
-  redTeam: string[];
+export interface LobbyPayload {
+  playerList: Player[];
 }
 
 // Sent by front-end

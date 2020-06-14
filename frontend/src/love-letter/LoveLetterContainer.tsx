@@ -60,7 +60,6 @@ export class LoveLetterContainer extends React.Component<
 
   onEnter(username: string) {
     this.setState({ username });
-    // this.props.socket.registerPlayer({ username });
     this.props.socket.LOVE_LETTER.registerPlayer({ username });
   }
 

@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 import {
-  RegisterPlayerPayload,
-  LobbyPayload,
+  RegisterPlayerPayload as LL_RegisterPlayerPayload,
+  LobbyPayload as LL_LobbyPayload,
   ReadyPlayerPayload,
   GameStatePayload,
   SelectCardPayload,
@@ -17,6 +17,10 @@ import {
   SocketEvent,
   ChatMessagePayload,
 } from "../models/GameTypes";
+import {
+  LobbyPayload as CN_LobbyPayload,
+  RegisterPlayerPayload as CN_RegisterPlayerPayload,
+} from "../models/CodenamesTypes";
 
 /**
  * Represents a service object that manages socket connection to the server.
@@ -68,13 +72,13 @@ export class SocketService {
   }
 
   LOVE_LETTER = {
-    registerPlayer: (payload: RegisterPlayerPayload) => {
+    registerPlayer: (payload: LL_RegisterPlayerPayload) => {
       console.log("registering player: " + payload.username);
       this.socket.emit(SocketEvent.LL_REGISTER_PLAYER, payload);
     },
 
-    subscribeToLobby: (callback: (result: LobbyPayload) => void) => {
-      this.socket.on(SocketEvent.LL_LOBBY, (result: LobbyPayload) =>
+    subscribeToLobby: (callback: (result: LL_LobbyPayload) => void) => {
+      this.socket.on(SocketEvent.LL_LOBBY, (result: LL_LobbyPayload) =>
         callback(result)
       );
     },
@@ -127,6 +131,19 @@ export class SocketService {
 
     subscribeToGameOver: (callback: (result: GameOverPayload) => void) => {
       this.socket.on(SocketEvent.LL_GAME_OVER, (result: GameOverPayload) =>
+        callback(result)
+      );
+    },
+  };
+
+  CODENAMES = {
+    registerPlayer: (payload: CN_RegisterPlayerPayload) => {
+      console.log("registering player: " + payload.username);
+      this.socket.emit(SocketEvent.CN_REGISTER_PLAYER, payload);
+    },
+
+    subscribeToLobby: (callback: (result: CN_LobbyPayload) => void) => {
+      this.socket.on(SocketEvent.CN_LOBBY, (result: CN_LobbyPayload) =>
         callback(result)
       );
     },
