@@ -1,4 +1,4 @@
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 import {
   ChatMessageEvent,
   RegisterPlayerEvent,
@@ -57,28 +57,30 @@ export class SocketService {
 
   readyPlayer(payload: ReadyPlayerEvent) {
     console.log("ready player: " + payload.username + " - " + payload.status);
-    this.socket.emit("readyPlayer", payload);
+    this.socket.emit(SocketEvent.LL_READY_PLAYER, payload);
   }
 
   subscribeToGameState(callback: (result: GameStateEvent) => void) {
-    this.socket.on("gameState", (result: GameStateEvent) => callback(result));
+    this.socket.on(SocketEvent.LL_GAME_STATE, (result: GameStateEvent) =>
+      callback(result)
+    );
   }
 
   selectCard(payload: SelectCardEvent) {
     console.log("selecting card: " + payload.username + " - " + payload.card);
-    this.socket.emit("selectCard", payload);
+    this.socket.emit(SocketEvent.LL_SELECT_CARD, payload);
   }
 
   playCard(payload: PlayCardEvent) {
     console.log(
       "playing card: " + payload.username + " targeting: " + payload.target
     );
-    this.socket.emit("playCard", payload);
+    this.socket.emit(SocketEvent.LL_PLAY_CARD, payload);
   }
 
   confirm(payload: ConfirmEvent) {
     console.log("confirming: " + payload.username);
-    this.socket.emit("confirmEvent", payload);
+    this.socket.emit(SocketEvent.LL_CONFIRM, payload);
   }
 
   highlight(payload: HighlightEvent) {
@@ -90,15 +92,19 @@ export class SocketService {
         " - " +
         payload.card
     );
-    this.socket.emit("highlight", payload);
+    this.socket.emit(SocketEvent.LL_HIGHLIGHT, payload);
   }
 
   subscribeToRoundOver(callback: (result: RoundOverEvent) => void) {
-    this.socket.on("roundOver", (result: RoundOverEvent) => callback(result));
+    this.socket.on(SocketEvent.LL_ROUND_OVER, (result: RoundOverEvent) =>
+      callback(result)
+    );
   }
 
   subscribeToGameOver(callback: (result: GameOverEvent) => void) {
-    this.socket.on("gameOver", (result: GameOverEvent) => callback(result));
+    this.socket.on(SocketEvent.LL_GAME_OVER, (result: GameOverEvent) =>
+      callback(result)
+    );
   }
 
   /**
@@ -106,7 +112,7 @@ export class SocketService {
    */
   public sendChatMessage(message: ChatMessageEvent): void {
     console.log("emitting chat message: " + message);
-    this.socket.emit("message", message);
+    this.socket.emit(SocketEvent.MESSAGE, message);
   }
 
   /**
@@ -114,7 +120,7 @@ export class SocketService {
    * @param callback function to call upon receiving a chat message.
    */
   public subscribeToChat(callback: (message: ChatMessageEvent) => void) {
-    this.socket.on("message", (m: ChatMessageEvent) => callback(m));
+    this.socket.on(SocketEvent.MESSAGE, (m: ChatMessageEvent) => callback(m));
   }
 
   /**

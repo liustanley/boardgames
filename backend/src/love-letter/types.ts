@@ -34,7 +34,7 @@ export interface PlayCardPayload {
 
 // Sent by front-end
 // Sent after the play of a Baron or a Priest
-export interface ConfirmEvent {
+export interface ConfirmPayload {
   username: string;
 }
 

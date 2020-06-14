@@ -7,7 +7,6 @@ import { Card } from "./Card";
 import { Player } from "./Player";
 import { DECK } from "./constants";
 import {
-  ConfirmEvent,
   GameState,
   LobbyPayload,
   PlayCardPayload,
@@ -18,6 +17,7 @@ import {
   ReadyStatus,
   GameOverPayload,
   HighlightPayload,
+  ConfirmPayload,
 } from "./types";
 import { SocketEvent } from "../types/constants";
 
@@ -58,7 +58,7 @@ export class LoveLetterController {
    */
   registerPlayer(socketId: string, payload: RegisterPlayerPayload) {
     if (this.model.getGameProgressState()) {
-      this.io.to(socketId).emit("lobby", {
+      this.io.to(socketId).emit(SocketEvent.LL_LOBBY, {
         success: false,
         usernameList: [],
       });
@@ -77,10 +77,7 @@ export class LoveLetterController {
         usernameList: usernames,
       };
 
-      const sockets = Object.keys(
-        this.io.sockets.adapter.rooms[this.room].sockets
-      );
-      for (let id of sockets) {
+      for (let id of socketIds) {
         this.io.to(id).emit(SocketEvent.LL_LOBBY, lobby);
       }
     }
@@ -90,7 +87,7 @@ export class LoveLetterController {
    * Listener for readyPlayer events, also responsible for starting the game and sending first game state.
    * Also responsible for restarting rounds/games.
    */
-  private onReadyPlayer = (res: ReadyPlayerPayload) => {
+  readyPlayer(socketId: string, payload: ReadyPlayerPayload) {
     this.model.incrementNumReady();
     let players: Player[] = this.model.getPlayers();
 
@@ -100,14 +97,14 @@ export class LoveLetterController {
       this.model.getNumReady() === players.length &&
       this.model.getNumReady() !== 1
     ) {
-      if (res.status === ReadyStatus.GAME_START) {
+      if (payload.status === ReadyStatus.GAME_START) {
         this.model.startGame();
         this.sendGameState();
-      } else if (res.status === ReadyStatus.ROUND_START) {
+      } else if (payload.status === ReadyStatus.ROUND_START) {
         this.model.resetRound();
         this.model.startGame();
         this.sendGameState();
-      } else if (res.status === ReadyStatus.GAME_RESTART) {
+      } else if (payload.status === ReadyStatus.GAME_RESTART) {
         this.model.resetGame();
         this.model.startGame();
         this.sendGameState();
@@ -115,15 +112,15 @@ export class LoveLetterController {
 
       this.model.resetNumReady();
     }
-  };
+  }
 
   /**
    * Sends the given death message if it is not empty.
    * @param deathMessage  the death message to emit
    */
-  private sendDeathMessage(deathMessage: string) {
+  private sendDeathMessage(room: string, deathMessage: string) {
     if (deathMessage !== "") {
-      this.io.emit(SocketEvent.MESSAGE, {
+      this.io.to(room).emit(SocketEvent.MESSAGE, {
         author: "God",
         message: deathMessage,
       });
@@ -134,9 +131,9 @@ export class LoveLetterController {
    * Listener for selectCard events, alters the model accordingly.
    * @param res the response object of type SelectCardEvent
    */
-  private onSelectCard = (res: SelectCardPayload) => {
-    let selected: Card = Card.correct(res.card);
-    this.model.selectCard(res.username, selected);
+  selectCard(socketId: string, room: string, payload: SelectCardPayload) {
+    let selected: Card = Card.correct(payload.card);
+    this.model.selectCard(payload.username, selected);
 
     // These cards all don't require a Play action, and just progress to the next turn.
     if (
@@ -144,7 +141,7 @@ export class LoveLetterController {
       selected === Card.COUNTESS ||
       selected === Card.PRINCESS
     ) {
-      this.sendDeathMessage(this.model.getDeathMessage());
+      this.sendDeathMessage(room, this.model.getDeathMessage());
 
       if (this.model.roundOver()) {
         this.model.gameOver()
@@ -165,7 +162,7 @@ export class LoveLetterController {
       let gameState: GameState[] = this.model.gameState();
 
       let player: Player = players.find(
-        (player) => player.username === res.username
+        (player) => player.username === payload.username
       );
       let playerIndex: number = players.indexOf(player);
       for (let i = 0; i < gameState.length; i++) {
@@ -178,49 +175,49 @@ export class LoveLetterController {
       }
 
       for (let i: number = 0; i < players.length; i++) {
-        this.io.to(players[i].id).emit("gameState", gameState[i]);
+        this.io.to(players[i].id).emit(SocketEvent.LL_GAME_STATE, gameState[i]);
       }
     } else {
       this.sendGameState();
     }
-  };
+  }
 
   /**
    * Listener for playCard events, alters the model accordingly.
    * @param res the response object of type PlayCardEvent
    */
-  private onPlayCard = (res: PlayCardPayload) => {
-    let guess: Card | undefined = res.guess
-      ? Card.correct(res.guess)
+  playCard(socketId: string, room: string, payload: PlayCardPayload) {
+    let guess: Card | undefined = payload.guess
+      ? Card.correct(payload.guess)
       : undefined;
-    this.model.playCard(res.username, res.target, guess);
+    this.model.playCard(payload.username, payload.target, guess);
 
     let lastPlayed: Card = this.model.getLastPlayed();
 
     if (
       (lastPlayed === Card.PRIEST || lastPlayed === Card.BARON) &&
-      res.target
+      payload.target
     ) {
       this.sendGameState();
     } else if (this.model.roundOver()) {
-      this.sendDeathMessage(this.model.getDeathMessage());
+      this.sendDeathMessage(room, this.model.getDeathMessage());
       this.model.gameOver()
         ? this.sendGameOverState()
         : this.sendRoundOverState();
     } else {
-      this.sendDeathMessage(this.model.getDeathMessage());
+      this.sendDeathMessage(room, this.model.getDeathMessage());
       this.model.nextTurn();
       this.sendGameState();
     }
-  };
+  }
 
   /**
    * Listener for confirm events
    * @param res the response object
    */
-  private onConfirm = (res: ConfirmEvent) => {
-    this.model.confirmPlay(res.username);
-    this.sendDeathMessage(this.model.getDeathMessage());
+  confirm(socketId: string, room: string, payload: ConfirmPayload) {
+    this.model.confirmPlay(payload.username);
+    this.sendDeathMessage(room, this.model.getDeathMessage());
 
     if (this.model.roundOver()) {
       this.model.gameOver()
@@ -230,7 +227,7 @@ export class LoveLetterController {
       this.model.nextTurn();
       this.sendGameState();
     }
-  };
+  }
 
   /**
    * Sends each client their respective game state.
@@ -255,7 +252,7 @@ export class LoveLetterController {
     }
 
     for (let i: number = 0; i < players.length; i++) {
-      this.io.to(players[i].id).emit("gameState", gameState[i]);
+      this.io.to(players[i].id).emit(SocketEvent.LL_GAME_STATE, gameState[i]);
     }
     console.log(this.model.gameState());
   }
@@ -273,7 +270,7 @@ export class LoveLetterController {
     };
 
     for (let p of players) {
-      this.io.to(p.id).emit("roundOver", roundOver);
+      this.io.to(p.id).emit(SocketEvent.LL_ROUND_OVER, roundOver);
     }
   }
 
@@ -290,7 +287,7 @@ export class LoveLetterController {
     };
 
     for (let p of players) {
-      this.io.to(p.id).emit("gameOver", gameOver);
+      this.io.to(p.id).emit(SocketEvent.LL_GAME_OVER, gameOver);
     }
   }
 
@@ -326,7 +323,7 @@ export class LoveLetterController {
         reset: true,
       };
       for (let id of socketIds) {
-        this.io.to(id).emit("lobby", lobby);
+        this.io.to(id).emit(SocketEvent.LL_LOBBY, lobby);
       }
     }
 
@@ -338,13 +335,13 @@ export class LoveLetterController {
    * @param scoketId the socket id of this player
    * @param res the response object
    */
-  private onHighlight(socketId: string, res: HighlightPayload): void {
+  highlight(socketId: string, room: string, payload: HighlightPayload): void {
     let players: Player[] = this.model.getPlayers();
     let gameState: GameState[] = this.model.gameState();
 
     for (let gs of gameState) {
-      gs.highlightedPlayer = res.player;
-      gs.highlightedCard = res.card;
+      gs.highlightedPlayer = payload.player;
+      gs.highlightedCard = payload.card;
       gs.visiblePlayers = players;
       if (this.model.getLastPlayed() === Card.GUARD) {
         gs.watchingGuardPlay = true;
@@ -353,41 +350,8 @@ export class LoveLetterController {
 
     for (let i: number = 0; i < players.length; i++) {
       if (players[i].id !== socketId) {
-        this.io.to(players[i].id).emit("gameState", gameState[i]);
+        this.io.to(players[i].id).emit(SocketEvent.LL_GAME_STATE, gameState[i]);
       }
     }
-  }
-
-  /**
-   * Opens up communication to our server and Socket.io events.
-   */
-  private listen(): void {
-    this.io.on(SocketEvent.CONNECT, (socket: socketIo.Socket) => {
-      console.log("Connected client on port %s.", this.port);
-
-      socket.on("readyPlayer", (res: ReadyPlayerPayload) =>
-        this.onReadyPlayer(res)
-      );
-
-      socket.on("selectCard", (res: SelectCardPayload) =>
-        this.onSelectCard(res)
-      );
-
-      socket.on("playCard", (res: PlayCardPayload) => this.onPlayCard(res));
-
-      socket.on("confirmEvent", (res: ConfirmEvent) => this.onConfirm(res));
-
-      socket.on("highlight", (res: HighlightPayload) =>
-        this.onHighlight(socket.id, res)
-      );
-
-      socket.on(SocketEvent.MESSAGE, (res: ChatMessage) =>
-        this.onMessage(res, socket)
-      );
-
-      socket.on(SocketEvent.DISCONNECT, () => {
-        this.onDisconnectPlayer(socket.id);
-      });
-    });
   }
 }

@@ -7,7 +7,14 @@ import {
   Games,
 } from "../types/types";
 import { SocketEvent } from "../types/constants";
-import { RegisterPlayerPayload as LL_RegisterPlayerPayload } from "../love-letter/types";
+import {
+  RegisterPlayerPayload as LL_RegisterPlayerPayload,
+  ReadyPlayerPayload as LL_ReadyPlayerPayload,
+  SelectCardPayload as LL_SelectCardPayload,
+  PlayCardPayload as LL_PlayCardPayload,
+  ConfirmPayload as LL_ConfirmPayload,
+  HighlightPayload as LL_HighlightPayload,
+} from "../love-letter/types";
 import { LoveLetterManager } from "../love-letter/LoveLetterManager";
 
 export class SocketController {
@@ -125,6 +132,7 @@ export class SocketController {
     const game = this.socketToGame.get(socketId);
     if (room) this.socketToRoom.delete(socketId);
     if (game) this.socketToGame.delete(socketId);
+    // TODO - not going to reset game on disconnect in future, so for now disconnecting does nothing to model
   }
 
   private onChatMessage(payload: ChatMessage, socket: SocketIO.Socket) {
@@ -170,6 +178,35 @@ export class SocketController {
           this.loveLetterManager.registerPlayer(room, socket.id, payload);
         }
       );
+
+      socket.on(
+        SocketEvent.LL_READY_PLAYER,
+        (payload: LL_ReadyPlayerPayload) => {
+          const room = this.socketToRoom.get(socket.id);
+          this.loveLetterManager.readyPlayer(room, socket.id, payload);
+        }
+      );
+
+      socket.on(SocketEvent.LL_SELECT_CARD, (payload: LL_SelectCardPayload) => {
+        console.log("SELECT HEARD");
+        const room = this.socketToRoom.get(socket.id);
+        this.loveLetterManager.selectCard(room, socket.id, payload);
+      });
+
+      socket.on(SocketEvent.LL_PLAY_CARD, (payload: LL_PlayCardPayload) => {
+        const room = this.socketToRoom.get(socket.id);
+        this.loveLetterManager.playCard(room, socket.id, payload);
+      });
+
+      socket.on(SocketEvent.LL_CONFIRM, (payload: LL_ConfirmPayload) => {
+        const room = this.socketToRoom.get(socket.id);
+        this.loveLetterManager.confirm(room, socket.id, payload);
+      });
+
+      socket.on(SocketEvent.LL_HIGHLIGHT, (payload: LL_HighlightPayload) => {
+        const room = this.socketToRoom.get(socket.id);
+        this.loveLetterManager.highlight(room, socket.id, payload);
+      });
     });
   }
 }
