@@ -26,8 +26,14 @@ function ChatComponent(props: any) {
       </div>
       <hr />
       <div className="chatInput">
+        {props.gameInProgress && (
+          <button className="cheatSheet" onClick={props.openCheatSheet}>
+            Cheat Sheet
+          </button>
+        )}
         <input
           className="input"
+          type="text"
           value={props.messageValue}
           placeholder={props.messagePlaceholder}
           onChange={props.messageOnChange}

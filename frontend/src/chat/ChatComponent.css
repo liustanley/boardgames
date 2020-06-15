@@ -12,4 +12,38 @@
 
 .chatInput {
   padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  height: 37px;
+  display: inline-block;
+  border: none;
+  margin: 0;
+  margin-right: 32px;
+  text-decoration: none;
+  background: #a3be8c;
+  color: #2e3440;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background 250ms ease-in-out, transform 150ms ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+button:hover,
+button:focus {
+  background: hsl(92, 28%, 40%);
+}
+
+button:focus {
+  outline: 1px solid #fff;
+  outline-offset: -4px;
+}
+
+button:active {
+  transform: scale(0.99);
 }

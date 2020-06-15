@@ -9,6 +9,7 @@ interface LoveLetterCardContainerProps {
   selected?: boolean;
   clearSelected?: Function;
   selectable?: boolean;
+  cheatSheet?: boolean;
 }
 
 interface LoveLetterCardContainerState {
@@ -139,6 +140,7 @@ export class LoveLetterCardContainer extends React.Component<
         selected={this.props.selected}
         numberToColorDark={this.numberToColorDark.bind(this)}
         selectable={this.props.selectable}
+        cheatSheet={this.props.cheatSheet}
       />
     );
   }

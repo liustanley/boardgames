@@ -12,6 +12,7 @@ interface LoveLetterCardComponentProps {
   onMouseLeave: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   numberToColorDark: Function;
   selectable?: boolean;
+  cheatSheet?: boolean;
 }
 
 function LoveLetterCardComponent(props: LoveLetterCardComponentProps) {
@@ -19,7 +20,9 @@ function LoveLetterCardComponent(props: LoveLetterCardComponentProps) {
     <Fragment>
       <div
         className={
-          "loveLetterCard" + (props.selectable ? " selectableCard" : "")
+          "loveLetterCard" +
+          (props.selectable ? " selectableCard" : "") +
+          (props.cheatSheet ? " cheatSheetCard" : "")
         }
         style={{ background: props.numberToColor(props.card) }}
         onMouseEnter={props.onMouseEnter}

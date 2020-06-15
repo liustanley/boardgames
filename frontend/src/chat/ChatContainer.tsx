@@ -9,6 +9,8 @@ interface ChatContainerProps {
   socket: SocketService;
   username: string;
   size: "big" | "small";
+  gameInProgress: boolean;
+  openCheatSheet: () => void;
 }
 
 export class ChatContainer extends React.Component<
@@ -113,6 +115,8 @@ export class ChatContainer extends React.Component<
         userToColor={this.userToColor.bind(this)}
         chatRef={this.chatRef}
         size={this.props.size}
+        gameInProgress={this.props.gameInProgress}
+        openCheatSheet={this.props.openCheatSheet}
       />
     );
   }

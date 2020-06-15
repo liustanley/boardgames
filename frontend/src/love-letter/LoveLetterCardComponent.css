@@ -28,8 +28,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 8px 16px;
   font-size: 16px;
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
@@ -39,4 +38,14 @@
   font-size: 32px;
   margin-right: 24px;
   font-weight: 700;
+}
+
+.cheatSheetCard {
+  width: 186px;
+  height: 297px;
+  margin-right: 32px;
+}
+
+.cheatSheetCard .loveLetterCardTop {
+  font-size: 24px;
 }

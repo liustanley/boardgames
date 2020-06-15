@@ -13,6 +13,7 @@ import {
 import { LoveLetterGameState } from "./LoveLetterGameState";
 import { Card } from "./Card";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
+import LoveLetterCheatSheet from "./LoveLetterCheatSheet";
 
 interface LoveLetterLobbyProps {
   usernameList: string[];
@@ -32,6 +33,7 @@ interface LoveLetterLobbyState {
   roundState: RoundOverEvent | null;
   gameOver: boolean;
   gameOverState: GameOverEvent | null;
+  cheatSheetVisible: boolean;
 }
 
 // TODO:
@@ -155,6 +157,7 @@ export class LoveLetterLobby extends React.Component<
       //   message: "Christina wins!",
       //   players: [dillon, alex, christina, annette],
       // },
+      cheatSheetVisible: false,
     };
   }
 
@@ -232,9 +235,26 @@ export class LoveLetterLobby extends React.Component<
     this.setState({ gameOver: true, gameOverState: payload, ready: false });
   }
 
+  openCheatSheet() {
+    this.setState({
+      cheatSheetVisible: true,
+    });
+  }
+
+  closeCheatSheet() {
+    this.setState({
+      cheatSheetVisible: false,
+    });
+  }
+
   render() {
     return (
       <Fragment>
+        {this.state.cheatSheetVisible && (
+          <LoveLetterCheatSheet
+            closeOverlay={this.closeCheatSheet.bind(this)}
+          />
+        )}
         {!this.state.gameStarted && !this.state.roundOver && (
           <Fragment>
             <div className="loveLetterLobby">
@@ -373,6 +393,13 @@ export class LoveLetterLobby extends React.Component<
             socket={this.props.socket}
             username={this.props.username}
             size="big"
+            gameInProgress={
+              this.state.gameStarted &&
+              !!this.state.gameState &&
+              !this.state.roundOver &&
+              !this.state.gameOver
+            }
+            openCheatSheet={this.openCheatSheet.bind(this)}
           />
         </div>
       </Fragment>
