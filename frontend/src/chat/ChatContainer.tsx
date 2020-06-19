@@ -9,8 +9,8 @@ interface ChatContainerProps {
   socket: SocketService;
   username: string;
   size: "big" | "small";
-  gameInProgress: boolean;
-  openCheatSheet: () => void;
+  gameInProgress?: boolean;
+  openCheatSheet?: () => void;
 }
 
 export class ChatContainer extends React.Component<
