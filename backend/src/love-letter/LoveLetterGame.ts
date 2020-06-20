@@ -60,7 +60,14 @@ export class LoveLetterGame {
         success: false,
         usernameList: [],
       });
-    } else {
+    } else if (
+      !this.model
+        .getPlayers()
+        .find(
+          (player) =>
+            player.username.toUpperCase() === payload.username.toUpperCase()
+        )
+    ) {
       let success: boolean = this.model.addPlayer(socketId, payload.username);
       let players: Player[] = this.model.getPlayers();
       let usernames: string[] = [];
