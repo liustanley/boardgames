@@ -129,7 +129,7 @@ export class CodenamesGameState extends React.Component<
             }}
             onMouseEnter={() => this.setState({ endTurnHovered: true })}
             onMouseLeave={() => this.setState({ endTurnHovered: false })}
-            onClick={this.onClickEndTurn}
+            onClick={this.onClickEndTurn.bind(this)}
           >
             <b>End Turn</b>
           </div>

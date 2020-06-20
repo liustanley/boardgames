@@ -45,10 +45,10 @@ export class CodenamesContainer extends React.Component<
   constructor(props: CodenamesContainerProps) {
     super(props);
     this.state = {
-      // username: "",
-      username: "Dillon",
-      // playerList: [],
-      playerList: [dillon, stanley, alex, christina, annette],
+      username: "",
+      // username: "Dillon",
+      playerList: [],
+      // playerList: [dillon, stanley, alex, christina, annette],
     };
   }
 

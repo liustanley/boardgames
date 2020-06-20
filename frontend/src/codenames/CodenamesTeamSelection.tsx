@@ -68,14 +68,14 @@ export class CodenamesTeamSelection extends React.Component<
       joinButtonHovered: Team.NONE,
       spymasterHovered: false,
       startHovered: false,
-      // gameStarted: false,
-      gameStarted: true,
-      // gameState: null,
-      gameState: {
-        playerList: props.playerList,
-        cards: testCards,
-        status: PlayerStatus.BLUE_GUESSING,
-      },
+      gameStarted: false,
+      // gameStarted: true,
+      gameState: null,
+      // gameState: {
+      //   playerList: props.playerList,
+      //   cards: testCards,
+      //   status: PlayerStatus.BLUE_GUESSING,
+      // },
       canStartGame:
         allOnTeams &&
         redSpymaster &&

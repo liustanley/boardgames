@@ -115,7 +115,7 @@ export class CodenamesCard extends React.Component<
         }}
         onMouseEnter={() => this.setState({ hovered: true })}
         onMouseLeave={() => this.setState({ hovered: false })}
-        onClick={this.cardClicked}
+        onClick={this.cardClicked.bind(this)}
       >
         <div className="codenamesCardWord">{this.props.card.word}</div>
       </div>
