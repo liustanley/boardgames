@@ -55,13 +55,13 @@ export class CodenamesBoard extends React.Component<
   getCount(team: Team) {
     let count = 0;
     if (team === Team.RED) {
-      this.props.cards.map((card) => {
+      this.props.cards.forEach((card) => {
         if (card.type === CardType.RED && !card.revealed) {
           count++;
         }
       });
     } else if (team === Team.BLUE) {
-      this.props.cards.map((card) => {
+      this.props.cards.forEach((card) => {
         if (card.type === CardType.BLUE && !card.revealed) {
           count++;
         }

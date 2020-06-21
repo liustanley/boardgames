@@ -44,7 +44,7 @@ export class CodenamesTeamSelection extends React.Component<
     let blueSpymaster = false;
     let redGuesser = false;
     let blueGuesser = false;
-    this.props.playerList.map((player) => {
+    this.props.playerList.forEach((player) => {
       if (player.team === Team.RED) {
         if (player.spymaster) {
           redSpymaster = true;
