@@ -1,7 +1,7 @@
 import React from "react";
 import { SocketService } from "../services/SocketService";
 import {
-  GameStateEvent,
+  GameStatePayload,
   CodenamesColors,
   Team,
   Player,
@@ -14,7 +14,7 @@ import { CodenamesBoard } from "./CodenamesBoard";
 interface CodenamesGameStateProps {
   socket: SocketService;
   username: string;
-  gameState: GameStateEvent;
+  gameState: GameStatePayload;
 }
 
 interface CodenamesGameStateState {
@@ -38,7 +38,7 @@ export class CodenamesGameState extends React.Component<
   }
 
   onClickEndTurn() {
-    // SOCKET EndTurnEvent
+    this.props.socket.CODENAMES.endTurn({});
   }
 
   render() {
@@ -104,6 +104,7 @@ export class CodenamesGameState extends React.Component<
         </div>
         <div className="codenamesBoard">
           <CodenamesBoard
+            socket={this.props.socket}
             cards={this.props.gameState.cards}
             player={this.state.player}
             status={this.props.gameState.status}
@@ -128,7 +129,7 @@ export class CodenamesGameState extends React.Component<
             }}
             onMouseEnter={() => this.setState({ endTurnHovered: true })}
             onMouseLeave={() => this.setState({ endTurnHovered: false })}
-            onClick={this.onClickEndTurn}
+            onClick={this.onClickEndTurn.bind(this)}
           >
             <b>End Turn</b>
           </div>

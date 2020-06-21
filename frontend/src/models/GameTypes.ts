@@ -3,24 +3,29 @@ export enum Games {
   CODENAMES = "codenames",
 }
 
+export interface ChatMessagePayload {
+  author: string;
+  message: string;
+}
+
 // Sent by frontend
-export interface CreateGameEvent {
+export interface CreateGamePayload {
   gameType: Games;
 }
 
 // Sent by backend
-export interface CreateGameResponseEvent {
+export interface CreateGameResponsePayload {
   roomId: string;
 }
 
 // Sent by frontend
-export interface JoinGameEvent {
+export interface JoinGamePayload {
   gameType: Games;
   roomId: string;
 }
 
 // Sent by backend
-export interface JoinGameResponseEvent {
+export interface JoinGameResponsePayload {
   success: boolean;
 }
 
@@ -40,4 +45,11 @@ export enum SocketEvent {
   LL_HIGHLIGHT = "LL_HIGHLIGHT",
   LL_ROUND_OVER = "LL_ROUND_OVER",
   LL_GAME_OVER = "LL_GAME_OVER",
+  CN_REGISTER_PLAYER = "CN_REGISTER_PLAYER",
+  CN_LOBBY = "CN_LOBBY",
+  CN_CHOOSE_ROLE = "CN_CHOOSE_ROLE",
+  CN_START_GAME = "CN_START_GAME",
+  CN_GAME_STATE = "CN_GAME_STATE",
+  CN_SELECT_CARD = "CN_SELECT_CARD",
+  CN_END_TURN = "CN_END_TURN",
 }

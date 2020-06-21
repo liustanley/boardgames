@@ -1,6 +1,6 @@
 import React from "react";
 import { SocketService } from "../services/SocketService";
-import { LobbyEvent } from "../models/LoveLetterTypes";
+import { LobbyPayload } from "../models/LoveLetterTypes";
 import { LoveLetterColors } from "../models/LoveLetterTypes";
 import "./LoveLetterContainer.css";
 import { LoveLetterLobby } from "./LoveLetterLobby";
@@ -42,10 +42,10 @@ export class LoveLetterContainer extends React.Component<
   }
 
   componentDidMount() {
-    this.props.socket.subscribeToLobby(this.onLobby.bind(this));
+    this.props.socket.LOVE_LETTER.subscribeToLobby(this.onLobby.bind(this));
   }
 
-  onLobby(payload: LobbyEvent) {
+  onLobby(payload: LobbyPayload) {
     console.log(JSON.stringify(payload));
     if (payload.success) {
       this.setState({
@@ -60,7 +60,7 @@ export class LoveLetterContainer extends React.Component<
 
   onEnter(username: string) {
     this.setState({ username });
-    this.props.socket.registerPlayer({ username });
+    this.props.socket.LOVE_LETTER.registerPlayer({ username });
   }
 
   setReset() {

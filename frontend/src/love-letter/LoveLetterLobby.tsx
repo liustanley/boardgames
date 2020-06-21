@@ -4,11 +4,11 @@ import { LoveLetterColors } from "../models/LoveLetterTypes";
 import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
 import {
-  GameStateEvent,
+  GameStatePayload,
   PlayerStatus,
-  RoundOverEvent,
+  RoundOverPayload,
   ReadyStatus,
-  GameOverEvent,
+  GameOverPayload,
 } from "../models/LoveLetterTypes";
 import { LoveLetterGameState } from "./LoveLetterGameState";
 import { Card } from "./Card";
@@ -28,11 +28,11 @@ interface LoveLetterLobbyState {
   usernameList: string[];
   gameStarted: boolean;
   ready: boolean;
-  gameState: GameStateEvent | null;
+  gameState: GameStatePayload | null;
   roundOver: boolean;
-  roundState: RoundOverEvent | null;
+  roundState: RoundOverPayload | null;
   gameOver: boolean;
-  gameOverState: GameOverEvent | null;
+  gameOverState: GameOverPayload | null;
   cheatSheetVisible: boolean;
 }
 
@@ -162,9 +162,15 @@ export class LoveLetterLobby extends React.Component<
   }
 
   componentDidMount() {
-    this.props.socket.subscribeToGameState(this.onGameState.bind(this));
-    this.props.socket.subscribeToRoundOver(this.onRoundOver.bind(this));
-    this.props.socket.subscribeToGameOver(this.onGameOver.bind(this));
+    this.props.socket.LOVE_LETTER.subscribeToGameState(
+      this.onGameState.bind(this)
+    );
+    this.props.socket.LOVE_LETTER.subscribeToRoundOver(
+      this.onRoundOver.bind(this)
+    );
+    this.props.socket.LOVE_LETTER.subscribeToGameOver(
+      this.onGameOver.bind(this)
+    );
   }
 
   componentDidUpdate() {
@@ -185,7 +191,7 @@ export class LoveLetterLobby extends React.Component<
     }
   }
 
-  onGameState(payload: GameStateEvent) {
+  onGameState(payload: GameStatePayload) {
     payload.visibleCards = Card.correct(payload.visibleCards);
     payload.discardCards = Card.correct(payload.discardCards);
 
@@ -199,7 +205,7 @@ export class LoveLetterLobby extends React.Component<
 
   onReadyStart() {
     if (!this.state.ready) {
-      this.props.socket.readyPlayer({
+      this.props.socket.LOVE_LETTER.readyPlayer({
         username: this.props.username,
         status: ReadyStatus.GAME_START,
       });
@@ -209,7 +215,7 @@ export class LoveLetterLobby extends React.Component<
 
   onReadyContinue() {
     if (!this.state.ready) {
-      this.props.socket.readyPlayer({
+      this.props.socket.LOVE_LETTER.readyPlayer({
         username: this.props.username,
         status: ReadyStatus.ROUND_START,
       });
@@ -219,7 +225,7 @@ export class LoveLetterLobby extends React.Component<
 
   onReadyRestart() {
     if (!this.state.ready) {
-      this.props.socket.readyPlayer({
+      this.props.socket.LOVE_LETTER.readyPlayer({
         username: this.props.username,
         status: ReadyStatus.GAME_RESTART,
       });
@@ -227,11 +233,11 @@ export class LoveLetterLobby extends React.Component<
     this.setState({ ready: true });
   }
 
-  onRoundOver(payload: RoundOverEvent) {
+  onRoundOver(payload: RoundOverPayload) {
     this.setState({ roundOver: true, roundState: payload, ready: false });
   }
 
-  onGameOver(payload: GameOverEvent) {
+  onGameOver(payload: GameOverPayload) {
     this.setState({ gameOver: true, gameOverState: payload, ready: false });
   }
 

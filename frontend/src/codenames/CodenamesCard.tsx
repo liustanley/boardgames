@@ -7,8 +7,10 @@ import {
   PlayerStatus,
 } from "../models/CodenamesTypes";
 import "./CodenamesCard.css";
+import { SocketService } from "../services/SocketService";
 
 interface CodenamesCardProps {
+  socket: SocketService;
   card: Card;
   spymaster?: boolean;
   status: PlayerStatus;
@@ -97,7 +99,9 @@ export class CodenamesCard extends React.Component<
   }
 
   cardClicked() {
-    // SOCKET SelectCardEvent if myTurn
+    if (this.state.myTurn) {
+      this.props.socket.CODENAMES.selectCard({ word: this.props.card.word });
+    }
   }
 
   render() {
@@ -111,7 +115,7 @@ export class CodenamesCard extends React.Component<
         }}
         onMouseEnter={() => this.setState({ hovered: true })}
         onMouseLeave={() => this.setState({ hovered: false })}
-        onClick={this.cardClicked}
+        onClick={this.cardClicked.bind(this)}
       >
         <div className="codenamesCardWord">{this.props.card.word}</div>
       </div>
