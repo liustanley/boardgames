@@ -31,23 +31,9 @@ export class LoveLetterGame {
     this.model = new LoveLetterModel(DECK);
   }
 
-  /**
-   * Listener for message events. Emits the given message to all connected clients via a message event.
-   * @param m the given Chat Message to be emitted
-   */
-  public onMessage = (m: ChatMessage, socket: socketIo.Socket): void => {
-    console.log("[server](message): %s", JSON.stringify(m));
-    let room: string;
-    Object.keys(socket.rooms).forEach((roomId) => {
-      if (roomId !== socket.id) {
-        room = roomId;
-      }
-    });
-    console.log("Room: " + room);
-
-    // Emits the ChatMessage to all connected clients via a MESSAGE event.
-    this.io.to(room).emit(SocketEvent.MESSAGE, m);
-  };
+  rejoinPlayer(prevSocketId: string, newSocketId: string, callback: Function) {
+    return this.model.rejoinPlayer(prevSocketId, newSocketId, callback);
+  }
 
   /**
    * Listener for registerPlayer event. Adds players to the model and sends back lobby events.
@@ -74,7 +60,7 @@ export class LoveLetterGame {
       let socketIds: string[] = [];
       for (let p of players) {
         usernames.push(p.username);
-        socketIds.push(p.id);
+        socketIds = socketIds.concat(p.ids);
       }
 
       let lobby: LobbyPayload = {
@@ -180,7 +166,9 @@ export class LoveLetterGame {
       }
 
       for (let i: number = 0; i < players.length; i++) {
-        this.io.to(players[i].id).emit(SocketEvent.LL_GAME_STATE, gameState[i]);
+        for (let id of players[i].ids) {
+          this.io.to(id).emit(SocketEvent.LL_GAME_STATE, gameState[i]);
+        }
       }
     } else {
       this.sendGameState();
@@ -257,7 +245,9 @@ export class LoveLetterGame {
     }
 
     for (let i: number = 0; i < players.length; i++) {
-      this.io.to(players[i].id).emit(SocketEvent.LL_GAME_STATE, gameState[i]);
+      for (let id of players[i].ids) {
+        this.io.to(id).emit(SocketEvent.LL_GAME_STATE, gameState[i]);
+      }
     }
     console.log(this.model.gameState());
   }
@@ -275,7 +265,9 @@ export class LoveLetterGame {
     };
 
     for (let p of players) {
-      this.io.to(p.id).emit(SocketEvent.LL_ROUND_OVER, roundOver);
+      for (let id of p.ids) {
+        this.io.to(id).emit(SocketEvent.LL_ROUND_OVER, roundOver);
+      }
     }
   }
 
@@ -292,7 +284,9 @@ export class LoveLetterGame {
     };
 
     for (let p of players) {
-      this.io.to(p.id).emit(SocketEvent.LL_GAME_OVER, gameOver);
+      for (let id of p.ids) {
+        this.io.to(id).emit(SocketEvent.LL_GAME_OVER, gameOver);
+      }
     }
   }
 
@@ -300,10 +294,11 @@ export class LoveLetterGame {
    * Removes the disconnected player from the game and sends everyone to a new lobby.
    * @param socketId the socket id of the disconnected player
    */
+  // TODO: No longer compatible with multiple sockets per player
   private onDisconnectPlayer(socketId: string): void {
     let players: Player[] = this.model.getPlayers();
-    let disconnected: Player | undefined = players.find(
-      (player) => player.id === socketId
+    let disconnected: Player | undefined = players.find((player) =>
+      player.ids.includes(socketId)
     );
     if (disconnected) {
       this.io.emit(SocketEvent.MESSAGE, {
@@ -319,7 +314,7 @@ export class LoveLetterGame {
       let socketIds: string[] = [];
       for (let p of players) {
         usernames.push(p.username);
-        socketIds.push(p.id);
+        socketIds = socketIds.concat(p.ids);
       }
 
       let lobby: LobbyPayload = {
@@ -354,8 +349,10 @@ export class LoveLetterGame {
     }
 
     for (let i: number = 0; i < players.length; i++) {
-      if (players[i].id !== socketId) {
-        this.io.to(players[i].id).emit(SocketEvent.LL_GAME_STATE, gameState[i]);
+      if (!players[i].ids.includes(socketId)) {
+        for (let id of players[i].ids) {
+          this.io.to(id).emit(SocketEvent.LL_GAME_STATE, gameState[i]);
+        }
       }
     }
   }

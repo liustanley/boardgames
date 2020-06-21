@@ -7,7 +7,9 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { JoinGameContainer } from "./homepage/JoinGameContainer";
 import { CodenamesContainer } from "./codenames/CodenamesContainer";
 import { SocketService } from "./services/SocketService";
+import Cookies from "universal-cookie";
 
+const cookies = new Cookies();
 const socket: SocketService = new SocketService().init();
 
 export class App extends React.Component<{}, {}> {
@@ -36,7 +38,11 @@ export class App extends React.Component<{}, {}> {
               exact
               path={`/${Games.LOVE_LETTER}/:room_id`}
               render={(props) => (
-                <LoveLetterContainer {...props} socket={socket} />
+                <LoveLetterContainer
+                  {...props}
+                  socket={socket}
+                  cookies={cookies}
+                />
               )}
             />
             <Route

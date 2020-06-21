@@ -26,6 +26,22 @@ export class LoveLetterModel {
     this.gameInProgress = false;
   }
 
+  rejoinPlayer(prevSocketId: string, newSocketId: string, callback: Function) {
+    const player = this.players.find((player) =>
+      player.ids.includes(prevSocketId)
+    );
+    if (player) {
+      player.ids.push(newSocketId);
+      callback({
+        username: player.username,
+        usernameList: this.players.map((player) => player.username),
+      });
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * Shuffles this game's deck using the Fisher-Yates shuffle algorithm.
    */
@@ -282,7 +298,7 @@ export class LoveLetterModel {
    */
   public removePlayer(socketId: string): void {
     let playerIndex: number = this.players.indexOf(
-      this.players.find((player) => player.id === socketId)
+      this.players.find((player) => player.ids.includes(socketId))
     );
     this.players.splice(playerIndex, 1);
   }

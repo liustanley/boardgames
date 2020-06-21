@@ -16,6 +16,7 @@ import {
   JoinGamePayload,
   SocketEvent,
   ChatMessagePayload,
+  ReJoinPayload,
 } from "../models/GameTypes";
 import {
   LobbyPayload as CN_LobbyPayload,
@@ -32,6 +33,10 @@ import {
  */
 export class SocketService {
   private socket: SocketIOClient.Socket = {} as SocketIOClient.Socket;
+
+  getId(): string {
+    return this.socket.id;
+  }
 
   /**
    * Initializes this class's socket connection.
@@ -51,6 +56,13 @@ export class SocketService {
   joinGame(payload: JoinGamePayload, callback: Function) {
     console.log("joining game - " + payload.gameType + " - " + payload.roomId);
     this.socket.emit(SocketEvent.JOIN_GAME, payload, callback);
+  }
+
+  rejoinGame(payload: ReJoinPayload, callback: Function) {
+    console.log(
+      "rejoining game - " + payload.room + " - " + payload.prevSocketId
+    );
+    this.socket.emit(SocketEvent.REJOIN_GAME, payload, callback);
   }
 
   /**

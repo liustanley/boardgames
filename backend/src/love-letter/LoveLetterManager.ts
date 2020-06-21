@@ -16,6 +16,16 @@ export class LoveLetterManager {
     this.codeToGame = new Map<string, LoveLetterGame>();
   }
 
+  rejoinPlayer(
+    room: string,
+    prevSocketId: string,
+    newSocketId: string,
+    callback: Function
+  ): boolean {
+    const game = this.codeToGame.get(room);
+    return game.rejoinPlayer(prevSocketId, newSocketId, callback);
+  }
+
   createGame(room: string) {
     this.codeToGame.set(room, new LoveLetterGame(this.io, room));
   }

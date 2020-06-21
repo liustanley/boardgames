@@ -12,6 +12,13 @@ export enum Games {
 }
 
 // Sent by frontend
+export interface ReJoinEvent {
+  prevSocketId: string;
+  game: Games;
+  room: string;
+}
+
+// Sent by frontend
 export interface CreateGameEvent {
   gameType: Games;
 }

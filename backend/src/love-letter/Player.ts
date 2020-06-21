@@ -2,7 +2,7 @@ import { PlayerStatus } from "./types";
 import { Card } from "./Card";
 
 export class Player {
-  id: string; // socket id
+  ids: string[]; // socket ids
   username: string; // user input username
   tokens?: number;
   card?: Card;
@@ -13,7 +13,7 @@ export class Player {
   selfSelectable?: boolean;
 
   constructor(id: string, username: string) {
-    this.id = id;
+    this.ids = [id];
     this.username = username;
     this.tokens = 0;
   }

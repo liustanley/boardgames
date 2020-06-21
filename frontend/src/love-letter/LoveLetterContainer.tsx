@@ -1,18 +1,20 @@
 import React from "react";
 import { SocketService } from "../services/SocketService";
-import { LobbyPayload } from "../models/LoveLetterTypes";
+import { LobbyPayload, PlayerInfoPayload } from "../models/LoveLetterTypes";
 import { LoveLetterColors } from "../models/LoveLetterTypes";
 import "./LoveLetterContainer.css";
 import { LoveLetterLobby } from "./LoveLetterLobby";
 import { RouteComponentProps } from "react-router-dom";
 import { UsernameInput } from "../homepage/UsernameInput";
+import Cookies from "universal-cookie";
+import { Games } from "../models/GameTypes";
 
 interface LoveLetterContainerProps extends RouteComponentProps {
   socket: SocketService;
+  cookies: Cookies;
 }
 
 interface LoveLetterContainerState {
-  usernameEntered: boolean;
   username: string;
   input: string;
   roomFullMessage: string;
@@ -26,9 +28,28 @@ export class LoveLetterContainer extends React.Component<
 > {
   constructor(props: any) {
     super(props);
+
+    const prevSocketId = this.props.cookies.get("socketId");
+    if (prevSocketId) {
+      console.log("ENTERED");
+      console.log("PREV: " + prevSocketId);
+      const params: any = this.props.match.params;
+      this.props.socket.rejoinGame(
+        {
+          prevSocketId: prevSocketId,
+          game: Games.LOVE_LETTER,
+          room: params.room_id,
+        },
+        (response: PlayerInfoPayload) => {
+          this.setState({
+            username: response.username,
+            usernameList: response.usernameList,
+          });
+        }
+      );
+    }
+
     this.state = {
-      usernameEntered: false,
-      // usernameEntered: true,
       // TODO:
       username: "",
       // username: "Dillon",
@@ -48,8 +69,11 @@ export class LoveLetterContainer extends React.Component<
   onLobby(payload: LobbyPayload) {
     console.log(JSON.stringify(payload));
     if (payload.success) {
+      const date = new Date();
+      this.props.cookies.set("socketId", this.props.socket.getId(), {
+        expires: new Date(date.getTime() + 10 * 60000),
+      });
       this.setState({
-        usernameEntered: true,
         usernameList: payload.usernameList,
         reset: payload.reset || undefined,
       });
@@ -82,6 +106,7 @@ export class LoveLetterContainer extends React.Component<
         ) : (
           <LoveLetterLobby
             socket={this.props.socket}
+            cookies={this.props.cookies}
             usernameList={this.state.usernameList}
             username={this.state.username}
             reset={this.state.reset}

@@ -14,10 +14,12 @@ import { LoveLetterGameState } from "./LoveLetterGameState";
 import { Card } from "./Card";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
 import LoveLetterCheatSheet from "./LoveLetterCheatSheet";
+import Cookies from "universal-cookie";
 
 interface LoveLetterLobbyProps {
   usernameList: string[];
   socket: SocketService;
+  cookies: Cookies;
   username: string;
   reset?: boolean;
   setReset: Function;
@@ -192,6 +194,10 @@ export class LoveLetterLobby extends React.Component<
   }
 
   onGameState(payload: GameStatePayload) {
+    const date = new Date();
+    this.props.cookies.set("socketId", this.props.socket.getId(), {
+      expires: new Date(date.getTime() + 10 * 60000),
+    });
     payload.visibleCards = Card.correct(payload.visibleCards);
     payload.discardCards = Card.correct(payload.discardCards);
 

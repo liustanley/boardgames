@@ -5,6 +5,7 @@ import {
   JoinGameEvent,
   ChatMessage,
   Games,
+  ReJoinEvent,
 } from "../types/types";
 import { SocketEvent } from "../types/constants";
 import {
@@ -57,6 +58,32 @@ export class SocketController {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+  }
+
+  private onReJoin(
+    payload: ReJoinEvent,
+    socket: socketIo.Socket,
+    callback: Function
+  ) {
+    switch (payload.game) {
+      case Games.LOVE_LETTER:
+        const success = this.loveLetterManager.rejoinPlayer(
+          payload.room,
+          payload.prevSocketId,
+          socket.id,
+          callback
+        );
+        if (success) {
+          this.socketToGame.set(socket.id, Games.LOVE_LETTER);
+          this.socketToRoom.set(socket.id, payload.room);
+          socket.join(payload.room);
+        } else {
+          console.log("Re-join unsuccessful");
+        }
+        break;
+      case Games.CODENAMES:
+        break;
+    }
   }
 
   private onCreateGame(
@@ -146,6 +173,13 @@ export class SocketController {
     this.io.on(SocketEvent.CONNECT, (socket: socketIo.Socket) => {
       console.log("Connected client on port %s.", this.port);
       this.sockets.push(socket.id);
+
+      socket.on(
+        SocketEvent.REJOIN_GAME,
+        (payload: ReJoinEvent, callback: Function) => {
+          this.onReJoin(payload, socket, callback);
+        }
+      );
 
       socket.on(
         SocketEvent.CREATE_GAME,

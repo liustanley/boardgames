@@ -6,6 +6,8 @@
 export enum SocketEvent {
   CONNECT = "connect",
   DISCONNECT = "disconnect",
+  REJOIN_GAME = "REJOIN_GAME",
+  PLAYER_INFO = "PLAYER_INFO",
   MESSAGE = "message",
   JOIN_GAME = "JOIN_GAME",
   CREATE_GAME = "CREATE_GAME",

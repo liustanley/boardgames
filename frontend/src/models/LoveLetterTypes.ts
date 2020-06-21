@@ -1,6 +1,12 @@
 import { Card } from "../love-letter/Card";
 import { ChatMessagePayload } from "./GameTypes";
 
+// Sent by back-end
+export interface PlayerInfoPayload {
+  username: string;
+  usernameList: string[];
+}
+
 // Sent by front-end
 export interface RegisterPlayerPayload {
   username: string;
