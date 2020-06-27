@@ -4,19 +4,21 @@ import { LoveLetterColors } from "../models/LoveLetterTypes";
 import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
 import {
-  GameStateEvent,
-  PlayerStatus,
-  RoundOverEvent,
+  GameStatePayload,
+  RoundOverPayload,
   ReadyStatus,
-  GameOverEvent,
+  GameOverPayload,
 } from "../models/LoveLetterTypes";
 import { LoveLetterGameState } from "./LoveLetterGameState";
 import { Card } from "./Card";
 import { LoveLetterDeckCard } from "./LoveLetterDeckCard";
+import LoveLetterCheatSheet from "./LoveLetterCheatSheet";
+import Cookies from "universal-cookie";
 
 interface LoveLetterLobbyProps {
   usernameList: string[];
   socket: SocketService;
+  cookies: Cookies;
   username: string;
   reset?: boolean;
   setReset: Function;
@@ -27,61 +29,13 @@ interface LoveLetterLobbyState {
   usernameList: string[];
   gameStarted: boolean;
   ready: boolean;
-  gameState: GameStateEvent | null;
+  gameState: GameStatePayload | null;
   roundOver: boolean;
-  roundState: RoundOverEvent | null;
+  roundState: RoundOverPayload | null;
   gameOver: boolean;
-  gameOverState: GameOverEvent | null;
+  gameOverState: GameOverPayload | null;
+  cheatSheetVisible: boolean;
 }
-
-// TODO:
-const deck = [
-  Card.GUARD,
-  Card.HANDMAID,
-  Card.KING,
-  Card.GUARD,
-  Card.PRINCE,
-  Card.PRINCE,
-  Card.GUARD,
-  Card.PRIEST,
-  Card.BARON,
-  Card.GUARD,
-  Card.PRINCESS,
-  Card.PRIEST,
-  Card.BARON,
-];
-const dillon = {
-  id: "1",
-  username: "Dillon",
-  immune: false,
-  status: PlayerStatus.WAITING,
-  tokens: 2,
-  card: Card.PRIEST,
-};
-const alex = {
-  id: "2",
-  username: "Alex",
-  immune: false,
-  status: PlayerStatus.DEAD,
-  tokens: 1,
-  card: Card.PRINCESS,
-};
-const christina = {
-  id: "3",
-  username: "Christina",
-  immune: false,
-  status: PlayerStatus.DEAD,
-  tokens: 3,
-  card: Card.KING,
-};
-const annette = {
-  id: "4",
-  username: "Annette",
-  immune: false,
-  status: PlayerStatus.WAITING,
-  selfSelectable: false,
-  tokens: 1,
-};
 
 export class LoveLetterLobby extends React.Component<
   LoveLetterLobbyProps,
@@ -92,76 +46,26 @@ export class LoveLetterLobby extends React.Component<
     this.state = {
       usernameList: props.usernameList,
       ready: false,
-      // TODO:
       gameStarted: false,
-      // gameStarted: true,
-      // TODO:
       gameState: null,
-      // gameState: {
-      //   message: "Select a card",
-      //   visibleCards: [Card.PRIEST, Card.KING],
-      //   discardCards: deck,
-      //   status: PlayerStatus.SELECTING_CARD,
-      // },
-      // gameState: {
-      //   message: "It's Stanley's turn",
-      //   visibleCards: [Card.PRINCESS],
-      //   discardCards: deck,
-      //   status: PlayerStatus.WAITING,
-      // },
-      // gameState: {
-      //   message: "Stanley compared cards with you and lost!",
-      //   visibleCards: [Card.PRINCE, Card.COUNTESS],
-      //   discardCards: deck,
-      //   status: PlayerStatus.WAITING,
-      // },
-      // gameState: {
-      //   message: "You are viewing Stanley's card",
-      //   visibleCards: [Card.KING],
-      //   discardCards: deck,
-      //   status: PlayerStatus.VIEWING_CARD,
-      // },
-      // gameState: {
-      //   message: "You compared cards with Stanley and won!",
-      //   visibleCards: [Card.HANDMAID, Card.PRIEST],
-      //   discardCards: deck,
-      //   status: PlayerStatus.COMPARING_CARDS,
-      // },
-      // gameState: {
-      //   message: "Select a player",
-      //   visibleCards: [],
-      //   discardCards: deck,
-      //   visiblePlayers: [dillon, alex, christina, annette],
-      //   status: PlayerStatus.SELECTING_PLAYER,
-      // },
-      // gameState: {
-      //   message: "Select a player and a card",
-      //   visibleCards: [],
-      //   discardCards: deck,
-      //   visiblePlayers: [dillon, alex, christina, annette],
-      //   status: PlayerStatus.GUESSING_CARD,
-      // },
       roundOver: false,
-      // roundOver: true,
       roundState: null,
-      // roundState: {
-      //   message: "Alex wins!",
-      //   players: [dillon, alex, christina, annette],
-      // },
       gameOver: false,
-      // gameOver: true,
       gameOverState: null,
-      // gameOverState: {
-      //   message: "Christina wins!",
-      //   players: [dillon, alex, christina, annette],
-      // },
+      cheatSheetVisible: false,
     };
   }
 
   componentDidMount() {
-    this.props.socket.subscribeToGameState(this.onGameState.bind(this));
-    this.props.socket.subscribeToRoundOver(this.onRoundOver.bind(this));
-    this.props.socket.subscribeToGameOver(this.onGameOver.bind(this));
+    this.props.socket.LOVE_LETTER.subscribeToGameState(
+      this.onGameState.bind(this)
+    );
+    this.props.socket.LOVE_LETTER.subscribeToRoundOver(
+      this.onRoundOver.bind(this)
+    );
+    this.props.socket.LOVE_LETTER.subscribeToGameOver(
+      this.onGameOver.bind(this)
+    );
   }
 
   componentDidUpdate() {
@@ -182,7 +86,11 @@ export class LoveLetterLobby extends React.Component<
     }
   }
 
-  onGameState(payload: GameStateEvent) {
+  onGameState(payload: GameStatePayload) {
+    this.props.cookies.set("socketId", this.props.socket.getId(), {
+      path: "/",
+      maxAge: 600,
+    });
     payload.visibleCards = Card.correct(payload.visibleCards);
     payload.discardCards = Card.correct(payload.discardCards);
 
@@ -196,7 +104,7 @@ export class LoveLetterLobby extends React.Component<
 
   onReadyStart() {
     if (!this.state.ready) {
-      this.props.socket.readyPlayer({
+      this.props.socket.LOVE_LETTER.readyPlayer({
         username: this.props.username,
         status: ReadyStatus.GAME_START,
       });
@@ -206,7 +114,7 @@ export class LoveLetterLobby extends React.Component<
 
   onReadyContinue() {
     if (!this.state.ready) {
-      this.props.socket.readyPlayer({
+      this.props.socket.LOVE_LETTER.readyPlayer({
         username: this.props.username,
         status: ReadyStatus.ROUND_START,
       });
@@ -216,7 +124,7 @@ export class LoveLetterLobby extends React.Component<
 
   onReadyRestart() {
     if (!this.state.ready) {
-      this.props.socket.readyPlayer({
+      this.props.socket.LOVE_LETTER.readyPlayer({
         username: this.props.username,
         status: ReadyStatus.GAME_RESTART,
       });
@@ -224,17 +132,39 @@ export class LoveLetterLobby extends React.Component<
     this.setState({ ready: true });
   }
 
-  onRoundOver(payload: RoundOverEvent) {
+  onRoundOver(payload: RoundOverPayload) {
     this.setState({ roundOver: true, roundState: payload, ready: false });
   }
 
-  onGameOver(payload: GameOverEvent) {
-    this.setState({ gameOver: true, gameOverState: payload, ready: false });
+  onGameOver(payload: GameOverPayload) {
+    this.setState({
+      gameOver: true,
+      gameStarted: true,
+      gameOverState: payload,
+      ready: false,
+    });
+  }
+
+  openCheatSheet() {
+    this.setState({
+      cheatSheetVisible: true,
+    });
+  }
+
+  closeCheatSheet() {
+    this.setState({
+      cheatSheetVisible: false,
+    });
   }
 
   render() {
     return (
       <Fragment>
+        {this.state.cheatSheetVisible && (
+          <LoveLetterCheatSheet
+            closeOverlay={this.closeCheatSheet.bind(this)}
+          />
+        )}
         {!this.state.gameStarted && !this.state.roundOver && (
           <Fragment>
             <div className="loveLetterLobby">
@@ -372,6 +302,14 @@ export class LoveLetterLobby extends React.Component<
           <ChatContainer
             socket={this.props.socket}
             username={this.props.username}
+            size="big"
+            gameInProgress={
+              this.state.gameStarted &&
+              !!this.state.gameState &&
+              !this.state.roundOver &&
+              !this.state.gameOver
+            }
+            openCheatSheet={this.openCheatSheet.bind(this)}
           />
         </div>
       </Fragment>

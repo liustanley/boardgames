@@ -5,6 +5,12 @@ import { Games } from "./models/GameTypes";
 import { HomePage } from "./homepage/HomePage";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { JoinGameContainer } from "./homepage/JoinGameContainer";
+import { CodenamesContainer } from "./codenames/CodenamesContainer";
+import { SocketService } from "./services/SocketService";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+const socket: SocketService = new SocketService().init();
 
 export class App extends React.Component<{}, {}> {
   render() {
@@ -12,11 +18,10 @@ export class App extends React.Component<{}, {}> {
       <Fragment>
         <Router>
           <Switch>
-            <Route exact path="/" component={HomePage} />
             <Route
               exact
-              path={`/${Games.LOVE_LETTER}/:room_id`}
-              component={LoveLetterContainer}
+              path="/"
+              render={(props) => <HomePage {...props} socket={socket} />}
             />
             <Route
               exact
@@ -24,8 +29,27 @@ export class App extends React.Component<{}, {}> {
               render={(props) => (
                 <JoinGameContainer
                   {...props}
+                  socket={socket}
                   gameType={props.match.params.gameType}
                 />
+              )}
+            />
+            <Route
+              exact
+              path={`/${Games.LOVE_LETTER}/:room_id`}
+              render={(props) => (
+                <LoveLetterContainer
+                  {...props}
+                  socket={socket}
+                  cookies={cookies}
+                />
+              )}
+            />
+            <Route
+              exact
+              path={`/${Games.CODENAMES}/:room_id`}
+              render={(props) => (
+                <CodenamesContainer {...props} socket={socket} />
               )}
             />
           </Switch>

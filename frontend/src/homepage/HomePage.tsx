@@ -3,24 +3,20 @@ import "./HomePage.css";
 import { HomePageCard } from "./HomePageCard";
 import { Games } from "../models/GameTypes";
 import { RouteComponentProps } from "react-router-dom";
+import { SocketService } from "../services/SocketService";
 
-export class HomePage extends React.Component<RouteComponentProps, {}> {
-  makeid(length: number) {
-    var result = "";
-    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+interface HomePageProps extends RouteComponentProps {
+  socket: SocketService;
+}
+
+export class HomePage extends React.Component<HomePageProps, {}> {
+  onCreate(game: Games) {
+    this.props.socket.createGame({ gameType: game }, (roomCode: string) => {
+      this.props.history.push(`/${game}/${roomCode}`);
+    });
   }
 
-  onCreate(game: string) {
-    const code = this.makeid(4);
-    this.props.history.push(`/${game}/${code}`);
-  }
-
-  onJoin(game: string) {
+  onJoin(game: Games) {
     this.props.history.push(`/${game}`);
   }
 
@@ -33,6 +29,11 @@ export class HomePage extends React.Component<RouteComponentProps, {}> {
             game="Love Letter"
             onCreate={() => this.onCreate(Games.LOVE_LETTER)}
             onJoin={() => this.onJoin(Games.LOVE_LETTER)}
+          />
+          <HomePageCard
+            game="Codenames"
+            onCreate={() => this.onCreate(Games.CODENAMES)}
+            onJoin={() => this.onJoin(Games.CODENAMES)}
           />
         </div>
         <div className="homepageRight"></div>

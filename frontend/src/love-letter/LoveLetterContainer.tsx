@@ -1,16 +1,20 @@
 import React from "react";
 import { SocketService } from "../services/SocketService";
-import { LobbyEvent } from "../models/LoveLetterTypes";
+import { LobbyPayload, PlayerInfoPayload } from "../models/LoveLetterTypes";
 import { LoveLetterColors } from "../models/LoveLetterTypes";
 import "./LoveLetterContainer.css";
 import { LoveLetterLobby } from "./LoveLetterLobby";
 import { RouteComponentProps } from "react-router-dom";
 import { UsernameInput } from "../homepage/UsernameInput";
+import Cookies from "universal-cookie";
+import { Games } from "../models/GameTypes";
 
-const socket: SocketService = new SocketService().init();
+interface LoveLetterContainerProps extends RouteComponentProps {
+  socket: SocketService;
+  cookies: Cookies;
+}
 
 interface LoveLetterContainerState {
-  usernameEntered: boolean;
   username: string;
   input: string;
   roomFullMessage: string;
@@ -19,34 +23,53 @@ interface LoveLetterContainerState {
 }
 
 export class LoveLetterContainer extends React.Component<
-  RouteComponentProps,
+  LoveLetterContainerProps,
   LoveLetterContainerState
 > {
   constructor(props: any) {
     super(props);
+
+    this.props.socket.onConnect(() => {
+      const prevSocketId = this.props.cookies.get("socketId");
+      if (!prevSocketId || prevSocketId !== this.props.socket.getId()) {
+        const params: any = this.props.match.params;
+        this.props.socket.rejoinGame(
+          {
+            prevSocketId: prevSocketId,
+            game: Games.LOVE_LETTER,
+            room: params.room_id,
+          },
+          (response: PlayerInfoPayload) => {
+            this.setState({
+              username: response.username,
+              usernameList: response.usernameList,
+            });
+          }
+        );
+      }
+    });
+
     this.state = {
-      usernameEntered: false,
-      // TODO:
       username: "",
-      // username: "Dillon",
       input: "",
       roomFullMessage: "",
-      // TODO:
       usernameList: [],
-      // usernameList: ["Stanley", "Alex", "Annette", "Christina"],
       reset: false,
     };
   }
 
   componentDidMount() {
-    socket.subscribeToLobby(this.onLobby.bind(this));
+    this.props.socket.LOVE_LETTER.subscribeToLobby(this.onLobby.bind(this));
   }
 
-  onLobby(payload: LobbyEvent) {
+  onLobby(payload: LobbyPayload) {
     console.log(JSON.stringify(payload));
     if (payload.success) {
+      this.props.cookies.set("socketId", this.props.socket.getId(), {
+        path: "/",
+        maxAge: 600,
+      });
       this.setState({
-        usernameEntered: true,
         usernameList: payload.usernameList,
         reset: payload.reset || undefined,
       });
@@ -57,7 +80,7 @@ export class LoveLetterContainer extends React.Component<
 
   onEnter(username: string) {
     this.setState({ username });
-    socket.registerPlayer({ username });
+    this.props.socket.LOVE_LETTER.registerPlayer({ username });
   }
 
   setReset() {
@@ -78,7 +101,8 @@ export class LoveLetterContainer extends React.Component<
           </div>
         ) : (
           <LoveLetterLobby
-            socket={socket}
+            socket={this.props.socket}
+            cookies={this.props.cookies}
             usernameList={this.state.usernameList}
             username={this.state.username}
             reset={this.state.reset}

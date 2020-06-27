@@ -1,8 +1,8 @@
 import * as express from "express";
 import { createServer, Server } from "http";
-import { SocketType } from "../types/constants";
-import { LoveLetterController } from "../love-letter/LoveLetterController";
+import { LoveLetterGame } from "../love-letter/LoveLetterGame";
 import { ChatServer } from "../chat/ChatServer";
+import { SocketController } from "./SocketController";
 
 var cors = require("cors");
 
@@ -42,19 +42,11 @@ export class ExpressServer {
    * Instantiates and adds a socket server of the given type to this express server.
    * @param socketType the type of socket server to instantiate
    */
-  public addSocket(socketType: SocketType): ExpressServer {
-    switch (socketType) {
-      case SocketType.CHAT:
-        const chatServer: ChatServer = new ChatServer(this.server, this.port);
-        return this;
-
-      case SocketType.LOVE_LETTER:
-        const loveLetter: LoveLetterController = new LoveLetterController(
-          this.server,
-          this.port
-        );
-        return this;
-    }
+  public addSocket(): ExpressServer {
+    const controller: SocketController = new SocketController(
+      this.server,
+      this.port
+    );
     return this;
   }
 }

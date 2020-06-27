@@ -1,0 +1,56 @@
+.codenamesTeamSelectionContainer {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.codenamesTeamSelectionLeft {
+  flex: 1;
+  padding: 20px;
+}
+
+.codenamesTeamSelectionCenter {
+  flex: 1;
+  padding: 20px;
+}
+
+.codenamesTeamSelectionRight {
+  flex: 1;
+  padding: 20px;
+}
+
+.codenamesJoinTeamButtons {
+  display: flex;
+  position: absolute;
+  height: 100px;
+  width: 100%;
+  bottom: 0px;
+  line-height: 100px;
+  font-size: 50px;
+}
+
+.joinRedTeamButton {
+  flex: 1;
+}
+
+.joinBlueTeamButton {
+  flex: 1;
+}
+
+.codenamesBeSpymasterButton {
+  position: absolute;
+  height: 100px;
+  width: 100%;
+  bottom: 100px;
+  line-height: 100px;
+  font-size: 50px;
+}
+
+.codenamesStartButton {
+  position: absolute;
+  height: 100px;
+  width: 100%;
+  bottom: 200px;
+  line-height: 100px;
+  font-size: 50px;
+}

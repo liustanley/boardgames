@@ -26,6 +26,24 @@ export class LoveLetterModel {
     this.gameInProgress = false;
   }
 
+  rejoinPlayer(prevSocketId: string, newSocketId: string, callback: Function) {
+    const player = this.players.find((player) =>
+      player.ids.includes(prevSocketId)
+    );
+    if (player) {
+      if (!player.ids.includes(newSocketId)) {
+        player.ids.push(newSocketId);
+      }
+      callback({
+        username: player.username,
+        usernameList: this.players.map((player) => player.username),
+      });
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * Shuffles this game's deck using the Fisher-Yates shuffle algorithm.
    */
@@ -231,7 +249,9 @@ export class LoveLetterModel {
   public gameState(): GameState[] {
     let result: GameState[] = [];
 
-    for (let p of this.players) {
+    for (let i = 0; i < this.players.length; i++) {
+      let p: Player = this.players[i];
+
       let gs: GameState = {
         message: this.message,
         visibleCards: p.visibleCards,
@@ -241,9 +261,16 @@ export class LoveLetterModel {
 
       if (
         p.status === PlayerStatus.GUESSING_CARD ||
-        p.status === PlayerStatus.SELECTING_PLAYER
+        p.status === PlayerStatus.SELECTING_PLAYER ||
+        p.status === PlayerStatus.WATCHING
       ) {
         gs.visiblePlayers = this.players;
+      }
+
+      let turnMessage: string =
+        "It's " + this.players[this.turn].username + "'s turn";
+      if (i !== this.turn) {
+        gs.turnMessage = turnMessage;
       }
 
       result.push(gs);
@@ -274,7 +301,7 @@ export class LoveLetterModel {
    */
   public removePlayer(socketId: string): void {
     let playerIndex: number = this.players.indexOf(
-      this.players.find((player) => player.id === socketId)
+      this.players.find((player) => player.ids.includes(socketId))
     );
     this.players.splice(playerIndex, 1);
   }
@@ -353,6 +380,26 @@ export class LoveLetterModel {
 
     if (this.deck.length <= 1 || numAlive === 1) {
       winner.tokens++;
+      this.message = winner.username + "'s love letter reached the princess.";
+      return true;
+    }
+
+    return false;
+  }
+
+  public checkRoundOver(): boolean {
+    let numAlive: number = 0;
+    let winner: Player = undefined;
+    for (let p of this.players) {
+      if (p.status !== PlayerStatus.DEAD) {
+        if (!winner || p.card.value > winner.card.value) {
+          winner = p;
+        }
+        numAlive++;
+      }
+    }
+
+    if (this.deck.length <= 1 || numAlive === 1) {
       this.message = winner.username + "'s love letter reached the princess.";
       return true;
     }

@@ -1,0 +1,27 @@
+.codenamesGameStateContainer {
+  display: flex;
+  width: 100%;
+}
+
+.codenamesTeamList {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-flow: column;
+}
+
+.codenamesTeamList .redTeam,
+.codenamesTeamList .blueTeam {
+  flex: 1;
+}
+
+.codenamesBoard {
+  flex: 2;
+  min-width: 640px;
+  padding: 20px;
+}
+
+.codenamesChat {
+  flex: 1;
+  padding: 20px;
+}

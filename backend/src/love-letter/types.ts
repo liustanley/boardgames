@@ -2,31 +2,31 @@ import { Player } from "./Player";
 import { Card } from "./Card";
 
 // Sent by front-end
-export interface RegisterPlayerEvent {
+export interface RegisterPlayerPayload {
   username: string;
 }
 
 // Sent by back-end
-export interface LobbyEvent {
+export interface LobbyPayload {
   success: boolean;
   usernameList: string[];
   reset?: boolean;
 }
 
 // Sent by front-end
-export interface ReadyPlayerEvent {
+export interface ReadyPlayerPayload {
   username: string;
   status: ReadyStatus;
 }
 
 // Sent by front-end
-export interface SelectCardEvent {
+export interface SelectCardPayload {
   username: string;
   card: Card;
 }
 
 // Sent by front-end
-export interface PlayCardEvent {
+export interface PlayCardPayload {
   username: string;
   target?: string; // If target is undefined, then there are no selectable players and the game will progress to the next turn.
   guess?: Card;
@@ -34,12 +34,12 @@ export interface PlayCardEvent {
 
 // Sent by front-end
 // Sent after the play of a Baron or a Priest
-export interface ConfirmEvent {
+export interface ConfirmPayload {
   username: string;
 }
 
 // Sent by back-end
-export interface GameStateEvent {
+export interface GameStatePayload {
   message: string;
   visibleCards: Card[];
   discardCards: Card[];
@@ -50,19 +50,19 @@ export interface GameStateEvent {
 }
 
 // Sent by back-end
-export interface RoundOverEvent {
+export interface RoundOverPayload {
   message: string;
   players: Player[];
 }
 
 // Sent by back-end
-export interface GameOverEvent {
+export interface GameOverPayload {
   message: string;
   players: Player[];
 }
 
 // Sent by front-end
-export interface HighlightEvent {
+export interface HighlightPayload {
   username: string; // player doing the selecting
   player?: Player; // highlighted player
   card?: Card; // highlighted card
@@ -87,6 +87,7 @@ export enum ReadyStatus {
 
 export interface GameState {
   message: string;
+  turnMessage?: string;
   visibleCards: Card[];
   discardCards: Card[];
   visiblePlayers?: Player[];

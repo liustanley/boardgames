@@ -1,13 +1,17 @@
 import React, { createRef } from "react";
 import ChatComponent from "./ChatComponent";
-import { ChatState, ChatMessageEvent } from "../models/LoveLetterTypes";
+import { ChatState } from "../models/LoveLetterTypes";
 import { SocketService } from "../services/SocketService";
 import { LoveLetterColors } from "../models/LoveLetterTypes";
 import "./ChatContainer.css";
+import { ChatMessagePayload } from "../models/GameTypes";
 
 interface ChatContainerProps {
   socket: SocketService;
   username: string;
+  size: "big" | "small";
+  gameInProgress?: boolean;
+  openCheatSheet?: () => void;
 }
 
 export class ChatContainer extends React.Component<
@@ -66,8 +70,8 @@ export class ChatContainer extends React.Component<
     }
   }
 
-  receiveMessage(message: ChatMessageEvent) {
-    let messages: ChatMessageEvent[] = this.state.messages;
+  receiveMessage(message: ChatMessagePayload) {
+    let messages: ChatMessagePayload[] = this.state.messages;
     messages.push(message);
 
     this.setState({ messages }, () => {
@@ -111,6 +115,9 @@ export class ChatContainer extends React.Component<
         messageOnKeyPress={this.onKeyPress.bind(this)}
         userToColor={this.userToColor.bind(this)}
         chatRef={this.chatRef}
+        size={this.props.size}
+        gameInProgress={this.props.gameInProgress}
+        openCheatSheet={this.props.openCheatSheet}
       />
     );
   }

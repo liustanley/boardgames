@@ -1,12 +1,19 @@
 import React from "react";
-import { ChatMessageEvent } from "../models/LoveLetterTypes";
 import "./ChatComponent.css";
+import { ChatMessagePayload } from "../models/GameTypes";
 
 function ChatComponent(props: any) {
   return (
-    <div className="chatComponent">
+    <div
+      className="chatComponent"
+      style={{
+        fontSize: props.size === "big" ? 24 : 20,
+        padding: props.size === "big" ? 50 : 20,
+        lineHeight: props.size === "big" ? "48px" : "30px",
+      }}
+    >
       <div className="chatMessages" ref={props.chatRef}>
-        {props.messages.map((msg: ChatMessageEvent, index: number) => (
+        {props.messages.map((msg: ChatMessagePayload, index: number) => (
           <div key={index}>
             <p>
               <span style={{ color: props.userToColor(msg.author) }}>
@@ -19,8 +26,14 @@ function ChatComponent(props: any) {
       </div>
       <hr />
       <div className="chatInput">
+        {props.gameInProgress && (
+          <button className="cheatSheet" onClick={props.openCheatSheet}>
+            Cheat Sheet
+          </button>
+        )}
         <input
           className="input"
+          type="text"
           value={props.messageValue}
           placeholder={props.messagePlaceholder}
           onChange={props.messageOnChange}
