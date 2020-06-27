@@ -1,7 +1,7 @@
 import * as socketIo from "socket.io";
-import { ChatEvent } from "../types/constants";
 import { ChatMessage } from "../types/types";
 import { Server } from "http";
+import { SocketEvent } from "../types/constants";
 
 export class ChatServer {
   private io: SocketIO.Server;
@@ -24,18 +24,18 @@ export class ChatServer {
     console.log("[server](message): %s", JSON.stringify(m));
 
     // Emits the ChatMessage to all connected clients via a MESSAGE event.
-    this.io.emit(ChatEvent.MESSAGE, m);
+    this.io.emit(SocketEvent.MESSAGE, m);
   };
 
   /**
    * Opens up communication to our server and Socket.io events.
    */
   private listen(): void {
-    this.io.on(ChatEvent.CONNECT, (socket: socketIo.Socket) => {
+    this.io.on(SocketEvent.CONNECT, (socket: socketIo.Socket) => {
       console.log("Connected client on port %s.", this.port);
-      socket.on(ChatEvent.MESSAGE, this.onMessage);
+      socket.on(SocketEvent.MESSAGE, this.onMessage);
 
-      socket.on(ChatEvent.DISCONNECT, () => {
+      socket.on(SocketEvent.DISCONNECT, () => {
         console.log("Client disconnected");
       });
     });
