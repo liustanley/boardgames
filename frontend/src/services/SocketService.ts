@@ -47,7 +47,8 @@ export class SocketService {
    */
   init(): SocketService {
     console.log("initiating socket service");
-    this.socket = io("localhost:8080");
+    // this.socket = io("localhost:8080");
+    this.socket = io("https://tranquil-river-48506.herokuapp.com");
     return this;
   }
 
