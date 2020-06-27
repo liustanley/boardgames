@@ -2,7 +2,7 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { SocketService } from "../services/SocketService";
 import { UsernameInput } from "../homepage/UsernameInput";
-import { Player, Team, LobbyPayload } from "../models/CodenamesTypes";
+import { Player, LobbyPayload } from "../models/CodenamesTypes";
 import "./CodenamesContainer.css";
 import { CodenamesTeamSelection } from "./CodenamesTeamSelection";
 
@@ -15,29 +15,6 @@ interface CodenamesContainerState {
   playerList: Player[];
 }
 
-// TODO
-const dillon: Player = {
-  username: "Dillon",
-  team: Team.BLUE,
-  spymaster: false,
-};
-const stanley: Player = {
-  username: "Stanley",
-  team: Team.RED,
-  spymaster: false,
-};
-const alex: Player = { username: "Alex", team: Team.BLUE, spymaster: false };
-const christina: Player = {
-  username: "Christina",
-  team: Team.RED,
-  spymaster: true,
-};
-const annette: Player = {
-  username: "Annette",
-  team: Team.RED,
-  spymaster: false,
-};
-
 export class CodenamesContainer extends React.Component<
   CodenamesContainerProps,
   CodenamesContainerState
@@ -46,9 +23,7 @@ export class CodenamesContainer extends React.Component<
     super(props);
     this.state = {
       username: "",
-      // username: "Dillon",
       playerList: [],
-      // playerList: [dillon, stanley, alex, christina, annette],
     };
   }
 

@@ -50,14 +50,10 @@ export class LoveLetterContainer extends React.Component<
     });
 
     this.state = {
-      // TODO:
       username: "",
-      // username: "Dillon",
       input: "",
       roomFullMessage: "",
-      // TODO:
       usernameList: [],
-      // usernameList: ["Stanley", "Alex", "Annette", "Christina"],
       reset: false,
     };
   }

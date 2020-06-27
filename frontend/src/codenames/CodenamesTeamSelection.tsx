@@ -5,8 +5,6 @@ import {
   CodenamesColors,
   Team,
   GameStatePayload,
-  PlayerStatus,
-  testCards,
 } from "../models/CodenamesTypes";
 import "./CodenamesTeamSelection.css";
 import { CodenamesGameState } from "./CodenamesGameState";
@@ -69,13 +67,7 @@ export class CodenamesTeamSelection extends React.Component<
       spymasterHovered: false,
       startHovered: false,
       gameStarted: false,
-      // gameStarted: true,
       gameState: null,
-      // gameState: {
-      //   playerList: props.playerList,
-      //   cards: testCards,
-      //   status: PlayerStatus.BLUE_GUESSING,
-      // },
       canStartGame:
         allOnTeams &&
         redSpymaster &&

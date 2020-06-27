@@ -5,7 +5,6 @@ import { SocketService } from "../services/SocketService";
 import { ChatContainer } from "../chat/ChatContainer";
 import {
   GameStatePayload,
-  PlayerStatus,
   RoundOverPayload,
   ReadyStatus,
   GameOverPayload,
@@ -38,55 +37,6 @@ interface LoveLetterLobbyState {
   cheatSheetVisible: boolean;
 }
 
-// TODO:
-const deck = [
-  Card.GUARD,
-  Card.HANDMAID,
-  Card.KING,
-  Card.GUARD,
-  Card.PRINCE,
-  Card.PRINCE,
-  Card.GUARD,
-  Card.PRIEST,
-  Card.BARON,
-  Card.GUARD,
-  Card.PRINCESS,
-  Card.PRIEST,
-  Card.BARON,
-];
-const dillon = {
-  id: "1",
-  username: "Dillon",
-  immune: false,
-  status: PlayerStatus.WAITING,
-  tokens: 2,
-  card: Card.PRIEST,
-};
-const alex = {
-  id: "2",
-  username: "Alex",
-  immune: false,
-  status: PlayerStatus.DEAD,
-  tokens: 1,
-  card: Card.PRINCESS,
-};
-const christina = {
-  id: "3",
-  username: "Christina",
-  immune: false,
-  status: PlayerStatus.DEAD,
-  tokens: 3,
-  card: Card.KING,
-};
-const annette = {
-  id: "4",
-  username: "Annette",
-  immune: false,
-  status: PlayerStatus.WAITING,
-  selfSelectable: false,
-  tokens: 1,
-};
-
 export class LoveLetterLobby extends React.Component<
   LoveLetterLobbyProps,
   LoveLetterLobbyState
@@ -96,69 +46,12 @@ export class LoveLetterLobby extends React.Component<
     this.state = {
       usernameList: props.usernameList,
       ready: false,
-      // TODO:
       gameStarted: false,
-      // gameStarted: true,
-      // TODO:
       gameState: null,
-      // gameState: {
-      //   message: "Select a card",
-      //   visibleCards: [Card.PRIEST, Card.KING],
-      //   discardCards: deck,
-      //   status: PlayerStatus.SELECTING_CARD,
-      // },
-      // gameState: {
-      //   message: "It's Stanley's turn",
-      //   visibleCards: [Card.PRINCESS],
-      //   discardCards: deck,
-      //   status: PlayerStatus.WAITING,
-      // },
-      // gameState: {
-      //   message: "Stanley compared cards with you and lost!",
-      //   visibleCards: [Card.PRINCE, Card.COUNTESS],
-      //   discardCards: deck,
-      //   status: PlayerStatus.WAITING,
-      // },
-      // gameState: {
-      //   message: "You are viewing Stanley's card",
-      //   visibleCards: [Card.KING],
-      //   discardCards: deck,
-      //   status: PlayerStatus.VIEWING_CARD,
-      // },
-      // gameState: {
-      //   message: "You compared cards with Stanley and won!",
-      //   visibleCards: [Card.HANDMAID, Card.PRIEST],
-      //   discardCards: deck,
-      //   status: PlayerStatus.COMPARING_CARDS,
-      // },
-      // gameState: {
-      //   message: "Select a player",
-      //   visibleCards: [],
-      //   discardCards: deck,
-      //   visiblePlayers: [dillon, alex, christina, annette],
-      //   status: PlayerStatus.SELECTING_PLAYER,
-      // },
-      // gameState: {
-      //   message: "Select a player and a card",
-      //   visibleCards: [],
-      //   discardCards: deck,
-      //   visiblePlayers: [dillon, alex, christina, annette],
-      //   status: PlayerStatus.GUESSING_CARD,
-      // },
       roundOver: false,
-      // roundOver: true,
       roundState: null,
-      // roundState: {
-      //   message: "Alex wins!",
-      //   players: [dillon, alex, christina, annette],
-      // },
       gameOver: false,
-      // gameOver: true,
       gameOverState: null,
-      // gameOverState: {
-      //   message: "Christina wins!",
-      //   players: [dillon, alex, christina, annette],
-      // },
       cheatSheetVisible: false,
     };
   }
