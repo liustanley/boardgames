@@ -194,9 +194,9 @@ export class LoveLetterLobby extends React.Component<
   }
 
   onGameState(payload: GameStatePayload) {
-    const date = new Date();
     this.props.cookies.set("socketId", this.props.socket.getId(), {
-      expires: new Date(date.getTime() + 10 * 60000),
+      path: "/",
+      maxAge: 600,
     });
     payload.visibleCards = Card.correct(payload.visibleCards);
     payload.discardCards = Card.correct(payload.discardCards);
@@ -244,7 +244,12 @@ export class LoveLetterLobby extends React.Component<
   }
 
   onGameOver(payload: GameOverPayload) {
-    this.setState({ gameOver: true, gameOverState: payload, ready: false });
+    this.setState({
+      gameOver: true,
+      gameStarted: true,
+      gameOverState: payload,
+      ready: false,
+    });
   }
 
   openCheatSheet() {

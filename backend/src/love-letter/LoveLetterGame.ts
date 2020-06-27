@@ -1,5 +1,3 @@
-import * as socketIo from "socket.io";
-import { ChatMessage } from "../types/types";
 import { LoveLetterModel } from "./LoveLetterModel";
 import { Card } from "./Card";
 import { Player } from "./Player";
@@ -16,6 +14,7 @@ import {
   GameOverPayload,
   HighlightPayload,
   ConfirmPayload,
+  PlayerStatus,
 } from "./types";
 import { SocketEvent } from "../types/constants";
 
@@ -32,7 +31,35 @@ export class LoveLetterGame {
   }
 
   rejoinPlayer(prevSocketId: string, newSocketId: string, callback: Function) {
-    return this.model.rejoinPlayer(prevSocketId, newSocketId, callback);
+    const success = this.model.rejoinPlayer(
+      prevSocketId,
+      newSocketId,
+      callback
+    );
+    if (success && this.model.getGameProgressState()) {
+      if (this.model.checkRoundOver()) {
+        this.model.gameOver()
+          ? this.sendGameOverState()
+          : this.sendRoundOverState();
+      } else {
+        let players: Player[] = this.model.getPlayers();
+        const index = players.findIndex((player) =>
+          player.ids.includes(newSocketId)
+        );
+        const player = players[index];
+        let gameState: GameState = this.model.gameState()[index];
+        if (
+          player.status === PlayerStatus.WATCHING &&
+          this.model.getLastPlayed() === Card.GUARD
+        ) {
+          gameState.watchingGuardPlay = true;
+        }
+        for (let id of player.ids) {
+          this.io.to(id).emit(SocketEvent.LL_GAME_STATE, gameState);
+        }
+      }
+    }
+    return success;
   }
 
   /**

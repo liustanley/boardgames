@@ -23,7 +23,11 @@ export class LoveLetterManager {
     callback: Function
   ): boolean {
     const game = this.codeToGame.get(room);
-    return game.rejoinPlayer(prevSocketId, newSocketId, callback);
+    if (game) {
+      return game.rejoinPlayer(prevSocketId, newSocketId, callback);
+    } else {
+      return false;
+    }
   }
 
   createGame(room: string) {
@@ -36,7 +40,9 @@ export class LoveLetterManager {
     payload: RegisterPlayerPayload
   ) {
     const game = this.codeToGame.get(room);
-    game.registerPlayer(socketId, payload);
+    if (game) {
+      game.registerPlayer(socketId, payload);
+    }
   }
 
   readyPlayer(room: string, socketId: string, payload: ReadyPlayerPayload) {

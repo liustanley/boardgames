@@ -73,7 +73,9 @@ export class SocketController {
           socket.id,
           callback
         );
-        if (success) {
+        if (success || this.rooms.includes(payload.room)) {
+          console.log("Re-join successful");
+          // User might not have entered name yet
           this.socketToGame.set(socket.id, Games.LOVE_LETTER);
           this.socketToRoom.set(socket.id, payload.room);
           socket.join(payload.room);

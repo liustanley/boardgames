@@ -29,25 +29,25 @@ export class LoveLetterContainer extends React.Component<
   constructor(props: any) {
     super(props);
 
-    const prevSocketId = this.props.cookies.get("socketId");
-    if (prevSocketId) {
-      console.log("ENTERED");
-      console.log("PREV: " + prevSocketId);
-      const params: any = this.props.match.params;
-      this.props.socket.rejoinGame(
-        {
-          prevSocketId: prevSocketId,
-          game: Games.LOVE_LETTER,
-          room: params.room_id,
-        },
-        (response: PlayerInfoPayload) => {
-          this.setState({
-            username: response.username,
-            usernameList: response.usernameList,
-          });
-        }
-      );
-    }
+    this.props.socket.onConnect(() => {
+      const prevSocketId = this.props.cookies.get("socketId");
+      if (!prevSocketId || prevSocketId !== this.props.socket.getId()) {
+        const params: any = this.props.match.params;
+        this.props.socket.rejoinGame(
+          {
+            prevSocketId: prevSocketId,
+            game: Games.LOVE_LETTER,
+            room: params.room_id,
+          },
+          (response: PlayerInfoPayload) => {
+            this.setState({
+              username: response.username,
+              usernameList: response.usernameList,
+            });
+          }
+        );
+      }
+    });
 
     this.state = {
       // TODO:
@@ -69,9 +69,9 @@ export class LoveLetterContainer extends React.Component<
   onLobby(payload: LobbyPayload) {
     console.log(JSON.stringify(payload));
     if (payload.success) {
-      const date = new Date();
       this.props.cookies.set("socketId", this.props.socket.getId(), {
-        expires: new Date(date.getTime() + 10 * 60000),
+        path: "/",
+        maxAge: 600,
       });
       this.setState({
         usernameList: payload.usernameList,
