@@ -29,25 +29,23 @@ export class LoveLetterContainer extends React.Component<
   constructor(props: any) {
     super(props);
 
-    this.props.socket.onConnect(() => {
-      const prevSocketId = this.props.cookies.get("socketId");
-      if (!prevSocketId || prevSocketId !== this.props.socket.getId()) {
-        const params: any = this.props.match.params;
-        this.props.socket.rejoinGame(
-          {
-            prevSocketId: prevSocketId,
-            game: Games.LOVE_LETTER,
-            room: params.room_id,
-          },
-          (response: PlayerInfoPayload) => {
-            this.setState({
-              username: response.username,
-              usernameList: response.usernameList,
-            });
-          }
-        );
-      }
-    });
+    const prevSocketId = this.props.cookies.get("socketId");
+    if (!prevSocketId || prevSocketId !== this.props.socket.getId()) {
+      const params: any = this.props.match.params;
+      this.props.socket.rejoinGame(
+        {
+          prevSocketId: prevSocketId,
+          game: Games.LOVE_LETTER,
+          room: params.room_id,
+        },
+        (response: PlayerInfoPayload) => {
+          this.setState({
+            username: response.username,
+            usernameList: response.usernameList,
+          });
+        }
+      );
+    }
 
     this.state = {
       username: "",
