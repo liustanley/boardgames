@@ -38,10 +38,6 @@ export class SocketService {
     return this.socket.id;
   }
 
-  onConnect(callback: Function): void {
-    this.socket.on("connect", callback);
-  }
-
   /**
    * Initializes this class's socket connection.
    */
